@@ -1,0 +1,80 @@
+﻿<Window x:Class="VwSyncSever.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VwSyncSever"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="600" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" WindowStartupLocation="CenterScreen" WindowStyle="None">
+    <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
+
+
+            <GroupBox x:Name="groupBox" Header="Server" Margin="10,0" FontSize="16">
+                <StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <Label x:Name="label" Content="Ip Local:" HorizontalAlignment="Left" Margin="2" />
+                    <TextBox x:Name="textBox" HorizontalAlignment="Center" Margin="2" TextWrapping="Wrap" Width="200" VerticalAlignment="Top"/>
+                
+                
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <Label x:Name="label1" Content="Port listener:" HorizontalAlignment="Left" Margin="2" />
+                    <TextBox x:Name="textBox1" HorizontalAlignment="Center" Margin="2" TextWrapping="Wrap" Width="200" VerticalAlignment="Top"/>
+
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <Label x:Name="label2" Content="Path:" HorizontalAlignment="Left" Margin="2" />
+                        <TextBox x:Name="textBox2" Margin="2" TextWrapping="Wrap" VerticalAlignment="Center" Width="490"/>
+
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+
+            <GroupBox x:Name="agroupBox" Header="Client" Margin="10,0" FontSize="16">
+                <StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10">
+                        <Label x:Name="alabel" Content="ID:" HorizontalAlignment="Left" Margin="2" />
+                    <TextBox x:Name="atextBox" HorizontalAlignment="Center" Margin="2" TextWrapping="Wrap" Width="200" VerticalAlignment="Top"/>
+
+
+                    </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10">
+                        <Label x:Name="alabel1" Content="Sever IP:" HorizontalAlignment="Left" Margin="2" />
+                        <TextBox x:Name="atextBox1" HorizontalAlignment="Center" Margin="2" TextWrapping="Wrap" Width="200" VerticalAlignment="Top"/>
+
+                    </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <Label x:Name="alabel3" Content="Port:" HorizontalAlignment="Left" Margin="2" />
+                    <TextBox x:Name="atextBox3" HorizontalAlignment="Center" Margin="2" Width="200" TextWrapping="Wrap" VerticalAlignment="Top"/>
+
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="10">
+                        <Label x:Name="alabel2" Content="Path:" HorizontalAlignment="Left" Margin="2" />
+                        <TextBox x:Name="atextBox2" Margin="2" TextWrapping="Wrap" VerticalAlignment="Top" Width="490"/>
+
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+
+
+
+        <DockPanel Margin="20,10,2,0">
+
+            <Button Content=" Close " Name="btnSaveEditedText" 
+                Background="Transparent" 
+                FontSize="18" 
+                Margin="8,1"
+                BorderBrush="Transparent"
+                BorderThickness="0" HorizontalAlignment="Right" DockPanel.Dock="Right" Click="btnSaveEditedText_Click" Foreground="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}" FontFamily="Times New Roman"/>
+
+        </DockPanel>
+        <Label Name="infoLbl" FontSize="16" FontFamily="Times New Roman" Margin="16,0"/>
+        
+
+    </StackPanel>
+</Window>
