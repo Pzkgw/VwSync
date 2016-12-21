@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using Microsoft.Synchronization;
+using Microsoft.Synchronization.Files;
 
 namespace VwSyncSever
 {
@@ -31,28 +20,34 @@ namespace VwSyncSever
         private void Orchestrate()
         {
 
-            // SETTINGS
+            // 1. SETARI
+
+            // Folders to be synced
             string
-                firstLocation = @"\\10.10.10.47\video\gi test\demo\",
-                secondLocation = @"c:\\_\";
+                folderA = @"c:\\_\", // remoteProvider
+                folderB = @"\\10.10.10.47\video\gi test\demo\" // localProvider
+                ;
 
+            // 2. OPTIUNI
+            SyncDirectionOrder way = SyncDirectionOrder.Download;
+            FileSyncScopeFilter scopeFilter = new FileSyncScopeFilter();
+            FileSyncOptions fileSyncOptions = new FileSyncOptions();
 
-            // FORM UPDATE
+            // 2. GUI
+            textBox2.Text = folderA;
+            atextBox2.Text = folderB;
 
-            textBox2.Text = firstLocation;
-            atextBox2.Text = secondLocation;
-
-
-            //ORCHESTRATE-IT
-            Orchestrator o = new VwSyncSever.Orchestrator();
+            // 3. ORCHESTRATE-IT
+            Orchestrator o = new Orchestrator();
             o.SetInfoShowPodium(infoLbl);
-            o.Start(firstLocation, secondLocation);
-            o.DoEeet();
+            o.SetDirectories(folderA, folderB);
+            o.InitSync(way, scopeFilter, fileSyncOptions);
+            o.Sync();
         }
 
         private void btnSaveEditedText_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

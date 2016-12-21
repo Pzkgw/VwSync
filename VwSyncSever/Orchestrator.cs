@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows.Controls;
 using Microsoft.Synchronization;
 using Microsoft.Synchronization.Files;
@@ -9,49 +10,59 @@ namespace VwSyncSever
     {
 
         SyncOrchestrator orchestrator;
-        
+
+        string localDirectory, remoteDirectory;
+
+        bool startSyncAllowed; 
+
         public Orchestrator()
         {
-            
-        }
-
-
-        
-
-        public void Start(string localProvider, string remoteProvider)
-        {
-
-            if (Directory.Exists(localProvider) && Directory.Exists(remoteProvider))
-            {
-                FileSyncProvider firstProvider = new FileSyncProvider(localProvider);
-                FileSyncProvider secondProvider = new FileSyncProvider(remoteProvider);
-
-                orchestrator = new SyncOrchestrator();
-                orchestrator.LocalProvider = firstProvider;
-                orchestrator.RemoteProvider = secondProvider;
-                orchestrator.Direction = SyncDirectionOrder.DownloadAndUpload;
-            }
-            else
-            {
-                Show("Dir !exists");
-            }
-
-
-            
 
         }
 
-
-        public void DoEeet()
+        public void SetDirectories(string local, string remote)
         {
-            if (orchestrator != null) {
+            localDirectory = local;
+            remoteDirectory = remote;
+            startSyncAllowed = PrepareDirectories(local, remote);
+        }
+
+        public void InitSync(SyncDirectionOrder way, 
+            FileSyncScopeFilter scopeFilter,
+            FileSyncOptions fileSyncOptions)
+        {
+            if (!startSyncAllowed) return;
+
+            // Create file system providers
+            FileSyncProvider providerA = new FileSyncProvider(localDirectory, scopeFilter, fileSyncOptions);
+            FileSyncProvider providerB = new FileSyncProvider(remoteDirectory, scopeFilter, fileSyncOptions);
+
+            // Ask providers to detect changes
+            providerA.DetectChanges();
+            providerB.DetectChanges();
+
+            // Init Sync
+            orchestrator = new SyncOrchestrator();
+            orchestrator.LocalProvider = providerA;
+            orchestrator.RemoteProvider = providerB;
+            orchestrator.Direction = way;
+
+        }
+
+
+        public void Sync()
+        {
+            if (!startSyncAllowed) return;
+
+            if (orchestrator != null)
+            {
                 orchestrator.Synchronize();
             }
             else
             {
                 Show("orchestrator !exists");
             }
-            
+
         }
 
 
@@ -73,5 +84,44 @@ namespace VwSyncSever
 
         #endregion
 
+
+
+        /// <summary>
+        /// Prepare directories for sync
+        /// </summary>
+        private bool PrepareDirectories(params string[] dir)
+        {
+            if (dir==null || dir[1] == null)
+            {
+                Show("Remote directory not available");
+                return false;
+            }
+
+            if (!Directory.Exists(dir[0]))
+            {
+                Show("No directory for local provider");
+                return false;
+            }
+
+            if (!Directory.Exists(dir[1]))
+            {
+                Show("No directory for remote provider");
+                return false;
+            }
+
+            //File.WriteAllText(Path.Combine(folderA, "A.txt"), " zbang ... ");
+
+            return true;
+        }
+
+        /*
+        static void PrepareDirectory(string directoryName)
+        {
+            if (Directory.Exists(directoryName))
+            {
+                Directory.Delete(directoryName, true);
+            }
+            Directory.CreateDirectory(directoryName);
+        }*/
     }
 }
