@@ -12,7 +12,7 @@ namespace VwSyncSever
         SyncOrchestrator orchestrator;
 
         string localDirectory, remoteDirectory;
-
+        int percentSync;
         bool startSyncAllowed; 
 
         public Orchestrator()
@@ -21,7 +21,7 @@ namespace VwSyncSever
         }
 
         public void SetDirectories(string local, string remote)
-        {
+        {        
             localDirectory = local;
             remoteDirectory = remote;
             startSyncAllowed = PrepareDirectories(local, remote);
@@ -56,7 +56,9 @@ namespace VwSyncSever
 
             if (orchestrator != null)
             {
+                SetPercentSync(0);
                 orchestrator.Synchronize();
+                SetPercentSync(100);
             }
             else
             {
@@ -81,6 +83,10 @@ namespace VwSyncSever
             s.Content = mesaj;
         }
 
+        private void SetPercentSync(int v)
+        {
+            percentSync = v;
+        }
 
         #endregion
 
