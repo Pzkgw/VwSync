@@ -30,7 +30,7 @@ namespace VwSyncSever
                 try
                 {
                     result.AddRange(
-                        Directory.GetFiles(temp, "*.*").Where(s => !(s.EndsWith('.'+excludedExtensions[0]))));//
+                        Directory.GetFiles(temp, "*.*").Where(s => !(s.EndsWith('.' + excludedExtensions[0]))));//
 
                     foreach (string directoryName in
                       Directory.GetDirectories(temp))

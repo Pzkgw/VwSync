@@ -7,77 +7,73 @@
         mc:Ignorable="d"
         Title="MainWindow" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" WindowStyle="None">
 
-    <StackPanel Orientation="Vertical" Margin="10,10,10,0">
-        <StackPanel Orientation="Horizontal">
+    <StackPanel Orientation="Vertical" Margin="15">
+
+        <GroupBox x:Name="groupBox" Header="Server" FontSize="16" HorizontalAlignment="Left" Foreground="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}">
 
             <StackPanel Orientation="Vertical">
 
-                <GroupBox x:Name="groupBox" Header="Server" FontSize="16" HorizontalAlignment="Left" Foreground="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}">
-                    <StackPanel Orientation="Horizontal">
-                        <StackPanel Orientation="Vertical">
-                            <StackPanel Orientation="Horizontal" Margin="10">
-                                <Label x:Name="label" Content="Ip Local:" HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
-                                <TextBox x:Name="textBox" HorizontalAlignment="Center" Margin="2" TextWrapping="Wrap" Width="200" VerticalAlignment="Top" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <Label x:Name="label2" Content="Path:" HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
+                    <TextBox x:Name="textBox2" Margin="2" TextWrapping="Wrap" VerticalAlignment="Center" Width="600" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
+
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <Label x:Name="label" Content="    IP:" HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
+                    <TextBox x:Name="textBox" HorizontalAlignment="Center" Margin="2" TextWrapping="Wrap" Width="200" VerticalAlignment="Top" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
+
+                    <Label x:Name="label1" Content="Port :" HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
+                    <TextBox x:Name="textBox1" HorizontalAlignment="Center" Margin="2" TextWrapping="Wrap" Width="170" VerticalAlignment="Top" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
 
 
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="10">
-                                <Label x:Name="label1" Content="Port listener:" HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
-                                <TextBox x:Name="textBox1" HorizontalAlignment="Center" Margin="2" TextWrapping="Wrap" Width="170" VerticalAlignment="Top" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
+                </StackPanel>
 
-                            </StackPanel>
+                <Label x:Name="lblLstServer" Content=" Files:" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
 
-                            <StackPanel Orientation="Horizontal" Margin="10">
-                                <Label x:Name="label2" Content="Path:" HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
-                                <TextBox x:Name="textBox2" Margin="2" TextWrapping="Wrap" VerticalAlignment="Center" Width="500" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
-
-                            </StackPanel>
-                        </StackPanel>
-
-                        <ListView Width="400" ScrollViewer.VerticalScrollBarVisibility="Auto" Name="lstServerFiles" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}" Margin="15,5,0,5" Height="155" BorderThickness="1,0,0,1"/>
-
-                    </StackPanel>
-                </GroupBox>
-
-
-                <GroupBox x:Name="agroupBox" Header="Client" FontSize="16" Foreground="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}">
-                    <StackPanel Orientation="Horizontal">
-                        <StackPanel Orientation="Vertical">
-                            <StackPanel Orientation="Horizontal" Margin="10">
-                                <Label x:Name="alabel" Content="ID:" HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
-                                <TextBox x:Name="atextBox" HorizontalAlignment="Center" Margin="2" TextWrapping="Wrap" Width="240" VerticalAlignment="Top" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
-
-
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="10">
-                                <Label x:Name="alabel1" Content="Sever IP:" HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
-                                <TextBox x:Name="atextBox1" HorizontalAlignment="Center" Margin="2" TextWrapping="Wrap" Width="200" VerticalAlignment="Top" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
-
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="10">
-                                <Label x:Name="alabel3" Content="Port:" HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
-                                <TextBox x:Name="atextBox3" HorizontalAlignment="Center" Margin="2" Width="226" TextWrapping="Wrap" VerticalAlignment="Top" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
-
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="10">
-                                <Label x:Name="alabel2" Content="Path:" HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
-                                <TextBox x:Name="atextBox2" Margin="2" TextWrapping="Wrap" VerticalAlignment="Top" Width="500" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
-
-                            </StackPanel>
-                        </StackPanel>
-                        <ListView Width="400" ScrollViewer.VerticalScrollBarVisibility="Auto" Name="lstClientFiles" Height="218" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}" Margin="15,5,0,5" BorderThickness="1,0,0,1">
-
-                        </ListView>
-
-                    </StackPanel>
-
-                </GroupBox>
-
+                <ListView ScrollViewer.VerticalScrollBarVisibility="Auto" Name="lstServerFiles" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}" Margin="15,5,0,5" MaxHeight="200" BorderThickness="0,1,0,0" HorizontalAlignment="Left"/>
 
 
             </StackPanel>
 
-        </StackPanel>
+
+
+        </GroupBox>
+
+
+        <GroupBox x:Name="agroupBox" Header="Client" FontSize="16" Foreground="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}">
+
+            <StackPanel Orientation="Vertical">
+
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <Label x:Name="alabel2" Content="Path:" HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
+                    <TextBox x:Name="atextBox2" Margin="2" TextWrapping="Wrap" VerticalAlignment="Top" Width="600" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
+
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <Label x:Name="alabel" Content="    ID:" HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
+                    <TextBox x:Name="atextBox" HorizontalAlignment="Center" Margin="2" TextWrapping="Wrap" Width="240" VerticalAlignment="Top" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
+
+                    <Label x:Name="alabel3" Content="Port: " HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
+                    <TextBox x:Name="atextBox3" HorizontalAlignment="Center" Margin="2" Width="226" TextWrapping="Wrap" VerticalAlignment="Top" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
+
+
+                    <Label x:Name="alabel1" Content="Sever IP:" HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
+                    <TextBox x:Name="atextBox1" HorizontalAlignment="Center" Margin="2" TextWrapping="Wrap" Width="200" VerticalAlignment="Top" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
+
+
+                </StackPanel>
+
+                <Label x:Name="lblLstClient" Content=" Files:" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
+
+                <ListView ScrollViewer.VerticalScrollBarVisibility="Auto" Name="lstClientFiles" MaxHeight="200" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}" Margin="15,5,0,5" BorderThickness="0,1,0,0" HorizontalAlignment="Left"/>
+
+            </StackPanel>
+
+
+
+        </GroupBox>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="4,4,4,0">
 
@@ -86,6 +82,7 @@
                 FontSize="18" 
                 Margin="8"
                 BorderBrush="Transparent"
+                    Click="btnSync_Click"
                 BorderThickness="0" HorizontalAlignment="Right" DockPanel.Dock="Right" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontFamily="Times New Roman"/>
 
             <Button Content=" Start sync service " Name="btnService" 
@@ -93,7 +90,8 @@
                 FontSize="18" 
                 Margin="8"
                 BorderBrush="Transparent"
-                BorderThickness="0" HorizontalAlignment="Right" DockPanel.Dock="Right" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontFamily="Times New Roman"/>
+                    Click="btnService_Click"
+                BorderThickness="0" HorizontalAlignment="Right" DockPanel.Dock="Right" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontFamily="Times New Roman" Height="41"/>
 
             <Button Content=" Close " Name="btnClose" 
                 Background="Transparent" 
@@ -104,6 +102,6 @@
 
         </StackPanel>
 
-        <Label Name="infoLbl" FontSize="16" FontFamily="Times New Roman" Margin="16,0" Foreground="{DynamicResource {x:Static SystemColors.InfoBrushKey}}"/>
+        <Label Name="infoLbl" FontSize="16" FontFamily="Times New Roman" Margin="16,0" Foreground="{DynamicResource {x:Static SystemColors.InfoBrushKey}}" VerticalAlignment="Bottom"/>
     </StackPanel>
 </Window>

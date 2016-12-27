@@ -6,14 +6,16 @@ using Microsoft.Synchronization.Files;
 
 namespace VwSyncSever
 {
-    class Orchestrator
+    partial class Orchestrator
     {
+
 
         SyncOrchestrator orchestrator;
 
         string localDirectory, remoteDirectory;
         int percentSync;
         bool startSyncAllowed;
+
 
         public Orchestrator()
         {
