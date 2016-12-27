@@ -13,7 +13,7 @@ namespace VwSyncSever
 
         string localDirectory, remoteDirectory;
         int percentSync;
-        bool startSyncAllowed; 
+        bool startSyncAllowed;
 
         public Orchestrator()
         {
@@ -21,13 +21,13 @@ namespace VwSyncSever
         }
 
         public void SetDirectories(string local, string remote)
-        {        
+        {
             localDirectory = local;
             remoteDirectory = remote;
             startSyncAllowed = PrepareDirectories(local, remote);
         }
 
-        public void InitSync(SyncDirectionOrder way, 
+        public void InitSync(SyncDirectionOrder way,
             FileSyncScopeFilter scopeFilter,
             FileSyncOptions fileSyncOptions)
         {
@@ -97,16 +97,16 @@ namespace VwSyncSever
         /// </summary>
         private bool PrepareDirectories(params string[] dir)
         {
-            if (dir==null || dir[1] == null)
+            if (dir == null || dir[1] == null)
             {
-                Show("Remote directory not available");
+                Show("No directories to sync ...");
                 return false;
             }
 
             if (!Directory.Exists(dir[0]))
             {
-                Show("No directory for local provider");
-                return false;
+                //Show("No directory for local provider"); return false;
+                Directory.CreateDirectory(dir[0]);
             }
 
             if (!Directory.Exists(dir[1]))

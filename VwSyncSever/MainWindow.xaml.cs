@@ -16,7 +16,6 @@ namespace VwSyncSever
         {
             InitializeComponent();
 
-
             Orchestrate();
         }
 
@@ -27,9 +26,12 @@ namespace VwSyncSever
 
             // Folders to be synced
             string
-                folderA = @"c:\\_\", // remoteProvider
-                folderB = @"\\10.10.10.47\video\gi test\demo\" // localProvider
-                ;
+                /* local */   strLocalFolder = @"c:\\___\",
+                 /* remote */ strRemoteFolder = @"\\CJ-PC\Users\Default\AppData";
+            //@"\\10.10.10.47\video\gi test\demo\";
+
+            string[] syncExcludeExtensions = new string[] { "*.tmp", "*.lnk", "*.pst" };
+            string displayExcludeExtension = "metadata";
 
             // 2. OPTIUNI
 
@@ -40,26 +42,26 @@ namespace VwSyncSever
             FileSyncScopeFilter fsFilter = new FileSyncScopeFilter();
             // exclude temporary files
             fsFilter.AttributeExcludeMask = FileAttributes.System | FileAttributes.Hidden;
-            fsFilter.FileNameExcludes.Add("*.tmp");
-            fsFilter.FileNameExcludes.Add("*.lnk");
-            fsFilter.FileNameExcludes.Add("*.pst");
+            foreach (string s in syncExcludeExtensions) fsFilter.FileNameExcludes.Add(s);
 
             // 2.3 FILE OPTIONS
             FileSyncOptions fsOptions = new FileSyncOptions();
 
             // 3. GUI
-            textBox2.Text = folderA;
-            atextBox2.Text = folderB;
+            textBox2.Text = strLocalFolder;
+            atextBox2.Text = strRemoteFolder;
 
-            foreach (string s in Utils.GetFilesAndDirectories(folderA, "metadata")) lstServerFiles.Items.Add(s);
+            foreach (string s in Utils.GetFilesAndDirectories(strLocalFolder, displayExcludeExtension)) lstServerFiles.Items.Add(s);
+
+            foreach (string s in Utils.GetFilesAndDirectories(strRemoteFolder, displayExcludeExtension)) lstClientFiles.Items.Add(s);
 
             textBox.Text = Utils.GetLocalIpAddress();
 
             // 4. ORCHESTRATE-IT
             Orchestrator o = new Orchestrator();
-            
-            //o.SetInfoShowPodium(infoLbl);
-            //o.SetDirectories(folderA, folderB);
+
+            o.SetInfoShowPodium(infoLbl);
+            o.SetDirectories(strLocalFolder, strRemoteFolder);
             //o.InitSync(fsWay, fsFilter, fsOptions);
             //o.Sync();
         }
