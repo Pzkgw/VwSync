@@ -29,44 +29,82 @@ namespace VwSyncSever
             startSyncAllowed = PrepareDirectories(local, remote);
         }
 
-        public void InitSync(SyncDirectionOrder way,
+        public bool InitSync(SyncDirectionOrder way,
             FileSyncScopeFilter scopeFilter,
             FileSyncOptions fileSyncOptions)
         {
-            if (!startSyncAllowed) return;
+            if (!startSyncAllowed) return false;
 
-            // Create file system providers
-            FileSyncProvider providerA = new FileSyncProvider(localDirectory, scopeFilter, fileSyncOptions);
-            FileSyncProvider providerB = new FileSyncProvider(remoteDirectory, scopeFilter, fileSyncOptions);
+            bool retVal = false;
 
-            // Ask providers to detect changes
-            providerA.DetectChanges();
-            providerB.DetectChanges();
+            FileSyncProvider
+                localPro = null,
+                remotePro = null;
 
-            // Init Sync
-            orchestrator = new SyncOrchestrator();
-            orchestrator.LocalProvider = providerA;
-            orchestrator.RemoteProvider = providerB;
-            orchestrator.Direction = way;
+            try
+            {
+                // setari aditionale pt remote
+                string metadataDirectoryPath = localDirectory + "\\_Remet",
+                 metadataFileName = remoteDirectory.Replace('\\','$')+".metadata",
+                 tempDirectoryPath = localDirectory + "\\_Temp",
+                 pathToSaveConflictLoserFiles = localDirectory + "\\_Conflict";
 
+                if (!Directory.Exists(metadataDirectoryPath)) Directory.CreateDirectory(metadataDirectoryPath);
+                if (!Directory.Exists(tempDirectoryPath)) Directory.CreateDirectory(tempDirectoryPath);
+                if (!Directory.Exists(pathToSaveConflictLoserFiles)) Directory.CreateDirectory(pathToSaveConflictLoserFiles);
+
+                // Create file system providers
+                localPro = new FileSyncProvider(localDirectory, scopeFilter, fileSyncOptions);
+                remotePro = new FileSyncProvider(remoteDirectory, scopeFilter, fileSyncOptions,
+                    metadataDirectoryPath, metadataFileName, tempDirectoryPath, pathToSaveConflictLoserFiles);
+
+                // Ask providers to detect changes
+                localPro.DetectChanges();
+                remotePro.DetectChanges();
+
+                // Init Sync
+                orchestrator = new SyncOrchestrator();
+                orchestrator.LocalProvider = localPro;
+                orchestrator.RemoteProvider = remotePro;
+                orchestrator.Direction = way;
+                orchestrator.SessionProgress += Orchestrator_SessionProgress;
+                retVal = true;
+            }
+            catch (Exception ex)
+            {
+                Show("Sync fail: " + ex.ToString());
+                retVal = false;
+            }
+            finally
+            {
+                if (localPro != null) localPro.Dispose();
+                if (remotePro != null) remotePro.Dispose();                
+            }
+
+            return retVal;
         }
 
-
-        public void Sync()
+        private void Orchestrator_SessionProgress(object sender, SyncStagedProgressEventArgs e)
         {
-            if (!startSyncAllowed) return;
+            Show(e.TotalWork.ToString());
+        }
+
+        public SyncOperationStatistics Sync()
+        {
+            if (!startSyncAllowed) return null;
+
+            SyncOperationStatistics retVal = null;
 
             if (orchestrator != null)
             {
-                SetPercentSync(0);
-                orchestrator.Synchronize();
-                SetPercentSync(100);
+                retVal = orchestrator.Synchronize();
             }
             else
             {
                 Show("orchestrator !exists");
             }
 
+            return retVal;
         }
 
 
@@ -87,7 +125,7 @@ namespace VwSyncSever
 
         private void SetPercentSync(int v)
         {
-            percentSync = v;
+            //percentSync = v;
         }
 
         #endregion

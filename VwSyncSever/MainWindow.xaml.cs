@@ -13,13 +13,8 @@ namespace VwSyncSever
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
-        {
-            InitializeComponent();
 
-            Orchestrate();
-        }
-
+        Orchestrator o;
 
         // 1. SETARI
         // Folders to be synced
@@ -32,22 +27,14 @@ namespace VwSyncSever
         const string displayExcludeExtension = "metadata";
 
 
-        private void Orchestrate()
+
+        public MainWindow()
         {
+            InitializeComponent();
 
-            // 2. OPTIUNI
 
-            // 2.1 WAY
-            SyncDirectionOrder fsWay = SyncDirectionOrder.Download;
-
-            // 2.2 FILTERS
-            FileSyncScopeFilter fsFilter = new FileSyncScopeFilter();
-            // exclude temporary files
-            fsFilter.AttributeExcludeMask = FileAttributes.System | FileAttributes.Hidden;
-            foreach (string s in syncExcludeExtensions) fsFilter.FileNameExcludes.Add(s);
-
-            // 2.3 FILE OPTIONS
-            FileSyncOptions fsOptions = new FileSyncOptions();
+            o = new Orchestrator();
+            o.SetInfoShowPodium(infoLbl);
 
             // 3. GUI
             textBox2.Text = strLocalFolder;
@@ -57,19 +44,15 @@ namespace VwSyncSever
 
             textBox.Text = Utils.GetLocalIpAddress();
 
-            // 4. ORCHESTRATE-IT
-            Orchestrator o = new Orchestrator();
 
-            o.SetInfoShowPodium(infoLbl);
-            o.SetDirectories(strLocalFolder, strRemoteFolder);
-            //o.InitSync(fsWay, fsFilter, fsOptions);
-            //o.Sync();
         }
+
 
         private void UpdateFileList()
         {
-            lblLstServer.Visibility = ListFiles(strLocalFolder, lstServerFiles) ? Visibility.Visible : Visibility.Hidden;
-            lblLstClient.Visibility = ListFiles(strRemoteFolder, lstClientFiles) ? Visibility.Visible : Visibility.Hidden;
+            const string f0 = "No files found", f1 = "Files:";
+            lblLstServer.Content = ListFiles(strLocalFolder, lstServerFiles) ? f0 : f1;
+            lblLstClient.Content = ListFiles(strRemoteFolder, lstClientFiles) ? f0 : f1;
         }
 
         private bool ListFiles(string dir, ListView lst)
@@ -98,6 +81,31 @@ namespace VwSyncSever
         private void btnSync_Click(object sender, RoutedEventArgs e)
         {
 
+            // 2. OPTIUNI
+
+            // 2.1 WAY
+            SyncDirectionOrder fsWay = SyncDirectionOrder.Download;
+
+            // 2.2 FILTERS
+            FileSyncScopeFilter fsFilter = new FileSyncScopeFilter();
+            // exclude temporary files
+            fsFilter.AttributeExcludeMask = FileAttributes.System | FileAttributes.Hidden;
+            foreach (string s in syncExcludeExtensions) fsFilter.FileNameExcludes.Add(s);
+
+            // 2.3 FILE OPTIONS
+            FileSyncOptions fsOptions = new FileSyncOptions();
+
+
+            // 2.4 DO Eeeet______________
+
+            o.SetDirectories(strLocalFolder, strRemoteFolder);
+
+            SyncOperationStatistics stats = null;
+            if (o.InitSync(fsWay, fsFilter, fsOptions))
+            {
+                stats = o.Sync();
+                MessageBox.Show(stats.ToString());
+            }
         }
 
         private void btnSaveEditedText_Click(object sender, RoutedEventArgs e)

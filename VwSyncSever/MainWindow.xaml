@@ -9,13 +9,13 @@
 
     <StackPanel Orientation="Vertical" Margin="15">
 
-        <GroupBox x:Name="groupBox" Header="Server" FontSize="16" HorizontalAlignment="Left" Foreground="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}">
+        <GroupBox x:Name="groupBox" Header="Server(Local)" FontSize="16" HorizontalAlignment="Left" Foreground="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}">
 
             <StackPanel Orientation="Vertical">
 
                 <StackPanel Orientation="Horizontal" Margin="10">
                     <Label x:Name="label2" Content="Path:" HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
-                    <TextBox x:Name="textBox2" Margin="2" TextWrapping="Wrap" VerticalAlignment="Center" Width="600" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
+                    <TextBox x:Name="textBox2" Margin="2,2,20,2" TextWrapping="Wrap" VerticalAlignment="Center" Width="799" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
 
                 </StackPanel>
 
@@ -29,7 +29,7 @@
 
                 </StackPanel>
 
-                <Label x:Name="lblLstServer" Content=" Files:" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
+                <Label x:Name="lblLstServer" Content="Files:" HorizontalAlignment="Center" Margin="10,0,0,0" Foreground="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 
                 <ListView ScrollViewer.VerticalScrollBarVisibility="Auto" Name="lstServerFiles" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}" Margin="15,5,0,5" MaxHeight="200" BorderThickness="0,1,0,0" HorizontalAlignment="Left"/>
 
@@ -41,13 +41,13 @@
         </GroupBox>
 
 
-        <GroupBox x:Name="agroupBox" Header="Client" FontSize="16" Foreground="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}">
+        <GroupBox x:Name="agroupBox" Header="Client(Remote)" FontSize="16" Foreground="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}">
 
             <StackPanel Orientation="Vertical">
 
                 <StackPanel Orientation="Horizontal" Margin="10">
                     <Label x:Name="alabel2" Content="Path:" HorizontalAlignment="Left" Margin="2" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
-                    <TextBox x:Name="atextBox2" Margin="2" TextWrapping="Wrap" VerticalAlignment="Top" Width="600" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
+                    <TextBox x:Name="atextBox2" Margin="2" TextWrapping="Wrap" VerticalAlignment="Top" Width="799" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
 
                 </StackPanel>
 
@@ -65,9 +65,11 @@
 
                 </StackPanel>
 
-                <Label x:Name="lblLstClient" Content=" Files:" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
 
-                <ListView ScrollViewer.VerticalScrollBarVisibility="Auto" Name="lstClientFiles" MaxHeight="200" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}" Margin="15,5,0,5" BorderThickness="0,1,0,0" HorizontalAlignment="Left"/>
+                <Label x:Name="lblLstClient" Content="Files:" HorizontalAlignment="Center" Margin="10,0,0,0" Foreground="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+
+                
+                <ListView ScrollViewer.VerticalScrollBarVisibility="Auto" Name="lstClientFiles" MaxHeight="200" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}" Margin="15,1,0,5" BorderThickness="0,1,0,0" HorizontalAlignment="Left"/>
 
             </StackPanel>
 
