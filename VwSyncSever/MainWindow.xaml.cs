@@ -106,7 +106,12 @@ namespace VwSyncSever
             if (o.InitSync(fsWay, fsFilter, fsOptions))
             {
                 stats = o.Sync();
-                MessageBox.Show(stats.ToString());
+                MessageBox.Show(
+                    string.Format(
+                        "Start Time: {0}{2} End Time: {1}{2} DownloadChangesTotal: {3}{2} DownloadChangesApplied: {4}{2} DownloadChangesFailed: {5}{2} UploadChangesTotal: {6}",
+                    stats.SyncStartTime, stats.SyncEndTime, Environment.NewLine,
+                    stats.DownloadChangesTotal, stats.DownloadChangesApplied, stats.DownloadChangesFailed,
+                    stats.UploadChangesTotal));
             }
         }
 

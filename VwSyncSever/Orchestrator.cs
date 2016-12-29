@@ -34,17 +34,22 @@ namespace VwSyncSever
             FileSyncScopeFilter scopeFilter,
             FileSyncOptions fileSyncOptions)
         {
-            if (!startSyncAllowed) return false;
 
             bool retVal = false;
 
+            string rFileName = null;
+            if (remoteDirectory[1] == ':') // Windows directory prezent la inspectie
+            {
+                rFileName = remoteDirectory.Replace('\\', '$').Remove(1, 1);
+            }
 
+            if (!startSyncAllowed || rFileName == null) return retVal;
 
             try
             {
                 // setari aditionale pt remote
-                string metadataDirectoryPath = localDirectory + "\\_Remet",
-                 metadataFileName = remoteDirectory.Replace('\\', '$').Remove(1,1),//"filesync.metadata",//
+                string metadataDirectoryPath = localDirectory + "\\_Remet",//"filesync.metadata",//
+                 metadataFileName = rFileName,
                  tempDirectoryPath = localDirectory + "\\_Temp",
                  pathToSaveConflictLoserFiles = localDirectory + "\\_Conflict";
 
