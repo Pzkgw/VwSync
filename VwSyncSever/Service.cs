@@ -11,12 +11,13 @@ namespace VwSyncSever
             ServiceName = "SyncServerService";
             CanStop = true;
             CanPauseAndContinue = true;
-            AutoLog = true;
+            AutoLog = false;
         }
 
 
         protected override void OnStart(string[] args)
         {
+
         }
 
         }

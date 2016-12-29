@@ -38,10 +38,21 @@ namespace VwSyncSever
             bool retVal = false;
 
             string rFileName = null;
-            if (remoteDirectory[1] == ':') // Windows directory prezent la inspectie
+
+
+            switch (remoteDirectory[1])
             {
-                rFileName = remoteDirectory.Replace('\\', '$').Remove(1, 1);
+                case ':':// Windows local prezent la inspectie
+                    rFileName = remoteDirectory.Replace('\\', '$').Remove(1, 1);
+                    break;
+                case '\\':
+                    if (remoteDirectory[0] == '\\') // network Windows device
+                        rFileName = remoteDirectory.Replace('\\', '$');
+                    break;
+                default:
+                    break;
             }
+
 
             if (!startSyncAllowed || rFileName == null) return retVal;
 
@@ -74,7 +85,7 @@ namespace VwSyncSever
                 orchestrator.SessionProgress += Orchestrator_SessionProgress;
                 retVal = true;
             }
-            catch (Exception ex)
+            catch //(Exception ex)
             {
                 // Show("Sync fail: " + ex.ToString());
 

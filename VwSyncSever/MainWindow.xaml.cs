@@ -21,9 +21,9 @@ namespace VwSyncSever
         string
             /* local */   strLocalFolder = @"c:\\___\",
              /* remote */ strRemoteFolder =
-        //@"\\CJ-PC\Users\Default\AppData";
+        @"\\CJ-PC\Users\Default\AppData";
         //@"\\10.10.10.47\video\gi test\demo\";
-        @"c:\_ToDo\TestHik\TestHik\bin\x86\Debug\DbgMessages\";
+        //@"c:\_ToDo\TestHik\TestHik\bin\x86\Debug\DbgMessages\";
 
         string[] syncExcludeExtensions = new string[] { "*.tmp", "*.lnk", "*.pst" };
         const string displayExcludeExtension = "metadata";
