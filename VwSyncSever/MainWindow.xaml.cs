@@ -20,8 +20,10 @@ namespace VwSyncSever
         // Folders to be synced
         string
             /* local */   strLocalFolder = @"c:\\___\",
-             /* remote */ strRemoteFolder = @"\\CJ-PC\Users\Default\AppData";
+             /* remote */ strRemoteFolder =
+        //@"\\CJ-PC\Users\Default\AppData";
         //@"\\10.10.10.47\video\gi test\demo\";
+        @"c:\_ToDo\TestHik\TestHik\bin\x86\Debug\DbgMessages\";
 
         string[] syncExcludeExtensions = new string[] { "*.tmp", "*.lnk", "*.pst" };
         const string displayExcludeExtension = "metadata";
@@ -51,8 +53,8 @@ namespace VwSyncSever
         private void UpdateFileList()
         {
             const string f0 = "No files found", f1 = "Files:";
-            lblLstServer.Content = ListFiles(strLocalFolder, lstServerFiles) ? f0 : f1;
-            lblLstClient.Content = ListFiles(strRemoteFolder, lstClientFiles) ? f0 : f1;
+            lblLstServer.Content = ListFiles(strLocalFolder, lstServerFiles) ? f1 : f0;
+            lblLstClient.Content = ListFiles(strRemoteFolder, lstClientFiles) ? f1 : f0;
         }
 
         private bool ListFiles(string dir, ListView lst)
@@ -106,6 +108,11 @@ namespace VwSyncSever
                 stats = o.Sync();
                 MessageBox.Show(stats.ToString());
             }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            o.CleanUp();
         }
 
         private void btnSaveEditedText_Click(object sender, RoutedEventArgs e)

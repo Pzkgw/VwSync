@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VwSyncSever"
         mc:Ignorable="d"
+        Closing="Window_Closing"
         Title="MainWindow" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" WindowStyle="None">
 
     <StackPanel Orientation="Vertical" Margin="15">

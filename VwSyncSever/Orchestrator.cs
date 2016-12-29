@@ -11,9 +11,10 @@ namespace VwSyncSever
 
 
         SyncOrchestrator orchestrator;
+        FileSyncProvider localPro = null, remotePro = null;
 
         string localDirectory, remoteDirectory;
-        int percentSync;
+        //int percentSync;
         bool startSyncAllowed;
 
 
@@ -37,15 +38,13 @@ namespace VwSyncSever
 
             bool retVal = false;
 
-            FileSyncProvider
-                localPro = null,
-                remotePro = null;
+
 
             try
             {
                 // setari aditionale pt remote
                 string metadataDirectoryPath = localDirectory + "\\_Remet",
-                 metadataFileName = remoteDirectory.Replace('\\','$')+".metadata",
+                 metadataFileName = remoteDirectory.Replace('\\', '$').Remove(1,1),//"filesync.metadata",//
                  tempDirectoryPath = localDirectory + "\\_Temp",
                  pathToSaveConflictLoserFiles = localDirectory + "\\_Conflict";
 
@@ -72,13 +71,15 @@ namespace VwSyncSever
             }
             catch (Exception ex)
             {
-                Show("Sync fail: " + ex.ToString());
+                // Show("Sync fail: " + ex.ToString());
+
+                CleanUp();
+
                 retVal = false;
             }
             finally
             {
-                if (localPro != null) localPro.Dispose();
-                if (remotePro != null) remotePro.Dispose();                
+
             }
 
             return retVal;
@@ -97,7 +98,14 @@ namespace VwSyncSever
 
             if (orchestrator != null)
             {
-                retVal = orchestrator.Synchronize();
+                try
+                {
+                    retVal = orchestrator.Synchronize();
+                }
+                catch
+                {
+
+                }
             }
             else
             {
@@ -158,6 +166,18 @@ namespace VwSyncSever
             //File.WriteAllText(Path.Combine(folderA, "A.txt"), " zbang ... ");
 
             return true;
+        }
+
+        public void CleanUp()
+        {
+            if (remotePro != null) remotePro.Dispose();
+            if (localPro != null) localPro.Dispose();
+        }
+
+        ~Orchestrator()
+        {
+            CleanUp();
+            GC.SuppressFinalize(this);
         }
 
         /*
