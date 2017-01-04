@@ -8,26 +8,12 @@ namespace VwSyncSever
 {
     partial class Orchestrator
     {
-
-
         SyncOrchestrator orchestrator;
         FileSyncProvider localPro = null, remotePro = null;
-
-        string localDirectory, remoteDirectory;
-        //int percentSync;
-        bool startSyncAllowed;
-
 
         public Orchestrator()
         {
 
-        }
-
-        public void SetDirectories(string local, string remote)
-        {
-            localDirectory = local;
-            remoteDirectory = remote;
-            startSyncAllowed = PrepareDirectories(local, remote);
         }
 
         public bool InitSync(SyncDirectionOrder way,
@@ -35,44 +21,20 @@ namespace VwSyncSever
             FileSyncOptions fileSyncOptions)
         {
 
-            bool retVal = false;
-
-            string rFileName = remoteDirectory.Replace('\\', '$');
+            bool retVal = false; 
 
 
-            switch (remoteDirectory[1])
-            {
-                case ':':// Windows local prezent la inspectie
-                    rFileName = rFileName.Remove(1, 1);
-                    break;
-                case '\\':
-                    //if (remoteDirectory[0] == '\\') // network Windows device
-                    // rFileName = rFileName;
-                    break;
-                default:
-                    break;
-            }
-
-
-            if (!startSyncAllowed || rFileName == null) return retVal;
+            if (!Settings.directoryStructureIsOk) return retVal;
 
             try
             {
-                // setari aditionale pt remote
-                string metadataDirectoryPath = localDirectory + Settings.dirForMetadata,//"filesync.metadata",//
-                 metadataFileName = rFileName,
-                 tempDirectoryPath = localDirectory + Settings.dirForTemporaryFiles,
-                 pathToSaveConflictLoserFiles = localDirectory + Settings.dirForConflictedFiles;
-
-                if (!Directory.Exists(metadataDirectoryPath)) Directory.CreateDirectory(metadataDirectoryPath);
-                if (!Directory.Exists(tempDirectoryPath)) Directory.CreateDirectory(tempDirectoryPath);
-                if (!Directory.Exists(pathToSaveConflictLoserFiles)) Directory.CreateDirectory(pathToSaveConflictLoserFiles);
+                Settings.SetupDirectoryStruct();
 
                 // Create file system providers
-                localPro = new FileSyncProvider(localDirectory, scopeFilter, fileSyncOptions,
-                    metadataDirectoryPath, "L_" + metadataFileName, tempDirectoryPath, pathToSaveConflictLoserFiles);
-                remotePro = new FileSyncProvider(remoteDirectory, scopeFilter, fileSyncOptions,
-                    metadataDirectoryPath, "R_" + metadataFileName, tempDirectoryPath, pathToSaveConflictLoserFiles);
+                localPro = new FileSyncProvider(Settings.dirLocalSync, scopeFilter, fileSyncOptions,
+                    Settings.metadataDirectoryPath, Settings.metaLocalFile, Settings.tempDirectoryPath, Settings.pathToSaveConflictLoserFiles);
+                remotePro = new FileSyncProvider(Settings.dirRemote, scopeFilter, fileSyncOptions,
+                    Settings.metadataDirectoryPath, Settings.metaRemoteFile, Settings.tempDirectoryPath, Settings.pathToSaveConflictLoserFiles);
 
                 // Ask providers to detect changes
                 localPro.DetectChanges();
@@ -109,20 +71,15 @@ namespace VwSyncSever
 
         public SyncOperationStatistics Sync()
         {
-            if (!startSyncAllowed) return null;
+            if (!Settings.directoryStructureIsOk) return null;
 
             SyncOperationStatistics retVal = null;
 
             if (orchestrator != null)
             {
-                try
-                {
-                    retVal = orchestrator.Synchronize();
-                }
-                catch
-                {
-
-                }
+                //try                {
+                retVal = orchestrator.Synchronize();
+                //}                catch                {                }
             }
             else
             {
@@ -157,33 +114,7 @@ namespace VwSyncSever
 
 
 
-        /// <summary>
-        /// Prepare directories for sync
-        /// </summary>
-        private bool PrepareDirectories(params string[] dir)
-        {
-            if (dir == null || dir[1] == null)
-            {
-                Show("No directories to sync ...");
-                return false;
-            }
 
-            if (!Directory.Exists(dir[0]))
-            {
-                //Show("No directory for local provider"); return false;
-                Directory.CreateDirectory(dir[0]);
-            }
-
-            if (!Directory.Exists(dir[1]))
-            {
-                Show("No directory for remote provider");
-                return false;
-            }
-
-            //File.WriteAllText(Path.Combine(folderA, "A.txt"), " zbang ... ");
-
-            return true;
-        }
 
         public void CleanUp()
         {

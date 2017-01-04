@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Text;
 
 namespace VwSyncSever
 {
@@ -33,16 +31,17 @@ namespace VwSyncSever
 
                 try
                 {
-                    result.AddRange(
-                        Directory.GetFiles(temp, "*").Where(s => !(
+                    // 'Where' -> fara anumite fisiere
+                    result.AddRange( 
+                        Directory.GetFiles(temp).Where(s => !(
                         s.EndsWith(excludedExtensions[1]) ||
                         s.EndsWith(excludedExtensions[2]) ||
-                        s.EndsWith(excludedExtensions[3])))); // fara anumite fisiere
+                        s.EndsWith(excludedExtensions[3])))); 
 
                     foreach (string directoryName in
                       Directory.GetDirectories(temp))
                     {
-                        // fara anumite directoare
+                        // 'if' - > fara anumite directoare
                         if (directoryName.Length > 2 &&
                             directoryName[directoryName.Length - 1] != '_' &&
                             directoryName[directoryName.Length - 2] != '_' &&

@@ -24,34 +24,44 @@ namespace VwSyncSever
             o = new Orchestrator();
             o.SetInfoShowPodium(infoLbl);
 
-            // 3. GUI
-            textBox2.Text = Settings.strLocalFolder;
-            atextBox2.Text = Settings.strRemoteFolder;
+            textBox2.Text = Settings.dirLocal;
+            atextBox2.Text = Settings.dirRemote;
 
-            UpdateFileList();
+            Settings.dirLocalSync = Settings.dirLocal + '\\' + Settings.GetDirLocalSync();
+            UpdateSyncPathGui(true, textBox2.Text, atextBox2.Text);
 
             textBox.Text = Utils.GetLocalIpAddress();
-
-
         }
 
 
-        private void UpdateFileList()
+        private void UpdateSyncPathGui(bool updateGui, string dirLocal, string dirRemote)
         {
-            const string f0 = "No files found", f1 = "Files:";
-            lblLstServer.Content = ListFiles(Settings.strLocalFolder, lstServerFiles) ? f1 : f0;
-            lblLstClient.Content = ListFiles(Settings.strRemoteFolder, lstClientFiles) ? f1 : f0;
+            Settings.dirLocal = dirLocal;
+            Settings.dirRemote = dirRemote;
+
+            if (updateGui)
+            {
+                const string f0 = "No files found", f1 = "Files:";
+                lblLstServer.Content = ListFiles(Settings.dirLocalSync, lstServerFiles) ? f1 : f0;
+                lblLstClient.Content = ListFiles(Settings.dirRemote, lstClientFiles) ? f1 : f0;
+            }
         }
 
         private bool ListFiles(string dir, ListView lst)
         {
+
+            lst.Items.Clear();
+
             List<string> ff = null;
-            if (Directory.Exists(dir)) ff = Utils.GetFilesAndDirectories(dir,
+
+            if (Directory.Exists(dir)) ff =
+                    Utils.GetFilesAndDirectories(dir,
                 "___", ".tmp", ".lnk", ".pst");
+
             if (ff != null && ff.Count() > 0)
             {
                 lst.Visibility = Visibility.Visible;
-                foreach (string s in ff) lst.Items.Add(s);
+                foreach (string s in ff) lst.Items.Add(s.Substring(dir.Length));
                 return true;
             }
             else
@@ -68,38 +78,32 @@ namespace VwSyncSever
 
         private void btnSync_Click(object sender, RoutedEventArgs e)
         {
+            UpdateSyncPathGui(false, textBox2.Text, atextBox2.Text);
+            Settings.dirLocalSync = Settings.dirLocal + '\\' + Settings.GetDirLocalSync();
 
-            // 2. OPTIUNI
+            Settings.optFilter = new FileSyncScopeFilter();
 
-            // 2.1 WAY
-            SyncDirectionOrder fsWay = SyncDirectionOrder.Download;
+            Settings.optFilter.AttributeExcludeMask = Settings.excludeFileAttributes;
+            foreach (string s in Settings.excludeFileExtensions)
+                Settings.optFilter.FileNameExcludes.Add(s);
 
-            // 2.2 FILTERS
-            FileSyncScopeFilter fsFilter = new FileSyncScopeFilter();
-            // exclude temporary files
-            fsFilter.AttributeExcludeMask = FileAttributes.System | FileAttributes.Hidden;
-            foreach (string s in Settings.syncExcludeExtensions) fsFilter.FileNameExcludes.Add(s);
-
-            // 2.3 FILE OPTIONS
-            FileSyncOptions fsOptions = new FileSyncOptions();
-
-
-            // 2.4 DO Eeeet______________
-            o.SetDirectories(Settings.strLocalFolder, Settings.strRemoteFolder);
+            Settings.directoryStructureIsOk =
+                Settings.PrepareDirectories(Settings.dirLocal, Settings.dirRemote);
 
             SyncOperationStatistics stats = null;
-            if (o.InitSync(fsWay, fsFilter, fsOptions))
+            if (o.InitSync(Settings.optWay, Settings.optFilter, Settings.optFileSync))
             {
                 stats = o.Sync();
 
+                //infoLbl.Content = 
                 MessageBox.Show(
                     string.Format(
                         "Start Time: {0}{2} End Time: {1}{2} DownloadChangesTotal: {3}{2} DownloadChangesApplied: {4}{2} DownloadChangesFailed: {5}{2} UploadChangesTotal: {6}",
-                    stats.SyncStartTime, stats.SyncEndTime, Environment.NewLine,
+                    stats.SyncStartTime, stats.SyncEndTime, " ",//Environment.NewLine,
                     stats.DownloadChangesTotal, stats.DownloadChangesApplied, stats.DownloadChangesFailed,
                     stats.UploadChangesTotal));
 
-                UpdateFileList();
+                UpdateSyncPathGui(true, textBox2.Text, atextBox2.Text);
             }
         }
 
