@@ -22,13 +22,10 @@ namespace VwSyncSever
             InitializeComponent();
 
             o = new Orchestrator();
-            o.SetInfoShowPodium(infoLbl);
-
-            textBox2.Text = Settings.dirLocal;
-            atextBox2.Text = Settings.dirRemote;
+            //o.SetInfoShowPodium(infoLbl);
 
             Settings.dirLocalSync = Settings.dirLocal + '\\' + Settings.GetDirLocalSync();
-            UpdateSyncPathGui(true, textBox2.Text, atextBox2.Text);
+            UpdateSyncPathGui(true, Settings.dirLocal, Settings.dirRemote);
 
             textBox.Text = Utils.GetLocalIpAddress();
         }
@@ -39,8 +36,14 @@ namespace VwSyncSever
             Settings.dirLocal = dirLocal;
             Settings.dirRemote = dirRemote;
 
+            if (!dirLocal.EndsWith("\\")) Settings.dirLocal = Settings.dirLocal + "\\";
+            if (!dirRemote.EndsWith("\\")) Settings.dirRemote = Settings.dirRemote + "\\";
+
             if (updateGui)
             {
+                textBox2.Text = Settings.dirLocal.Substring(0, Settings.dirLocal.Length - 1);
+                atextBox2.Text = Settings.dirRemote.Substring(0, Settings.dirRemote.Length - 1);
+
                 const string f0 = "No files found", f1 = "Files:";
                 lblLstServer.Content = ListFiles(Settings.dirLocalSync, lstServerFiles) ? f1 : f0;
                 lblLstClient.Content = ListFiles(Settings.dirRemote, lstClientFiles) ? f1 : f0;
@@ -95,13 +98,13 @@ namespace VwSyncSever
             {
                 stats = o.Sync();
 
-                //infoLbl.Content = 
-                MessageBox.Show(
+                infoLbl.Content = 
+                //MessageBox.Show(
                     string.Format(
                         "Start Time: {0}{2} End Time: {1}{2} DownloadChangesTotal: {3}{2} DownloadChangesApplied: {4}{2} DownloadChangesFailed: {5}{2} UploadChangesTotal: {6}",
-                    stats.SyncStartTime, stats.SyncEndTime, " ",//Environment.NewLine,
+                    stats.SyncStartTime.ToLongTimeString(), stats.SyncEndTime.ToLongTimeString(), " ",//Environment.NewLine,
                     stats.DownloadChangesTotal, stats.DownloadChangesApplied, stats.DownloadChangesFailed,
-                    stats.UploadChangesTotal));
+                    stats.UploadChangesTotal);
 
                 UpdateSyncPathGui(true, textBox2.Text, atextBox2.Text);
             }

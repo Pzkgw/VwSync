@@ -30,7 +30,7 @@
 
                 </StackPanel>
 
-                <Label x:Name="lblLstServer" Content="Files:" HorizontalAlignment="Center" Margin="10,0,0,0" Foreground="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+                <Label x:Name="lblLstServer" Content="Files:" HorizontalAlignment="Left" Margin="30,0,0,0" Foreground="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 
                 <ListView ScrollViewer.VerticalScrollBarVisibility="Auto" Name="lstServerFiles" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}" Margin="15,5,0,5" MaxHeight="200" BorderThickness="0,1,0,0" HorizontalAlignment="Left"/>
 
@@ -67,7 +67,7 @@
                 </StackPanel>
 
 
-                <Label x:Name="lblLstClient" Content="Files:" HorizontalAlignment="Center" Margin="10,0,0,0" Foreground="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+                <Label x:Name="lblLstClient" Content="Files:" HorizontalAlignment="Left" Margin="30,0,0,0" Foreground="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 
                 
                 <ListView ScrollViewer.VerticalScrollBarVisibility="Auto" Name="lstClientFiles" MaxHeight="200" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}" Margin="15,1,0,5" BorderThickness="0,1,0,0" HorizontalAlignment="Left"/>

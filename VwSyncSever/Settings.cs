@@ -11,7 +11,7 @@ namespace VwSyncSever
     static class Settings
     {
         internal static string
-            dirLocal = @"c:\\___\",
+            dirLocal = @"c:\___\",
             dirRemote = @"c:\__###\SDL1\",
             dirLocalSync;
         //@"\\CJ-PC\Users\Default\AppData",

@@ -36,6 +36,7 @@ namespace VwSyncSever
                 remotePro = new FileSyncProvider(Settings.dirRemote, scopeFilter, fileSyncOptions,
                     Settings.metadataDirectoryPath, Settings.metaRemoteFile, Settings.tempDirectoryPath, Settings.pathToSaveConflictLoserFiles);
 
+                // Skip delete event
                 remotePro.ApplyingChange += RemotePro_ApplyingChange;
                 localPro.ApplyingChange += RemotePro_ApplyingChange;
 
@@ -74,7 +75,7 @@ namespace VwSyncSever
 
         private void Orchestrator_SessionProgress(object sender, SyncStagedProgressEventArgs e)
         {
-            Show("Total work: " + e.CompletedWork.ToString());
+            //Show("Total work: " + e.CompletedWork.ToString());
         }
 
         public SyncOperationStatistics Sync()
@@ -91,7 +92,7 @@ namespace VwSyncSever
             }
             else
             {
-                Show("orchestrator !exists");
+                //("orchestrator !exists");
             }
 
             return retVal;
@@ -101,22 +102,7 @@ namespace VwSyncSever
 
         #region GUI_STUFF
 
-        Label s;
-        public void SetInfoShowPodium(Label inf)
-        {
-            s = inf;
-        }
 
-
-        private void Show(string mesaj)
-        {
-            s.Content = mesaj;
-        }
-
-        private void SetPercentSync(int v)
-        {
-            //percentSync = v;
-        }
 
         #endregion
 
