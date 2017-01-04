@@ -15,12 +15,14 @@ namespace VwSyncSever
 
         /// <summary>
         /// Get all files from a directory, exluding cerain extensions
+        /// First excluded extensions is for dir, next for files
         /// </summary>
         /// <param name="directory"></param>
         /// <param name="excludedExtensions"></param>
         /// <returns></returns>
         internal static List<string> GetFilesAndDirectories(String directory, params string[] excludedExtensions)
         {
+
             List<string> result = new List<string>();
             Stack<string> stack = new Stack<string>();
             stack.Push(directory);
@@ -32,12 +34,20 @@ namespace VwSyncSever
                 try
                 {
                     result.AddRange(
-                        Directory.GetFiles(temp, "*.*").Where(s => !(s.EndsWith('.' + excludedExtensions[0]))));//
+                        Directory.GetFiles(temp, "*").Where(s => !(
+                        s.EndsWith(excludedExtensions[1]) ||
+                        s.EndsWith(excludedExtensions[2]) ||
+                        s.EndsWith(excludedExtensions[3])))); // fara anumite fisiere
 
                     foreach (string directoryName in
                       Directory.GetDirectories(temp))
                     {
-                        stack.Push(directoryName);
+                        // fara anumite directoare
+                        if (directoryName.Length > 2 &&
+                            directoryName[directoryName.Length - 1] != '_' &&
+                            directoryName[directoryName.Length - 2] != '_' &&
+                            directoryName[directoryName.Length - 3] != '_')
+                            stack.Push(directoryName);
                     }
                 }
                 catch
@@ -109,63 +119,63 @@ namespace VwSyncSever
 
 
 
-/*
-        #region StringCompress
+        /*
+                #region StringCompress
 
-        
-        /// <summary>
-        /// Compresses the string.
-        /// </summary>
-        /// <param name="text">The text.</param>
-        /// <returns></returns>
-        public static string CompressString(string text)
-        {
-            byte[] buffer = Encoding.UTF8.GetBytes(text);
-            var memoryStream = new MemoryStream();
-            using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Compress, true))
-            {
-                gZipStream.Write(buffer, 0, buffer.Length);
-            }
 
-            memoryStream.Position = 0;
-
-            var compressedData = new byte[memoryStream.Length];
-            memoryStream.Read(compressedData, 0, compressedData.Length);
-
-            var gZipBuffer = new byte[compressedData.Length + 4];
-            Buffer.BlockCopy(compressedData, 0, gZipBuffer, 4, compressedData.Length);
-            Buffer.BlockCopy(BitConverter.GetBytes(buffer.Length), 0, gZipBuffer, 0, 4);
-            return Convert.ToBase64String(gZipBuffer);
-        }
-
-        /// <summary>
-        /// Decompresses the string.
-        /// </summary>
-        /// <param name="compressedText">The compressed text.</param>
-        /// <returns></returns>
-        public static string DecompressString(string compressedText)
-        {
-            byte[] gZipBuffer = Convert.FromBase64String(compressedText);
-            using (var memoryStream = new MemoryStream())
-            {
-                int dataLength = BitConverter.ToInt32(gZipBuffer, 0);
-                memoryStream.Write(gZipBuffer, 4, gZipBuffer.Length - 4);
-
-                var buffer = new byte[dataLength];
-
-                memoryStream.Position = 0;
-                using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
+                /// <summary>
+                /// Compresses the string.
+                /// </summary>
+                /// <param name="text">The text.</param>
+                /// <returns></returns>
+                public static string CompressString(string text)
                 {
-                    gZipStream.Read(buffer, 0, buffer.Length);
+                    byte[] buffer = Encoding.UTF8.GetBytes(text);
+                    var memoryStream = new MemoryStream();
+                    using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Compress, true))
+                    {
+                        gZipStream.Write(buffer, 0, buffer.Length);
+                    }
+
+                    memoryStream.Position = 0;
+
+                    var compressedData = new byte[memoryStream.Length];
+                    memoryStream.Read(compressedData, 0, compressedData.Length);
+
+                    var gZipBuffer = new byte[compressedData.Length + 4];
+                    Buffer.BlockCopy(compressedData, 0, gZipBuffer, 4, compressedData.Length);
+                    Buffer.BlockCopy(BitConverter.GetBytes(buffer.Length), 0, gZipBuffer, 0, 4);
+                    return Convert.ToBase64String(gZipBuffer);
                 }
 
-                return Encoding.UTF8.GetString(buffer);
-            }
-        }
+                /// <summary>
+                /// Decompresses the string.
+                /// </summary>
+                /// <param name="compressedText">The compressed text.</param>
+                /// <returns></returns>
+                public static string DecompressString(string compressedText)
+                {
+                    byte[] gZipBuffer = Convert.FromBase64String(compressedText);
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        int dataLength = BitConverter.ToInt32(gZipBuffer, 0);
+                        memoryStream.Write(gZipBuffer, 4, gZipBuffer.Length - 4);
+
+                        var buffer = new byte[dataLength];
+
+                        memoryStream.Position = 0;
+                        using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
+                        {
+                            gZipStream.Read(buffer, 0, buffer.Length);
+                        }
+
+                        return Encoding.UTF8.GetString(buffer);
+                    }
+                }
 
 
-        #endregion StringCompress
-        */
+                #endregion StringCompress
+                */
 
 
 

@@ -37,17 +37,17 @@ namespace VwSyncSever
 
             bool retVal = false;
 
-            string rFileName = null;
+            string rFileName = remoteDirectory.Replace('\\', '$');
 
 
             switch (remoteDirectory[1])
             {
                 case ':':// Windows local prezent la inspectie
-                    rFileName = remoteDirectory.Replace('\\', '$').Remove(1, 1);
+                    rFileName = rFileName.Remove(1, 1);
                     break;
                 case '\\':
-                    if (remoteDirectory[0] == '\\') // network Windows device
-                        rFileName = remoteDirectory.Replace('\\', '$');
+                    //if (remoteDirectory[0] == '\\') // network Windows device
+                    // rFileName = rFileName;
                     break;
                 default:
                     break;
@@ -59,19 +59,20 @@ namespace VwSyncSever
             try
             {
                 // setari aditionale pt remote
-                string metadataDirectoryPath = localDirectory + "\\_Remet",//"filesync.metadata",//
+                string metadataDirectoryPath = localDirectory + Settings.dirForMetadata,//"filesync.metadata",//
                  metadataFileName = rFileName,
-                 tempDirectoryPath = localDirectory + "\\_Temp",
-                 pathToSaveConflictLoserFiles = localDirectory + "\\_Conflict";
+                 tempDirectoryPath = localDirectory + Settings.dirForTemporaryFiles,
+                 pathToSaveConflictLoserFiles = localDirectory + Settings.dirForConflictedFiles;
 
                 if (!Directory.Exists(metadataDirectoryPath)) Directory.CreateDirectory(metadataDirectoryPath);
                 if (!Directory.Exists(tempDirectoryPath)) Directory.CreateDirectory(tempDirectoryPath);
                 if (!Directory.Exists(pathToSaveConflictLoserFiles)) Directory.CreateDirectory(pathToSaveConflictLoserFiles);
 
                 // Create file system providers
-                localPro = new FileSyncProvider(localDirectory, scopeFilter, fileSyncOptions);
+                localPro = new FileSyncProvider(localDirectory, scopeFilter, fileSyncOptions,
+                    metadataDirectoryPath, "L_" + metadataFileName, tempDirectoryPath, pathToSaveConflictLoserFiles);
                 remotePro = new FileSyncProvider(remoteDirectory, scopeFilter, fileSyncOptions,
-                    metadataDirectoryPath, metadataFileName, tempDirectoryPath, pathToSaveConflictLoserFiles);
+                    metadataDirectoryPath, "R_" + metadataFileName, tempDirectoryPath, pathToSaveConflictLoserFiles);
 
                 // Ask providers to detect changes
                 localPro.DetectChanges();
@@ -103,7 +104,7 @@ namespace VwSyncSever
 
         private void Orchestrator_SessionProgress(object sender, SyncStagedProgressEventArgs e)
         {
-            Show(e.TotalWork.ToString());
+            Show("Total work: " + e.CompletedWork.ToString());
         }
 
         public SyncOperationStatistics Sync()
