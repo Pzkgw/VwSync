@@ -21,7 +21,7 @@ namespace VwSyncSever
             FileSyncOptions fileSyncOptions)
         {
 
-            bool retVal = false; 
+            bool retVal = false;
 
 
             if (!Settings.directoryStructureIsOk) return retVal;
@@ -35,6 +35,9 @@ namespace VwSyncSever
                     Settings.metadataDirectoryPath, Settings.metaLocalFile, Settings.tempDirectoryPath, Settings.pathToSaveConflictLoserFiles);
                 remotePro = new FileSyncProvider(Settings.dirRemote, scopeFilter, fileSyncOptions,
                     Settings.metadataDirectoryPath, Settings.metaRemoteFile, Settings.tempDirectoryPath, Settings.pathToSaveConflictLoserFiles);
+
+                remotePro.ApplyingChange += RemotePro_ApplyingChange;
+                localPro.ApplyingChange += RemotePro_ApplyingChange;
 
                 // Ask providers to detect changes
                 localPro.DetectChanges();
@@ -62,6 +65,11 @@ namespace VwSyncSever
             }
 
             return retVal;
+        }
+
+        private void RemotePro_ApplyingChange(object sender, ApplyingChangeEventArgs e)
+        {
+            e.SkipChange = (e.ChangeType == ChangeType.Delete);
         }
 
         private void Orchestrator_SessionProgress(object sender, SyncStagedProgressEventArgs e)
