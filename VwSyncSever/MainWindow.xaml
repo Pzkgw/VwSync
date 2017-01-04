@@ -42,7 +42,7 @@
         </GroupBox>
 
 
-        <GroupBox x:Name="agroupBox" Header="Client(Remote)" FontSize="16" Foreground="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}">
+        <GroupBox x:Name="agroupBox" Header="Client(Remote)" FontSize="16" Foreground="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" Margin="0,8,0,0">
 
             <StackPanel Orientation="Vertical">
 

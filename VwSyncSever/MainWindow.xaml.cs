@@ -59,7 +59,7 @@ namespace VwSyncSever
 
             if (Directory.Exists(dir)) ff =
                     Utils.GetFilesAndDirectories(dir,
-                "___", ".tmp", ".lnk", ".pst");
+                "___", Settings.excludeFileExtensions);
 
             if (ff != null && ff.Count() > 0)
             {
@@ -82,7 +82,7 @@ namespace VwSyncSever
         private void btnSync_Click(object sender, RoutedEventArgs e)
         {
             UpdateSyncPathGui(false, textBox2.Text, atextBox2.Text);
-            Settings.dirLocalSync = Settings.dirLocal + '\\' + Settings.GetDirLocalSync();
+            Settings.dirLocalSync = Settings.dirLocal + Settings.GetDirLocalSync();
 
             Settings.optFilter = new FileSyncScopeFilter();
 
@@ -101,10 +101,11 @@ namespace VwSyncSever
                 infoLbl.Content = 
                 //MessageBox.Show(
                     string.Format(
-                        "Start Time: {0}{2} End Time: {1}{2} DownloadChangesTotal: {3}{2} DownloadChangesApplied: {4}{2} DownloadChangesFailed: {5}{2} UploadChangesTotal: {6}",
-                    stats.SyncStartTime.ToLongTimeString(), stats.SyncEndTime.ToLongTimeString(), " ",//Environment.NewLine,
-                    stats.DownloadChangesTotal, stats.DownloadChangesApplied, stats.DownloadChangesFailed,
-                    stats.UploadChangesTotal);
+                        " Task done in {0}ms.  Download changes total:{1}  Download changes applied:{2}  Download changes failed:{3}", //  UploadChangesTotal: {6}
+                    stats.SyncEndTime.Subtract(stats.SyncStartTime).Milliseconds, //Environment.NewLine,
+                    stats.DownloadChangesTotal, stats.DownloadChangesApplied, stats.DownloadChangesFailed
+                    //stats.UploadChangesTotal
+                    );
 
                 UpdateSyncPathGui(true, textBox2.Text, atextBox2.Text);
             }

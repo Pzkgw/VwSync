@@ -18,7 +18,7 @@ namespace VwSyncSever
         /// <param name="directory"></param>
         /// <param name="excludedExtensions"></param>
         /// <returns></returns>
-        internal static List<string> GetFilesAndDirectories(String directory, params string[] excludedExtensions)
+        internal static List<string> GetFilesAndDirectories(String directory, string excludeDirNameStart, params string[] excludedExtensions)
         {
 
             List<string> result = new List<string>();
@@ -32,24 +32,24 @@ namespace VwSyncSever
                 try
                 {
                     // 'Where' -> fara anumite fisiere
-                    result.AddRange( 
+                    result.AddRange(
                         Directory.GetFiles(temp).Where(s => !(
-                        s.EndsWith(excludedExtensions[1]) ||
-                        s.EndsWith(excludedExtensions[2]) ||
-                        s.EndsWith(excludedExtensions[3])))); 
+                        s.EndsWith(excludedExtensions[0].Substring(2)) ||
+                        s.EndsWith(excludedExtensions[1].Substring(2)) ||
+                        s.EndsWith(excludedExtensions[2].Substring(2)))));
 
                     foreach (string directoryName in
                       Directory.GetDirectories(temp))
                     {
                         // 'if' - > fara anumite directoare
                         if (directoryName.Length > 2 &&
-                            directoryName[directoryName.Length - 1] != '_' &&
-                            directoryName[directoryName.Length - 2] != '_' &&
-                            directoryName[directoryName.Length - 3] != '_')
+                            directoryName[directoryName.Length - 1] != excludeDirNameStart[0] &&
+                            directoryName[directoryName.Length - 2] != excludeDirNameStart[1] &&
+                            directoryName[directoryName.Length - 3] != excludeDirNameStart[2])
                             stack.Push(directoryName);
                     }
                 }
-                catch
+                catch //(Exception ex)
                 {
                     //throw new Exception("Error retrieving file or directory.");
                     return null;
