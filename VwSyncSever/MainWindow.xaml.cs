@@ -93,13 +93,20 @@ namespace VwSyncSever
             Settings.directoryStructureIsOk =
                 Settings.PrepareDirectories(Settings.dirLocal, Settings.dirRemote);
 
+            if (!Settings.directoryStructureIsOk)
+            {
+
+                infoLbl.Content = "Failed sync. " +
+                    (Utils.DirectoryExists(Settings.dirRemote) ? "Directory exists, but without rights." : "Directory does not exist.");
+            }
+
             SyncOperationStatistics stats = null;
             if (o.InitSync(Settings.optWay, Settings.optFilter, Settings.optFileSync))
             {
                 stats = o.Sync();
 
-                infoLbl.Content = 
-                //MessageBox.Show(
+                infoLbl.Content =
+                    //MessageBox.Show(
                     string.Format(
                         " Task done in {0}ms.  Download changes total:{1}  Download changes applied:{2}  Download changes failed:{3}", //  UploadChangesTotal: {6}
                     stats.SyncEndTime.Subtract(stats.SyncStartTime).Milliseconds, //Environment.NewLine,

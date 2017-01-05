@@ -25,7 +25,9 @@ namespace VwSyncSever
             dirForTemporaryFiles = "\\___temp___",
             dirForConflictedFiles = "\\___conf___",
             metaLocalFile = "L_filesync.metadata",
-            metaRemoteFile = "R_filesync.metadata";
+            metaRemoteFile = "R_filesync.metadata",
+            registryPath = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI Sync";
+
 
         internal static FileAttributes excludeFileAttributes =
             FileAttributes.System | FileAttributes.Hidden;

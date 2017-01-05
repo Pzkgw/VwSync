@@ -115,6 +115,24 @@ namespace VwSyncSever
         }
 
 
+        public static bool DirectoryExists(string path)
+        {
+            try
+            {
+                Directory.GetAccessControl(path);
+                return true;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
 
 
 

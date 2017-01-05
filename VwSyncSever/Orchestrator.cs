@@ -36,9 +36,14 @@ namespace VwSyncSever
                 remotePro = new FileSyncProvider(Settings.dirRemote, scopeFilter, fileSyncOptions,
                     Settings.metadataDirectoryPath, Settings.metaRemoteFile, Settings.tempDirectoryPath, Settings.pathToSaveConflictLoserFiles);
 
-                // Skip delete event
-                remotePro.ApplyingChange += RemotePro_ApplyingChange;
-                localPro.ApplyingChange += RemotePro_ApplyingChange;
+                // Task curent: Skip delete
+                // ChangeType:
+                // Create A file or folder will be created.
+                // Delete A file or folder will be deleted.
+                // Update A file or folder will be updated.
+                // Rename A file or folder will be renamed.
+                remotePro.ApplyingChange += ProviderEvent_ApplyingChange;
+                localPro.ApplyingChange += ProviderEvent_ApplyingChange;
 
                 // Ask providers to detect changes
                 localPro.DetectChanges();
@@ -68,7 +73,7 @@ namespace VwSyncSever
             return retVal;
         }
 
-        private void RemotePro_ApplyingChange(object sender, ApplyingChangeEventArgs e)
+        private void ProviderEvent_ApplyingChange(object sender, ApplyingChangeEventArgs e)
         {
             e.SkipChange = (e.ChangeType == ChangeType.Delete);
         }
