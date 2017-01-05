@@ -1,46 +1,51 @@
-﻿using Microsoft.Win32;
+﻿using System;
+using System.Net;
+using Microsoft.Win32;
 
 namespace VwSyncSever
 {
     class Registry
     {
+        const string strCDir = "\\Clienti\\";
 
-        RegistryKey keySv, keyCl;
-
-        public void AlterKey()
+        internal void UpdateBase(IPAddress ipLocal, int portListener, string path)
         {
-            
-            keySv = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(Settings.registryPath);
+            RegistryKey keySv = null;
+
+            keySv = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(Settings.registryPath, true);
 
             if (keySv == null) // HKEY_LOCAL_MACHINE\
             {
                 keySv = Microsoft.Win32.Registry.LocalMachine.CreateSubKey(Settings.registryPath,
                     RegistryKeyPermissionCheck.ReadWriteSubTree);
 
-                Microsoft.Win32.Registry.LocalMachine.CreateSubKey(Settings.registryPath + "\\Clienti",
+                Microsoft.Win32.Registry.LocalMachine.CreateSubKey(Settings.registryPath + strCDir,
                     RegistryKeyPermissionCheck.ReadWriteSubTree);
             }
-            else
-            {
 
+            //if (IPAddress.TryParse(ipLocal.ToString(), out ipLocalNonStr))
+
+            keySv.SetValue("IPLocal", ipLocal);
+            //keySv.SetValue("portListener", "portListener");
+            keySv.SetValue("Path", path);
+            keySv.Close();
+        }
+
+        internal void UpdateDeriv(int idClient, int port, string path)
+        {
+            RegistryKey keyCl = null;
+
+            keyCl = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(Settings.registryPath + strCDir + path, true);
+
+            if (keyCl == null)
+            {
+                Microsoft.Win32.Registry.LocalMachine.CreateSubKey(Settings.registryPath + strCDir + path,
+                    RegistryKeyPermissionCheck.ReadWriteSubTree);
             }
 
-            //keySv.SetValue("Name", "Isabella");
+            keyCl.SetValue("SyncTime", DateTime.Now.ToString());
 
-            keySv.Close();
-
-            /*
-            RegistryKey key = null;
-            //key= Registry.Local.OpenSubKey("Software", true);
-
-            key.CreateSubKey("AppName");
-            key = key.OpenSubKey("AppName", true);
-
-
-            key.CreateSubKey("AppVersion");
-            key = key.OpenSubKey("AppVersion", true);
-
-            key.SetValue("yourkey", "yourvalue");*/
+            keyCl.Close();
         }
 
 

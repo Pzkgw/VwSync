@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Net;
 using Microsoft.Synchronization;
 using Microsoft.Synchronization.Files;
 
@@ -10,6 +11,8 @@ namespace VwSyncSever
     /// </summary>
     static class Settings
     {
+        internal static IPAddress IP;
+
         internal static string
             dirLocal = @"c:\___\",
             dirRemote = @"c:\__###\SDL1\",

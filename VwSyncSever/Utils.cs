@@ -66,7 +66,7 @@ namespace VwSyncSever
         /// As intented, get local IP
         /// </summary>
         /// <returns>Local IP</returns>
-        internal static string GetLocalIpAddress()
+        internal static IPAddress GetLocalIpAddress()
         {
             UnicastIPAddressInformation mostSuitableIp = null;
 
@@ -105,13 +105,13 @@ namespace VwSyncSever
                         continue;
                     }
 
-                    return address.Address.ToString();
+                    return address.Address;
                 }
             }
 
             return mostSuitableIp != null
-                ? mostSuitableIp.Address.ToString()
-                : "";
+                ? mostSuitableIp.Address
+                : null;
         }
 
 

@@ -27,7 +27,9 @@ namespace VwSyncSever
             Settings.dirLocalSync = Settings.dirLocal + '\\' + Settings.GetDirLocalSync();
             UpdateSyncPathGui(true, Settings.dirLocal, Settings.dirRemote);
 
-            textBox.Text = Utils.GetLocalIpAddress();
+            Settings.IP = Utils.GetLocalIpAddress();
+            if(Settings.IP!=null)textBox.Text = Settings.IP.ToString();
+            
         }
 
 
@@ -82,6 +84,13 @@ namespace VwSyncSever
         private void btnSync_Click(object sender, RoutedEventArgs e)
         {
             UpdateSyncPathGui(false, textBox2.Text, atextBox2.Text);
+
+            if (o.reg == null)
+            {
+                o.reg = new Registry();
+                o.reg.UpdateBase(Settings.IP, 4500, Settings.dirLocal);
+            }
+
             Settings.dirLocalSync = Settings.dirLocal + Settings.GetDirLocalSync();
 
             Settings.optFilter = new FileSyncScopeFilter();
@@ -115,6 +124,8 @@ namespace VwSyncSever
                     );
 
                 UpdateSyncPathGui(true, textBox2.Text, atextBox2.Text);
+
+                o.reg.UpdateDeriv(1525, 5000, Settings.dirLocalSync);
             }
         }
 

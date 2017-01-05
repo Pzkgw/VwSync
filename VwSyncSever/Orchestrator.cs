@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Windows.Controls;
 using Microsoft.Synchronization;
 using Microsoft.Synchronization.Files;
@@ -11,12 +12,18 @@ namespace VwSyncSever
         SyncOrchestrator orchestrator;
         FileSyncProvider localPro = null, remotePro = null;
 
+        internal Registry reg;
         public Orchestrator()
+        {
+            
+        }
+
+        internal void RegistryUpdateLocalKey(IPAddress ipLocal, int portListener, string path)
         {
 
         }
 
-        public bool InitSync(SyncDirectionOrder way,
+        internal bool InitSync(SyncDirectionOrder way,
             FileSyncScopeFilter scopeFilter,
             FileSyncOptions fileSyncOptions)
         {
