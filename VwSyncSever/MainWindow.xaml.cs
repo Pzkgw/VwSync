@@ -125,7 +125,9 @@ namespace VwSyncSever
 
                 UpdateSyncPathGui(true, textBox2.Text, atextBox2.Text);
 
-                o.reg.UpdateDeriv(1525, 5000, Settings.dirLocalSync);
+                o.reg.UpdateDeriv(1525, 5000, 
+                    Settings.dirLocalSync.Substring(
+                        Settings.dirLocalSync.LastIndexOf('\\')));
             }
         }
 

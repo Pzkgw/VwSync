@@ -6,7 +6,7 @@ namespace VwSyncSever
 {
     class Registry
     {
-        const string strCDir = "\\Clienti\\";
+        const string strCDir = "\\Clienti";
 
         internal void UpdateBase(IPAddress ipLocal, int portListener, string path)
         {
@@ -35,11 +35,13 @@ namespace VwSyncSever
         {
             RegistryKey keyCl = null;
 
-            keyCl = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(Settings.registryPath + strCDir + path, true);
+            string keyStr = Settings.registryPath + strCDir + path;
+
+            keyCl = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(keyStr, true);
 
             if (keyCl == null)
             {
-                Microsoft.Win32.Registry.LocalMachine.CreateSubKey(Settings.registryPath + strCDir + path,
+                keyCl = Microsoft.Win32.Registry.LocalMachine.CreateSubKey(keyStr,
                     RegistryKeyPermissionCheck.ReadWriteSubTree);
             }
 
