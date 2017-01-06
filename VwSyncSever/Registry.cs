@@ -31,6 +31,7 @@ namespace VwSyncSever
             keySv.Close();
         }
 
+        /*
         internal void UpdateDeriv(int idClient, int port, string path)
         {
             RegistryKey keyCl = null;
@@ -45,11 +46,18 @@ namespace VwSyncSever
                     RegistryKeyPermissionCheck.ReadWriteSubTree);
             }
 
-            keyCl.SetValue("SyncTime", DateTime.Now.ToString());
+            if (keyCl.Name.Length > 254)
+            {
+                System.Windows.MessageBox.Show("Name too long");
+            }
+            else
+            {
+                keyCl.SetValue("SyncTime", DateTime.Now.ToString());
+            }
 
             keyCl.Close();
         }
-
+        */
 
     }
 }

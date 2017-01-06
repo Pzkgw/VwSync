@@ -24,32 +24,35 @@ namespace VwSyncSever
             o = new Orchestrator();
             //o.SetInfoShowPodium(infoLbl);
 
-            Settings.dirLocalSync = Settings.dirLocal + '\\' + Settings.GetDirLocalSync();
-            UpdateSyncPathGui(true, Settings.dirLocal, Settings.dirRemote);
+            Settings.dirLocalSync = Settings.dirLocal + Settings.GetDirLocalSync();
+            UpdateSyncPathGui(Settings.dirLocal, Settings.dirRemote);
 
             Settings.IP = Utils.GetLocalIpAddress();
-            if(Settings.IP!=null)textBox.Text = Settings.IP.ToString();
+            if(Settings.IP!=null) lblIpServer.Content = Settings.IP.ToString();
             
         }
 
-
-        private void UpdateSyncPathGui(bool updateGui, string dirLocal, string dirRemote)
+        void RefreshPaths(string dirLocal, string dirRemote)
         {
             Settings.dirLocal = dirLocal;
             Settings.dirRemote = dirRemote;
 
-            if (!dirLocal.EndsWith("\\")) Settings.dirLocal = Settings.dirLocal + "\\";
-            if (!dirRemote.EndsWith("\\")) Settings.dirRemote = Settings.dirRemote + "\\";
+            if (!Settings.dirLocal.EndsWith("\\")) Settings.dirLocal = Settings.dirLocal + "\\";
+            if (!Settings.dirRemote.EndsWith("\\")) Settings.dirRemote = Settings.dirRemote + "\\";
+            if (!Settings.dirLocalSync.EndsWith("\\")) Settings.dirLocalSync = Settings.dirLocalSync + "\\";
 
-            if (updateGui)
-            {
+        }
+
+
+        private void UpdateSyncPathGui(string dirLocal, string dirRemote)
+        {
                 textBox2.Text = Settings.dirLocal.Substring(0, Settings.dirLocal.Length - 1);
                 atextBox2.Text = Settings.dirRemote.Substring(0, Settings.dirRemote.Length - 1);
 
                 const string f0 = "No files found", f1 = "Files:";
                 lblLstServer.Content = ListFiles(Settings.dirLocalSync, lstServerFiles) ? f1 : f0;
                 lblLstClient.Content = ListFiles(Settings.dirRemote, lstClientFiles) ? f1 : f0;
-            }
+            
         }
 
         private bool ListFiles(string dir, ListView lst)
@@ -83,7 +86,7 @@ namespace VwSyncSever
 
         private void btnSync_Click(object sender, RoutedEventArgs e)
         {
-            UpdateSyncPathGui(false, textBox2.Text, atextBox2.Text);
+            RefreshPaths(textBox2.Text, atextBox2.Text);
 
             if (o.reg == null)
             {
@@ -123,11 +126,11 @@ namespace VwSyncSever
                     //stats.UploadChangesTotal
                     );
 
-                UpdateSyncPathGui(true, textBox2.Text, atextBox2.Text);
+                UpdateSyncPathGui(Settings.dirLocal, Settings.dirRemote);
 
-                o.reg.UpdateDeriv(1525, 5000, 
-                    Settings.dirLocalSync.Substring(
-                        Settings.dirLocalSync.LastIndexOf('\\')));
+                //o.reg.UpdateDeriv(1525, 5000, 
+                //    Settings.dirLocalSync.Substring(
+                //        Settings.dirLocalSync.LastIndexOf('\\')));
             }
         }
 

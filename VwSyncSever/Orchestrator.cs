@@ -18,11 +18,6 @@ namespace VwSyncSever
             
         }
 
-        internal void RegistryUpdateLocalKey(IPAddress ipLocal, int portListener, string path)
-        {
-
-        }
-
         internal bool InitSync(SyncDirectionOrder way,
             FileSyncScopeFilter scopeFilter,
             FileSyncOptions fileSyncOptions)
