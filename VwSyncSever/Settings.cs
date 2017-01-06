@@ -9,19 +9,9 @@ namespace VwSyncSever
     /// <summary>
     /// Denumiri, directoare
     /// </summary>
-    static class Settings
+    class Settings
     {
-        internal static IPAddress IP;
-
-        internal static string
-            dirLocal = @"c:\___\",
-            dirRemote = @"c:\__###\SDL1\",
-            dirLocalSync;
-        //@"\\CJ-PC\Users\Default\AppData",
-        //@"\\10.10.10.47\video\gi test\demo\";
-        //@"c:\_ToDo\TestHik\TestHik\bin\x86\Debug\DbgMessages\";
-
-        internal static string metadataDirectoryPath, tempDirectoryPath, pathToSaveConflictLoserFiles;
+        internal IPAddress IPServer;
 
         internal const string
             dirForMetadata = "\\___meta___",
@@ -31,26 +21,39 @@ namespace VwSyncSever
             metaRemoteFile = "R_filesync.metadata",
             registryPath = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI Sync";
 
+        internal string dirLocal, dirRemote, dirLocalSync;
+        //@"\\CJ-PC\Users\Default\AppData",
+        //@"\\10.10.10.47\video\gi test\demo\";
+        //@"c:\_ToDo\TestHik\TestHik\bin\x86\Debug\DbgMessages\";
 
-        internal static FileAttributes excludeFileAttributes =
+        internal string metadataDirectoryPath, tempDirectoryPath, pathToSaveConflictLoserFiles;
+
+
+        internal FileAttributes excludeFileAttributes =
             FileAttributes.System | FileAttributes.Hidden;
 
-        internal static FileSyncOptions optFileSync = FileSyncOptions.None;
-        internal static SyncDirectionOrder optWay = SyncDirectionOrder.Download;
-        internal static FileSyncScopeFilter optFilter;
+        internal FileSyncOptions optFileSync = FileSyncOptions.None;
+        internal SyncDirectionOrder optWay = SyncDirectionOrder.Download;
+        internal FileSyncScopeFilter optFilter;
 
         internal static string[] excludeFileExtensions =
             new string[] { "*.tmp", "*.lnk", "*.pst" };
 
-        internal static bool directoryStructureIsOk;
+        internal bool directoryStructureIsOk;
 
-        internal static string GetDirLocalSync()
+        internal Settings(string localDir, string remoteDir)
+        {
+            dirLocalSync = localDir + GetDirLocalSync(remoteDir);
+            RefreshPaths(localDir, remoteDir);            
+        }
+
+        internal string GetDirLocalSync(string remoteDir) // dirRemote
         {
             string rFileName = null;
 
-            rFileName = dirRemote.Replace('\\', '$');
+            rFileName = remoteDir.Replace('\\', '$');
 
-            switch (dirRemote[1])
+            switch (remoteDir[1])
             {
                 case ':':// Windows local prezent la inspectie
                     rFileName = rFileName.Remove(1, 1);
@@ -66,7 +69,18 @@ namespace VwSyncSever
             return rFileName;
         }
 
-        internal static void SetupDirectoryStruct()
+
+        internal void RefreshPaths(string localDir, string remoteDir)
+        {
+            dirLocal = localDir;
+            dirRemote = remoteDir;
+
+            if (!dirLocal.EndsWith("\\")) dirLocal = dirLocal + "\\";
+            if (!dirRemote.EndsWith("\\")) dirRemote = dirRemote + "\\";
+            if (!dirLocalSync.EndsWith("\\")) dirLocalSync = dirLocalSync + "\\";
+        }
+
+        internal void SetupDirectoryStruct()
         {
             if (!Directory.Exists(dirLocal)) Directory.CreateDirectory(dirLocal);
             if (!Directory.Exists(dirLocalSync)) Directory.CreateDirectory(dirLocalSync);
@@ -85,7 +99,7 @@ namespace VwSyncSever
         /// <summary>
         /// Prepare directories for sync
         /// </summary>
-        internal static bool PrepareDirectories(params string[] dir)
+        internal bool PrepareDirectories(params string[] dir)
         {
             if (dir == null || dir[1] == null)
             {

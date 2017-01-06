@@ -12,10 +12,11 @@ namespace VwSyncSever
         SyncOrchestrator orchestrator;
         FileSyncProvider localPro = null, remotePro = null;
 
-        internal Registry reg;
-        public Orchestrator()
+        internal RegistryLocal reg;
+        internal Settings set;
+        public Orchestrator(Settings settings)
         {
-            
+            set = settings;
         }
 
         internal bool InitSync(SyncDirectionOrder way,
@@ -26,17 +27,17 @@ namespace VwSyncSever
             bool retVal = false;
 
 
-            if (!Settings.directoryStructureIsOk) return retVal;
+            if (!set.directoryStructureIsOk) return retVal;
 
             try
             {
-                Settings.SetupDirectoryStruct();
+                set.SetupDirectoryStruct();
 
                 // Create file system providers
-                localPro = new FileSyncProvider(Settings.dirLocalSync, scopeFilter, fileSyncOptions,
-                    Settings.metadataDirectoryPath, Settings.metaLocalFile, Settings.tempDirectoryPath, Settings.pathToSaveConflictLoserFiles);
-                remotePro = new FileSyncProvider(Settings.dirRemote, scopeFilter, fileSyncOptions,
-                    Settings.metadataDirectoryPath, Settings.metaRemoteFile, Settings.tempDirectoryPath, Settings.pathToSaveConflictLoserFiles);
+                localPro = new FileSyncProvider(set.dirLocalSync, scopeFilter, fileSyncOptions,
+                    set.metadataDirectoryPath, Settings.metaLocalFile, set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
+                remotePro = new FileSyncProvider(set.dirRemote, scopeFilter, fileSyncOptions,
+                    set.metadataDirectoryPath, Settings.metaRemoteFile, set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
 
                 // Task curent: Skip delete
                 // ChangeType:
@@ -85,9 +86,40 @@ namespace VwSyncSever
             //Show("Total work: " + e.CompletedWork.ToString());
         }
 
-        public SyncOperationStatistics Sync()
+        internal SyncOperationStatistics Sync(string lStr, string rStr)
         {
-            if (!Settings.directoryStructureIsOk) return null;
+            // 1. dir struct
+            set.dirLocalSync = set.dirLocal + set.GetDirLocalSync(rStr);
+            set.RefreshPaths(lStr, rStr);
+
+            // 2. registry
+            if (reg == null)
+            {
+                reg = new RegistryLocal();
+                reg.UpdateBase(set.IPServer, 4500, set.dirLocal);
+            }            
+
+            // 3. WCF Sync
+            set.optFilter = new FileSyncScopeFilter();
+
+            set.optFilter.AttributeExcludeMask = set.excludeFileAttributes;
+            foreach (string s in Settings.excludeFileExtensions)
+                set.optFilter.FileNameExcludes.Add(s);
+
+            set.directoryStructureIsOk =
+                set.PrepareDirectories(set.dirLocal, set.dirRemote);
+
+            if (InitSync(set.optWay, set.optFilter, set.optFileSync))
+            {
+                return Sync();
+            }
+
+            return null;
+        }
+
+        private SyncOperationStatistics Sync()
+        {
+            if (!set.directoryStructureIsOk) return null;
 
             SyncOperationStatistics retVal = null;
 

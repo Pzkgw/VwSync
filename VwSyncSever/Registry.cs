@@ -4,23 +4,43 @@ using Microsoft.Win32;
 
 namespace VwSyncSever
 {
-    class Registry
+
+    class RegistryService
     {
-        const string strCDir = "\\Clienti";
+        internal static string GetSyncPath()
+        {
+            RegistryKey keySv = null;
+
+            object retVal = null;
+
+            keySv = Registry.LocalMachine.OpenSubKey(Settings.registryPath, false); // open to just read
+            if (keySv == null)
+            {
+                retVal = keySv.GetValue("Path");
+            }
+
+            keySv.Close();
+
+            return ((retVal == null) ? null : retVal.ToString());
+        }
+    }
+    class RegistryLocal
+    {
+        //const string strCDir = "\\Clienti";
 
         internal void UpdateBase(IPAddress ipLocal, int portListener, string path)
         {
             RegistryKey keySv = null;
 
-            keySv = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(Settings.registryPath, true);
+            keySv = Registry.LocalMachine.OpenSubKey(Settings.registryPath, true);
 
             if (keySv == null) // HKEY_LOCAL_MACHINE\
             {
-                keySv = Microsoft.Win32.Registry.LocalMachine.CreateSubKey(Settings.registryPath,
+                keySv = Registry.LocalMachine.CreateSubKey(Settings.registryPath,
                     RegistryKeyPermissionCheck.ReadWriteSubTree);
 
-                Microsoft.Win32.Registry.LocalMachine.CreateSubKey(Settings.registryPath + strCDir,
-                    RegistryKeyPermissionCheck.ReadWriteSubTree);
+                //Microsoft.Win32.Registry.LocalMachine.CreateSubKey(Settings.registryPath + strCDir,
+                //    RegistryKeyPermissionCheck.ReadWriteSubTree);
             }
 
             //if (IPAddress.TryParse(ipLocal.ToString(), out ipLocalNonStr))

@@ -21,38 +21,24 @@ namespace VwSyncSever
         {
             InitializeComponent();
 
-            o = new Orchestrator();
-            //o.SetInfoShowPodium(infoLbl);
+            o = new Orchestrator(new Settings(@"c:\___\", @"c:\__###\SDL1\"));
 
-            Settings.dirLocalSync = Settings.dirLocal + Settings.GetDirLocalSync();
-            UpdateSyncPathGui(Settings.dirLocal, Settings.dirRemote);
 
-            Settings.IP = Utils.GetLocalIpAddress();
-            if(Settings.IP!=null) lblIpServer.Content = Settings.IP.ToString();
-            
+            UpdateSyncPathGui(o.set);
+
+            o.set.IPServer = Utils.GetLocalIpAddress();
+            if (o.set.IPServer != null) lblIpServer.Content = o.set.IPServer.ToString();
         }
 
-        void RefreshPaths(string dirLocal, string dirRemote)
+        private void UpdateSyncPathGui(Settings set)
         {
-            Settings.dirLocal = dirLocal;
-            Settings.dirRemote = dirRemote;
+            textBox2.Text = set.dirLocal.Substring(0, set.dirLocal.Length - 1);
+            atextBox2.Text = set.dirRemote.Substring(0, set.dirRemote.Length - 1);
 
-            if (!Settings.dirLocal.EndsWith("\\")) Settings.dirLocal = Settings.dirLocal + "\\";
-            if (!Settings.dirRemote.EndsWith("\\")) Settings.dirRemote = Settings.dirRemote + "\\";
-            if (!Settings.dirLocalSync.EndsWith("\\")) Settings.dirLocalSync = Settings.dirLocalSync + "\\";
+            const string f0 = "No files found", f1 = "Files:";
+            lblLstServer.Content = ListFiles(set.dirLocalSync, lstServerFiles) ? f1 : f0;
+            lblLstClient.Content = ListFiles(set.dirRemote, lstClientFiles) ? f1 : f0;
 
-        }
-
-
-        private void UpdateSyncPathGui(string dirLocal, string dirRemote)
-        {
-                textBox2.Text = Settings.dirLocal.Substring(0, Settings.dirLocal.Length - 1);
-                atextBox2.Text = Settings.dirRemote.Substring(0, Settings.dirRemote.Length - 1);
-
-                const string f0 = "No files found", f1 = "Files:";
-                lblLstServer.Content = ListFiles(Settings.dirLocalSync, lstServerFiles) ? f1 : f0;
-                lblLstClient.Content = ListFiles(Settings.dirRemote, lstClientFiles) ? f1 : f0;
-            
         }
 
         private bool ListFiles(string dir, ListView lst)
@@ -79,59 +65,41 @@ namespace VwSyncSever
             }
         }
 
+        Service ser = new Service();
         private void btnService_Click(object sender, RoutedEventArgs e)
         {
-
+            ser.VwRun();
         }
 
         private void btnSync_Click(object sender, RoutedEventArgs e)
         {
-            RefreshPaths(textBox2.Text, atextBox2.Text);
+            SyncOperationStatistics stats =
+            o.Sync(textBox2.Text, atextBox2.Text);
 
-            if (o.reg == null)
+            if (stats == null)
             {
-                o.reg = new Registry();
-                o.reg.UpdateBase(Settings.IP, 4500, Settings.dirLocal);
+                if (!o.set.directoryStructureIsOk)
+                    infoLbl.Content = "Failed sync. " +
+                        (Utils.DirectoryExists(o.set.dirRemote) ? "Directory exists, but without rights." : "Directory does not exist.");
             }
-
-            Settings.dirLocalSync = Settings.dirLocal + Settings.GetDirLocalSync();
-
-            Settings.optFilter = new FileSyncScopeFilter();
-
-            Settings.optFilter.AttributeExcludeMask = Settings.excludeFileAttributes;
-            foreach (string s in Settings.excludeFileExtensions)
-                Settings.optFilter.FileNameExcludes.Add(s);
-
-            Settings.directoryStructureIsOk =
-                Settings.PrepareDirectories(Settings.dirLocal, Settings.dirRemote);
-
-            if (!Settings.directoryStructureIsOk)
+            else
             {
 
-                infoLbl.Content = "Failed sync. " +
-                    (Utils.DirectoryExists(Settings.dirRemote) ? "Directory exists, but without rights." : "Directory does not exist.");
-            }
-
-            SyncOperationStatistics stats = null;
-            if (o.InitSync(Settings.optWay, Settings.optFilter, Settings.optFileSync))
-            {
-                stats = o.Sync();
-
-                infoLbl.Content =
-                    //MessageBox.Show(
+                infoLbl.Content =    //MessageBox.Show(
                     string.Format(
                         " Task done in {0}ms.  Download changes total:{1}  Download changes applied:{2}  Download changes failed:{3}", //  UploadChangesTotal: {6}
-                    stats.SyncEndTime.Subtract(stats.SyncStartTime).Milliseconds, //Environment.NewLine,
-                    stats.DownloadChangesTotal, stats.DownloadChangesApplied, stats.DownloadChangesFailed
-                    //stats.UploadChangesTotal
-                    );
-
-                UpdateSyncPathGui(Settings.dirLocal, Settings.dirRemote);
+                        stats.SyncEndTime.Subtract(stats.SyncStartTime).Milliseconds, //Environment.NewLine,
+                        stats.DownloadChangesTotal, stats.DownloadChangesApplied, stats.DownloadChangesFailed
+                        //stats.UploadChangesTotal    
+                        );
+                UpdateSyncPathGui(o.set);
 
                 //o.reg.UpdateDeriv(1525, 5000, 
                 //    Settings.dirLocalSync.Substring(
                 //        Settings.dirLocalSync.LastIndexOf('\\')));
+
             }
+
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
