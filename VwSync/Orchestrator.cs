@@ -54,7 +54,7 @@ namespace VwSyncSever
                 orchestrator.LocalProvider = localPro;
                 orchestrator.RemoteProvider = remotePro;
                 orchestrator.Direction = way;
-                orchestrator.SessionProgress += Orchestrator_SessionProgress;
+                //orchestrator.SessionProgress += Orchestrator_SessionProgress;
                 retVal = true;
             }
             catch (Exception ex)
@@ -78,10 +78,11 @@ namespace VwSyncSever
             e.SkipChange = (e.ChangeType == ChangeType.Delete);
         }
 
+        /*
         private void Orchestrator_SessionProgress(object sender, SyncStagedProgressEventArgs e)
         {
-            //Show("Total work: " + e.CompletedWork.ToString());
-        }
+            Show("Total work: " + e.CompletedWork.ToString());
+        }*/
 
         public SyncOperationStatistics Sync(string lStr, string rStr)
         {

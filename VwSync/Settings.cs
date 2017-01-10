@@ -21,7 +21,7 @@ namespace VwSyncSever
             metaRemoteFile = "R_filesync.metadata",
             registryPath = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI Sync",
             serName = "CAVISync",
-            serDesc = "Files and directories syncronization";
+            serDesc = "File syncronization service";
 
         public string dirLocal, dirRemote, dirLocalSync;
         //@"\\CJ-PC\Users\Default\AppData",
