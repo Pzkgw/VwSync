@@ -10,7 +10,7 @@ namespace VwSyncService
         {
             InitializeComponent();
             ServiceName = "CAVISync";
-
+           
             CanHandleSessionChangeEvent = true;
             CanHandlePowerEvent = true;
             CanPauseAndContinue = true;
