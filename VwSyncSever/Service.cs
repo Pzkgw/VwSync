@@ -1,7 +1,7 @@
 ﻿
 using System;
 using System.ServiceProcess;
-using VwSyncService;
+
 
 namespace VwSyncSever
 {
@@ -9,28 +9,16 @@ namespace VwSyncSever
     {
         //RegistryService reg;
 
-        ServiceBase[] ServicesToRun;
+        //ServiceBase[] ServicesToRun;
         public Service()
         {
-            ServicesToRun = new ServiceBase[]
-{
-            new ServiceSync()
-};
         }
 
         public void VwRun()
         {
-            
-            if (false)//Environment.UserInteractive)
-            {
-                
-            }
-            else
-            {
-                //#if (!DEBUG)      #else       #endif
-                ServiceBase.Run(ServicesToRun);
-            }
-            //ServiceController sc = new ServiceController();
+            //Environment.UserInteractive)
+            //#if (!DEBUG)      #else       #endif
+
         }
 
 

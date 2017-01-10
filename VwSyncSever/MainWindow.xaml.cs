@@ -65,7 +65,7 @@ namespace VwSyncSever
             }
         }
 
-        Service ser = new Service();
+        //Service ser = new Service();
         private void btnService_Click(object sender, RoutedEventArgs e)
         {
             //ser.VwRun();
@@ -73,7 +73,8 @@ namespace VwSyncSever
             Services.InstallAndStart(
                                 "CAVISync",
                                 "CAVI Sync",
-                                @"""c:\apache\bin\httpd.exe"" -k runservice"
+                                //@"""c:\apache\bin\httpd.exe"" -k runservice"
+                                "VwSync.exe"
  );
 
         }

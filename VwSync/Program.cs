@@ -41,6 +41,10 @@ namespace VwSync
 
 
 
+        /// <summary>
+        /// Executa comanda in Command Prompt
+        /// </summary>
+        /// <param name="command"></param>
         public static void ExecuteCommand(string command)
         {
 
