@@ -1,29 +1,38 @@
 ﻿
+using System;
 using System.ServiceProcess;
+using VwSyncService;
 
 namespace VwSyncSever
 {
-    class Service : ServiceBase
+    class Service
     {
-        RegistryService reg;
+        //RegistryService reg;
+
+        ServiceBase[] ServicesToRun;
         public Service()
         {
-            ServiceName = "CAVISync";
-            CanStop = true;
-            CanPauseAndContinue = true;
-            AutoLog = false;
+            ServicesToRun = new ServiceBase[]
+{
+            new ServiceSync()
+};
         }
 
         public void VwRun()
         {
-            ServiceBase.Run(this);
+            
+            if (false)//Environment.UserInteractive)
+            {
+                
+            }
+            else
+            {
+                //#if (!DEBUG)      #else       #endif
+                ServiceBase.Run(ServicesToRun);
+            }
+            //ServiceController sc = new ServiceController();
         }
 
-        protected override void OnStart(string[] args)
-        {
-            base.OnStart(args);
-            //System.Windows.MessageBox.Show(RegistryService.GetSyncPath());
-        }
 
     }
 }
