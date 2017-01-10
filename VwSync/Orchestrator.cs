@@ -1,25 +1,22 @@
 ﻿using System;
-using System.IO;
-using System.Net;
-using System.Windows.Controls;
 using Microsoft.Synchronization;
 using Microsoft.Synchronization.Files;
 
 namespace VwSyncSever
 {
-    partial class Orchestrator
+    public class Orchestrator
     {
         SyncOrchestrator orchestrator;
         FileSyncProvider localPro = null, remotePro = null;
 
-        internal RegistryLocal reg;
-        internal Settings set;
+        public RegistryLocal reg;
+        public Settings set;
         public Orchestrator(Settings settings)
         {
             set = settings;
         }
 
-        internal bool InitSync(SyncDirectionOrder way,
+        public bool InitSync(SyncDirectionOrder way,
             FileSyncScopeFilter scopeFilter,
             FileSyncOptions fileSyncOptions)
         {
@@ -60,7 +57,7 @@ namespace VwSyncSever
                 orchestrator.SessionProgress += Orchestrator_SessionProgress;
                 retVal = true;
             }
-            catch //(Exception ex)
+            catch (Exception ex)
             {
                 // Show("Sync fail: " + ex.ToString());
 
@@ -86,7 +83,7 @@ namespace VwSyncSever
             //Show("Total work: " + e.CompletedWork.ToString());
         }
 
-        internal SyncOperationStatistics Sync(string lStr, string rStr)
+        public SyncOperationStatistics Sync(string lStr, string rStr)
         {
             // 1. dir struct
             set.dirLocalSync = set.dirLocal + set.GetDirLocalSync(rStr);

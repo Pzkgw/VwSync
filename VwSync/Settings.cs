@@ -9,45 +9,47 @@ namespace VwSyncSever
     /// <summary>
     /// Denumiri, directoare
     /// </summary>
-    class Settings
+    public class Settings
     {
-        internal IPAddress IPServer;
+        public IPAddress IPServer;
 
-        internal const string
+        public const string
             dirForMetadata = "\\___meta___",
             dirForTemporaryFiles = "\\___temp___",
             dirForConflictedFiles = "\\___conf___",
             metaLocalFile = "L_filesync.metadata",
             metaRemoteFile = "R_filesync.metadata",
-            registryPath = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI Sync";
+            registryPath = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI Sync",
+            serName = "CAVISync",
+            serDesc = "Files and directories syncronization";
 
-        internal string dirLocal, dirRemote, dirLocalSync;
+        public string dirLocal, dirRemote, dirLocalSync;
         //@"\\CJ-PC\Users\Default\AppData",
         //@"\\10.10.10.47\video\gi test\demo\";
         //@"c:\_ToDo\TestHik\TestHik\bin\x86\Debug\DbgMessages\";
 
-        internal string metadataDirectoryPath, tempDirectoryPath, pathToSaveConflictLoserFiles;
+        public string metadataDirectoryPath, tempDirectoryPath, pathToSaveConflictLoserFiles;
 
 
-        internal FileAttributes excludeFileAttributes =
+        public FileAttributes excludeFileAttributes =
             FileAttributes.System | FileAttributes.Hidden;
 
-        internal FileSyncOptions optFileSync = FileSyncOptions.None;
-        internal SyncDirectionOrder optWay = SyncDirectionOrder.Download;
-        internal FileSyncScopeFilter optFilter;
+        public FileSyncOptions optFileSync = FileSyncOptions.None;
+        public SyncDirectionOrder optWay = SyncDirectionOrder.Download;
+        public FileSyncScopeFilter optFilter;
 
-        internal static string[] excludeFileExtensions =
+        public static string[] excludeFileExtensions =
             new string[] { "*.tmp", "*.lnk", "*.pst" };
 
-        internal bool directoryStructureIsOk;
+        public bool directoryStructureIsOk;
 
-        internal Settings(string localDir, string remoteDir)
+        public Settings(string localDir, string remoteDir)
         {
             dirLocalSync = localDir + GetDirLocalSync(remoteDir);
             RefreshPaths(localDir, remoteDir);            
         }
 
-        internal string GetDirLocalSync(string remoteDir) // dirRemote
+        public string GetDirLocalSync(string remoteDir) // dirRemote
         {
             string rFileName = null;
 
@@ -70,7 +72,7 @@ namespace VwSyncSever
         }
 
 
-        internal void RefreshPaths(string localDir, string remoteDir)
+        public void RefreshPaths(string localDir, string remoteDir)
         {
             dirLocal = localDir;
             dirRemote = remoteDir;
@@ -80,7 +82,7 @@ namespace VwSyncSever
             if (!dirLocalSync.EndsWith("\\")) dirLocalSync = dirLocalSync + "\\";
         }
 
-        internal void SetupDirectoryStruct()
+        public void SetupDirectoryStruct()
         {
             if (!Directory.Exists(dirLocal)) Directory.CreateDirectory(dirLocal);
             if (!Directory.Exists(dirLocalSync)) Directory.CreateDirectory(dirLocalSync);
@@ -99,7 +101,7 @@ namespace VwSyncSever
         /// <summary>
         /// Prepare directories for sync
         /// </summary>
-        internal bool PrepareDirectories(params string[] dir)
+        public bool PrepareDirectories(params string[] dir)
         {
             if (dir == null || dir[1] == null)
             {

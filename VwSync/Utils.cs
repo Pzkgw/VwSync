@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -10,7 +11,7 @@ using System.ServiceProcess;
 
 namespace VwSyncSever
 {
-    class Utils
+    public class Utils
     {
 
         /// <summary>
@@ -20,7 +21,7 @@ namespace VwSyncSever
         /// <param name="directory"></param>
         /// <param name="excludedExtensions"></param>
         /// <returns></returns>
-        internal static List<string> GetFilesAndDirectories(String directory, string excludeDirNameStart, params string[] excludedExtensions)
+        public static List<string> GetFilesAndDirectories(String directory, string excludeDirNameStart, params string[] excludedExtensions)
         {
 
             List<string> result = new List<string>();
@@ -68,7 +69,7 @@ namespace VwSyncSever
         /// As intented, get local IP
         /// </summary>
         /// <returns>Local IP</returns>
-        internal static IPAddress GetLocalIpAddress()
+        public static IPAddress GetLocalIpAddress()
         {
             UnicastIPAddressInformation mostSuitableIp = null;
 
@@ -133,6 +134,34 @@ namespace VwSyncSever
                 return false;
             }
         }
+
+
+
+        /// <summary>
+        /// Executa comanda in Command Prompt
+        /// </summary>
+        /// <param name="command"></param>
+        public static void ExecuteCommand(string command)
+        {
+
+            int ExitCode;
+            ProcessStartInfo ProcessInfo;
+            Process Process;
+
+            ProcessInfo = new ProcessStartInfo("cmd.exe", "/c " + command);
+            ProcessInfo.CreateNoWindow = true;
+            ProcessInfo.UseShellExecute = false;
+
+            Process = Process.Start(ProcessInfo);
+            Process.WaitForExit();
+
+            ExitCode = Process.ExitCode;
+            Process.Close();
+
+            //MessageBox.Show("ExitCode: " + ExitCode.ToString(), "ExecuteCommand");
+        }
+
+
 
 
 
@@ -209,7 +238,7 @@ namespace VwSyncSever
 
 
 
-    class Services
+    public class Services
     {
 
         #region "Environment Variables"
@@ -308,6 +337,7 @@ namespace VwSyncSever
         #region "ServiceCalls API"
         private const int STANDARD_RIGHTS_REQUIRED = 0xF0000;
         private const int SERVICE_WIN32_OWN_PROCESS = 0x00000010;
+        private const int SERVICE_CONFIG_DESCRIPTION = 0x01;
 
         [Flags]
         public enum ServiceManagerRights
@@ -395,6 +425,16 @@ namespace VwSyncSever
             public int dwWaitHint = 0;
         }
 
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool ChangeServiceConfig2(IntPtr hService, int dwInfoLevel, [MarshalAs(UnmanagedType.Struct)] ref SERVICE_DESCRIPTION lpInfo);
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        public struct SERVICE_DESCRIPTION
+        {
+            public string lpDescription;
+        }
+
         [DllImport("advapi32.dll", EntryPoint = "OpenSCManagerA")]
         private static extern IntPtr OpenSCManager(string lpMachineName, string lpDatabaseName, ServiceManagerRights dwDesiredAccess);
         [DllImport("advapi32.dll", EntryPoint = "OpenServiceA", CharSet = CharSet.Ansi)]
@@ -447,6 +487,43 @@ namespace VwSyncSever
             }
         }
 
+        public static void SetDescriereServiciu(string ServiceName, string txt)
+        {
+            
+            IntPtr scman = OpenSCManager(ServiceManagerRights.Connect);
+            try
+            {
+                IntPtr service = OpenService(scman, ServiceName, ServiceRights.AllAccess);
+                if (service == IntPtr.Zero)
+                {
+                    throw new ApplicationException("Service not installed.");
+                }
+                try
+                {
+                    var pinfo = new SERVICE_DESCRIPTION
+                    {
+                        lpDescription = txt
+                    };
+                                        
+                    if (!ChangeServiceConfig2(service, SERVICE_CONFIG_DESCRIPTION, ref pinfo))
+                    {
+                        //int error = Marshal.GetLastWin32Error();
+                        //throw new ApplicationException("Could not delete service " + error);
+                    }
+                }
+                finally
+                {
+                    CloseServiceHandle(service);
+                }
+            }
+            finally
+            {
+                CloseServiceHandle(scman);
+            }          
+            
+        }
+
+
         /// <summary>
         /// Accepts a service name and returns true if the service with that service name exists
         /// </summary>
@@ -475,9 +552,10 @@ namespace VwSyncSever
         /// <param name="ServiceName">The service name that this service will have</param>
         /// <param name="DisplayName">The display name that this service will have</param>
         /// <param name="FileName">The path to the executable of the service</param>
-        public static void InstallAndStart(string ServiceName, string DisplayName,
+        public static bool InstallAndStart(string ServiceName, string DisplayName,
         string FileName)
         {
+            bool retVal = false;
             IntPtr scman = OpenSCManager(ServiceManagerRights.Connect |
             ServiceManagerRights.CreateService);
             try
@@ -488,8 +566,8 @@ namespace VwSyncSever
                 {
                     service = CreateService(scman, ServiceName, DisplayName,
                     ServiceRights.QueryStatus | ServiceRights.Start, SERVICE_WIN32_OWN_PROCESS,
-                    ServiceBootFlag.AutoStart, ServiceError.Normal, FileName, null, IntPtr.Zero,
-                    null, null, null);
+                    ServiceBootFlag.DemandStart, ServiceError.Normal, FileName, null, IntPtr.Zero,
+                    null, null, null);                    
                 }
                 if (service == IntPtr.Zero)
                 {
@@ -498,6 +576,7 @@ namespace VwSyncSever
                 try
                 {
                     StartService(service);
+                    retVal = true;
                 }
                 finally
                 {
@@ -508,6 +587,8 @@ namespace VwSyncSever
             {
                 CloseServiceHandle(scman);
             }
+
+            return retVal;
         }
 
         /// <summary>

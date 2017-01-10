@@ -65,17 +65,22 @@ namespace VwSyncSever
             }
         }
 
-        //Service ser = new Service();
         private void btnService_Click(object sender, RoutedEventArgs e)
         {
-            //ser.VwRun();
+            //ser.VwRun(); //@"""c:\apache\bin\httpd.exe"" -k runservice"
+            if (!Services.IsInstalled(Settings.serName))
+            {
+                bool started = Services.InstallAndStart(
+                                    Settings.serName, "", "VwSync.exe");
 
-            Services.InstallAndStart(
-                                "CAVISync",
-                                "CAVI Sync",
-                                //@"""c:\apache\bin\httpd.exe"" -k runservice"
-                                "VwSync.exe"
- );
+                Services.SetDescriereServiciu(Settings.serName, Settings.serDesc);
+
+                infoLbl.Content = "Service " + (started ? "" : "was not") + "started";
+            }
+            else
+            {
+                infoLbl.Content = Settings.serName + " is already installed";
+            }
 
         }
 

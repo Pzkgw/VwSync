@@ -33,37 +33,12 @@ namespace VwSync
                 Console.SetOut(standardOutput);
             }
 
-
-            ExecuteCommand("sc delete CAVISync");
+            Exec.Sync();
 
         }
 
 
 
-
-        /// <summary>
-        /// Executa comanda in Command Prompt
-        /// </summary>
-        /// <param name="command"></param>
-        public static void ExecuteCommand(string command)
-        {
-
-            int ExitCode;
-            ProcessStartInfo ProcessInfo;
-            Process Process;
-
-            ProcessInfo = new ProcessStartInfo("cmd.exe", "/c " + command);
-            ProcessInfo.CreateNoWindow = true;
-            ProcessInfo.UseShellExecute = false;
-
-            Process = Process.Start(ProcessInfo);
-            Process.WaitForExit();
-
-            ExitCode = Process.ExitCode;
-            Process.Close();
-
-            //MessageBox.Show("ExitCode: " + ExitCode.ToString(), "ExecuteCommand");
-        }
 
 
 

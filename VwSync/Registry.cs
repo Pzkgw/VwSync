@@ -7,7 +7,7 @@ namespace VwSyncSever
 
     class RegistryService
     {
-        internal static string GetSyncPath()
+        public static string GetSyncPath()
         {
             RegistryKey keySv = null;
 
@@ -24,11 +24,11 @@ namespace VwSyncSever
             return ((retVal == null) ? null : retVal.ToString());
         }
     }
-    class RegistryLocal
+    public class RegistryLocal
     {
         //const string strCDir = "\\Clienti";
 
-        internal void UpdateBase(IPAddress ipLocal, int portListener, string path)
+        public void UpdateBase(IPAddress ipLocal, int portListener, string path)
         {
             RegistryKey keySv = null;
 
@@ -52,7 +52,7 @@ namespace VwSyncSever
         }
 
         /*
-        internal void UpdateDeriv(int idClient, int port, string path)
+        public void UpdateDeriv(int idClient, int port, string path)
         {
             RegistryKey keyCl = null;
 
