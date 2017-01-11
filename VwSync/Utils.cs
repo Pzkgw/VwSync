@@ -268,10 +268,9 @@ namespace VwSyncSever
             ServiceController service = new ServiceController(serviceName);
             try
             {
-                TimeSpan timeout = TimeSpan.FromMilliseconds(timeoutMilliseconds);
-
                 service.Start();
-                service.WaitForStatus(ServiceControllerStatus.Running, timeout);
+                service.WaitForStatus(ServiceControllerStatus.Running, 
+                    TimeSpan.FromMilliseconds(timeoutMilliseconds));
             }
             catch
             {

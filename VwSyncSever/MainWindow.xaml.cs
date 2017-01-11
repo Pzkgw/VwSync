@@ -76,6 +76,13 @@ namespace VwSyncSever
                 Services.SetDescriereServiciu(Settings.serName, Settings.serDesc);
 
                 infoLbl.Content = "Service " + (started ? "" : "was not") + "started";
+
+                if(started)
+                {
+
+                    Services.Start(Settings.serName, 1000);
+                }
+
             }
             else
             {
