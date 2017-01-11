@@ -44,8 +44,8 @@ namespace VwSyncSever
             }
 
             //if (IPAddress.TryParse(ipLocal.ToString(), out ipLocalNonStr))
-
-            keySv.SetValue("IPLocal", ipLocal);
+            if (ipLocal != null)
+                keySv.SetValue("IPLocal", ipLocal);
             //keySv.SetValue("portListener", "portListener");
             keySv.SetValue("Path", path);
             keySv.Close();

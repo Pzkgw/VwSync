@@ -18,7 +18,7 @@ namespace VwSync
 
         protected override void OnStart(string[] args)
         {
-            // Insert code here to define processing.
+            Exec.Sync();
         }
 
     }
