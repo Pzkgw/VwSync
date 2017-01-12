@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using VwSyncSever;
 
-namespace WindowsService
+namespace VwService
 {
     public static class Lib
     {
+
+        
 
         public static void WrLog(Exception ex)
         {
@@ -14,7 +17,7 @@ namespace WindowsService
 
             try
             {
-                sw = new StreamWriter(@"c:\___\" + "\\Log.txt", true);
+                sw = new StreamWriter(SerSettings.dirLocal + "\\Log.txt", true);
                 sw.WriteLine(DateTime.Now.ToString() + " : " + ex.Source.ToString().Trim() + " : " +
                     ex.Message.ToString().Trim());
                 sw.Flush();
@@ -30,7 +33,7 @@ namespace WindowsService
 
             try
             {
-                sw = new StreamWriter(@"c:\___\" + "\\Log.txt", true);
+                sw = new StreamWriter(SerSettings.dirLocal + "\\Log.txt", true);
                 sw.WriteLine(DateTime.Now.ToString() + " : " + s);
                 sw.Flush();
                 sw.Close();

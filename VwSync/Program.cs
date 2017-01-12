@@ -33,7 +33,6 @@ namespace VwSync
                 Console.SetOut(standardOutput);
             }
 
-            System.ServiceProcess.ServiceBase.Run(new Service());
             //Exec.Sync();
 
         }

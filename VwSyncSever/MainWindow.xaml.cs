@@ -21,13 +21,25 @@ namespace VwSyncSever
         {
             InitializeComponent();
 
-            o = new Orchestrator(new Settings(@"c:\___\", @"c:\__###\SDL1\"));
-
+            o = new Orchestrator(new Settings(@"c:\_sync\", @"c:\__###\SDL1\"));
 
             UpdateSyncPathGui(o.set);
 
             o.set.IPServer = Utils.GetLocalIpAddress();
             if (o.set.IPServer != null) lblIpServer.Content = o.set.IPServer.ToString();
+
+            //MessageBox.Show(Application.ResourceAssembly.Location);
+            if (File.Exists(Settings.serExecutabil))
+            {
+                string s = Application.ResourceAssembly.Location;
+                Settings.serExecutabil = s.Substring(0, s.LastIndexOf('\\') + 1) + Settings.serExecutabil;
+                //infoLbl.Content = Settings.serExecutabil;
+            }
+            else
+            {
+                btnService.IsEnabled = false;
+                infoLbl.Content = "No service start available";
+            }
         }
 
         private void UpdateSyncPathGui(Settings set)
@@ -67,17 +79,16 @@ namespace VwSyncSever
 
         private void btnService_Click(object sender, RoutedEventArgs e)
         {
-            //ser.VwRun(); //@"""c:\apache\bin\httpd.exe"" -k runservice"
             if (!Services.IsInstalled(Settings.serName))
             {
                 bool started = Services.InstallAndStart(
-                                    Settings.serName, "", @"c:\_ToDo\Sync\trunk\VwSyncSever\bin\Release\VwService.exe");
+                                    Settings.serName, Settings.serName, Settings.serExecutabil);
 
                 Services.SetDescriereServiciu(Settings.serName, Settings.serDesc);
 
                 infoLbl.Content = "Service " + (started ? "" : "was not") + "started";
 
-                if(started)
+                if (started)
                 {
                     //Services.Start(Settings.serName, 0);
                     Utils.ExecuteCommand("net start" + Settings.serName);

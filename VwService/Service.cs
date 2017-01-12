@@ -2,14 +2,16 @@ using System;
 using System.Diagnostics;
 using System.ServiceProcess;
 using System.Timers;
+using VwSyncSever;
 
-namespace WindowsService
+namespace VwService
 {
     class Service : ServiceBase
     {
 
         private Timer tim;
 
+        const bool debug = true;
 
         /// <summary>
         /// Public Constructor for WindowsService.
@@ -17,17 +19,17 @@ namespace WindowsService
         /// </summary>
         public Service()
         {
-            this.ServiceName = "CAVISync";
+            ServiceName = "CAVISync";
             //this.EventLog.Source = "My Windows Service";
             //this.EventLog.Log = "Application";
             
             // These Flags set whether or not to handle that specific
             //  type of event. Set to true if you need it, false otherwise.
-            this.CanHandlePowerEvent = true;
-            this.CanHandleSessionChangeEvent = true;
-            this.CanPauseAndContinue = true;
-            this.CanShutdown = true;
-            this.CanStop = true;
+            CanHandlePowerEvent = true;
+            CanHandleSessionChangeEvent = true;
+            CanPauseAndContinue = true;
+            CanShutdown = true;
+            CanStop = true;
 
             //if (!EventLog.SourceExists("My Windows Service"))
             //    EventLog.CreateEventSource("My Windows Service", "Application");
@@ -59,12 +61,14 @@ namespace WindowsService
         {
             base.OnStart(args);
 
+            FileStructClass.Start();
+
             tim = new Timer();
-            tim.Interval = 2000;
+            tim.Interval = 1000;
             tim.Elapsed += Tim_Elapsed;
             tim.Start();
 
-            Lib.WrLog("---Start");
+            if(debug) Lib.WrLog("---Start");
 
         }
 
@@ -77,12 +81,12 @@ namespace WindowsService
             base.OnStop();
 
             tim.Enabled = false;
-            Lib.WrLog("---Stop");
+            if (debug) Lib.WrLog("---Stop");
         }
 
         private void Tim_Elapsed(object sender, ElapsedEventArgs e)
         {
-            Lib.WrLog("thick");
+            if (debug) Lib.WrLog(" timer_elapsed ");
         }
 
         /// <summary>

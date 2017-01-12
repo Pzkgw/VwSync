@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using Microsoft.Synchronization;
 using Microsoft.Synchronization.Files;
 
@@ -7,7 +8,9 @@ namespace VwSyncSever
     public class Orchestrator
     {
         SyncOrchestrator orchestrator;
-        FileSyncProvider localPro = null, remotePro = null;
+        FileSyncProvider 
+            localPro = null,
+            remotePro = null;
 
         public RegistryLocal reg;
         public Settings set;
@@ -30,11 +33,14 @@ namespace VwSyncSever
             {
                 set.SetupDirectoryStruct();
 
-                // Create file system providers
+                // file sync providers
                 localPro = new FileSyncProvider(set.dirLocalSync, scopeFilter, fileSyncOptions,
-                    set.metadataDirectoryPath, Settings.metaLocalFile, set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
+                    set.metadataDirectoryPath, Settings.metaLocalFile,
+                    set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
+
                 remotePro = new FileSyncProvider(set.dirRemote, scopeFilter, fileSyncOptions,
-                    set.metadataDirectoryPath, Settings.metaRemoteFile, set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
+                    set.metadataDirectoryPath, Settings.metaRemoteFile,
+                    set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
 
                 // Task curent: Skip delete
                 // ChangeType:
@@ -59,7 +65,7 @@ namespace VwSyncSever
             }
             catch (Exception ex)
             {
-                // Show("Sync fail: " + ex.ToString());
+                MessageBox.Show("Sync fail: " + ex.ToString());
 
                 CleanUp();
 

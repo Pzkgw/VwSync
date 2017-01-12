@@ -51,6 +51,22 @@ namespace VwSyncSever
             keySv.Close();
         }
 
+        public static string GetLocalPath()
+        {
+            RegistryKey keySv = null;
+
+            keySv = Registry.LocalMachine.OpenSubKey(Settings.registryPath, false);
+
+            if (keySv != null)
+            {
+                object o = null;
+                o = keySv.GetValue("Path");
+
+                if (o != null) return o.ToString();
+            }
+            return null;
+        }
+
         /*
         public void UpdateDeriv(int idClient, int port, string path)
         {

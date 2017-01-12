@@ -23,12 +23,17 @@ namespace VwSyncSever
             serName = "CAVISync",
             serDesc = "File syncronization service";
 
-        public string dirLocal, dirRemote, dirLocalSync;
+        public static string serExecutabil = "VwService.exe"; //c:\_ToDo\Sync\trunk\VwSyncSever\bin\Release\
+            
+
+        public string
+            dirLocal, dirRemote, dirLocalSync,
+            metadataDirectoryPath, tempDirectoryPath, pathToSaveConflictLoserFiles;
         //@"\\CJ-PC\Users\Default\AppData",
         //@"\\10.10.10.47\video\gi test\demo\";
         //@"c:\_ToDo\TestHik\TestHik\bin\x86\Debug\DbgMessages\";
 
-        public string metadataDirectoryPath, tempDirectoryPath, pathToSaveConflictLoserFiles;
+
 
 
         public FileAttributes excludeFileAttributes =
@@ -46,7 +51,7 @@ namespace VwSyncSever
         public Settings(string localDir, string remoteDir)
         {
             dirLocalSync = localDir + GetDirLocalSync(remoteDir);
-            RefreshPaths(localDir, remoteDir);            
+            RefreshPaths(localDir, remoteDir);
         }
 
         public string GetDirLocalSync(string remoteDir) // dirRemote
