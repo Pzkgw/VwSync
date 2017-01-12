@@ -34,6 +34,9 @@ namespace VwSyncSever
                 string s = Application.ResourceAssembly.Location;
                 Settings.serExecutabil = s.Substring(0, s.LastIndexOf('\\') + 1) + Settings.serExecutabil;
                 //infoLbl.Content = Settings.serExecutabil;
+
+                serChk.IsEnabled = false;
+                serChk.IsChecked = true;
             }
             else
             {

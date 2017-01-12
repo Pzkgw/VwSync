@@ -66,7 +66,7 @@
 
                 <Label x:Name="lblLstClient" Content="Files:" HorizontalAlignment="Left" Margin="11,0,0,0" Foreground="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" VerticalAlignment="Center" />
 
-                
+
                 <ListView ScrollViewer.VerticalScrollBarVisibility="Auto" Name="lstClientFiles" MaxHeight="200" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}" Margin="15,1,0,5" BorderThickness="0,1,0,0" HorizontalAlignment="Left"/>
 
             </StackPanel>
@@ -75,27 +75,55 @@
 
         </GroupBox>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="4,4,4,0">
+        <GroupBox x:Name="serGroupBox" Header="Syncronization Service" FontSize="16" Foreground="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" HorizontalAlignment="Right" BorderThickness="1,0,0,1">
+
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+
+                <CheckBox Name="serChk" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,5,0"></CheckBox>
+
+                <Button Content=" Start " Name="btnService" 
+                Background="Transparent" 
+                FontSize="18" 
+                Margin="10"
+                BorderBrush="Transparent"
+                    Click="btnService_Click"
+                BorderThickness="0" HorizontalAlignment="Right" DockPanel.Dock="Right" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontFamily="Times New Roman" Height="41"/>
+
+                <Button Content=" Stop " Name="btnSerStop" 
+                Background="Transparent" 
+                FontSize="18" 
+                Margin="10"
+                BorderBrush="Transparent"
+                    Click="btnService_Click"
+                BorderThickness="0" HorizontalAlignment="Right" DockPanel.Dock="Right" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontFamily="Times New Roman" Height="41"/>
+
+                <Button Content=" End " Name="btnSerDel" 
+                Background="Transparent" 
+                FontSize="18" 
+                Margin="10"
+                BorderBrush="Transparent"
+                    Click="btnService_Click"
+                BorderThickness="0" HorizontalAlignment="Right" DockPanel.Dock="Right" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontFamily="Times New Roman" Height="41"/>
+                
+            </StackPanel>
+
+        </GroupBox>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="4,0">
 
             <Button Content=" Sync " Name="btnSync" 
                 Background="Transparent" 
-                FontSize="18" 
+                FontSize="20" 
                 Margin="8"
                 BorderBrush="Transparent"
                     Click="btnSync_Click"
                 BorderThickness="0" HorizontalAlignment="Right" DockPanel.Dock="Right" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontFamily="Times New Roman"/>
 
-            <Button Content=" Start sync service " Name="btnService" 
-                Background="Transparent" 
-                FontSize="18" 
-                Margin="8"
-                BorderBrush="Transparent"
-                    Click="btnService_Click"
-                BorderThickness="0" HorizontalAlignment="Right" DockPanel.Dock="Right" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontFamily="Times New Roman" Height="41"/>
+
 
             <Button Content=" Close " Name="btnClose" 
                 Background="Transparent" 
-                FontSize="18" 
+                FontSize="20" 
                 Margin="8"
                 BorderBrush="Transparent"
                 BorderThickness="0" HorizontalAlignment="Right" DockPanel.Dock="Right" Click="btnSaveEditedText_Click" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontFamily="Times New Roman"/>
