@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VwSyncGui", "VwSyncSever\Vw
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VwSync", "VwSync\VwSync.csproj", "{9697FC96-54BF-4BFF-B929-65849968800E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "VwService\Service.csproj", "{2FA3EE86-6125-4C79-B122-35DFD0083EBA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,22 @@ Global
 		{9697FC96-54BF-4BFF-B929-65849968800E}.Release|x64.Build.0 = Release|Any CPU
 		{9697FC96-54BF-4BFF-B929-65849968800E}.Release|x86.ActiveCfg = Release|Any CPU
 		{9697FC96-54BF-4BFF-B929-65849968800E}.Release|x86.Build.0 = Release|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Debug|ARM.Build.0 = Debug|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Debug|x64.Build.0 = Debug|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Debug|x86.Build.0 = Debug|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Release|ARM.ActiveCfg = Release|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Release|ARM.Build.0 = Release|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Release|x64.ActiveCfg = Release|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Release|x64.Build.0 = Release|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Release|x86.ActiveCfg = Release|Any CPU
+		{2FA3EE86-6125-4C79-B122-35DFD0083EBA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -263,6 +263,8 @@ namespace VwSyncSever
         #region "ServiceCalls Native"
         public static ServiceController[] List { get { return ServiceController.GetServices(); } }
 
+        //The following method tries to start a service specified by a service name. 
+        //Then it waits until the service is running or a timeout occurs.
         public static void Start(string serviceName, int timeoutMilliseconds)
         {
             ServiceController service = new ServiceController(serviceName);
@@ -565,7 +567,7 @@ namespace VwSyncSever
                 {
                     service = CreateService(scman, ServiceName, DisplayName,
                     ServiceRights.QueryStatus | ServiceRights.Start, SERVICE_WIN32_OWN_PROCESS,
-                    ServiceBootFlag.DemandStart, ServiceError.Normal, FileName, null, IntPtr.Zero,
+                    ServiceBootFlag.AutoStart, ServiceError.Normal, FileName, null, IntPtr.Zero,
                     null, null, null);                    
                 }
                 if (service == IntPtr.Zero)

@@ -103,6 +103,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\VwService\Service.csproj">
+      <Project>{2fa3ee86-6125-4c79-b122-35dfd0083eba}</Project>
+      <Name>Service</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VwSync\VwSync.csproj">
       <Project>{9697fc96-54bf-4bff-b929-65849968800e}</Project>
       <Name>VwSync</Name>

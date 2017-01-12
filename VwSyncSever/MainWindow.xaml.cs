@@ -71,7 +71,7 @@ namespace VwSyncSever
             if (!Services.IsInstalled(Settings.serName))
             {
                 bool started = Services.InstallAndStart(
-                                    Settings.serName, "", "VwSync.exe");
+                                    Settings.serName, "", @"c:\_ToDo\Sync\trunk\VwSyncSever\bin\Release\VwService.exe");
 
                 Services.SetDescriereServiciu(Settings.serName, Settings.serDesc);
 
@@ -79,8 +79,8 @@ namespace VwSyncSever
 
                 if(started)
                 {
-
-                    Services.Start(Settings.serName, 1000);
+                    //Services.Start(Settings.serName, 0);
+                    Utils.ExecuteCommand("net start" + Settings.serName);
                 }
 
             }
