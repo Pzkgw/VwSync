@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:VwSyncSever"
         mc:Ignorable="d"
         Closing="Window_Closing"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown"
         Title="MainWindow" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" WindowStyle="None">
 
     <StackPanel Orientation="Vertical" Margin="15">
@@ -75,21 +76,14 @@
 
         </GroupBox>
 
-        <GroupBox x:Name="serGroupBox" Header="Syncronization Service" FontSize="16" Foreground="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" HorizontalAlignment="Right" BorderThickness="1,0,0,1">
+        <GroupBox x:Name="serGroupBox" Header="Windows service" FontSize="16" Foreground="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" HorizontalAlignment="Left" BorderThickness="1,0,0,1">
 
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 
-                <CheckBox Name="serChk" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,5,0"></CheckBox>
+
+
 
                 <Button Content=" Start " Name="btnService" 
-                Background="Transparent" 
-                FontSize="18" 
-                Margin="10"
-                BorderBrush="Transparent"
-                    Click="btnService_Click"
-                BorderThickness="0" HorizontalAlignment="Right" DockPanel.Dock="Right" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontFamily="Times New Roman" Height="41"/>
-
-                <Button Content=" Stop " Name="btnSerStop" 
                 Background="Transparent" 
                 FontSize="18" 
                 Margin="10"
@@ -102,16 +96,20 @@
                 FontSize="18" 
                 Margin="10"
                 BorderBrush="Transparent"
-                    Click="btnService_Click"
+                    Click="btnSerDel_Click"
                 BorderThickness="0" HorizontalAlignment="Right" DockPanel.Dock="Right" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontFamily="Times New Roman" Height="41"/>
-                
+
+                <Label Content="Current status:" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Verdana"/>
+                <Label Name="serLbl" Content="off" Foreground="{DynamicResource {x:Static SystemColors.MenuBrushKey}}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Verdana" FontSize="16"/>
+
+
             </StackPanel>
 
         </GroupBox>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="4,0">
 
-            <Button Content=" Sync " Name="btnSync" 
+            <Button Content=" Synchronize " Name="btnSync" 
                 Background="Transparent" 
                 FontSize="20" 
                 Margin="8"

@@ -35,8 +35,7 @@ namespace VwSyncSever
                 Settings.serExecutabil = s.Substring(0, s.LastIndexOf('\\') + 1) + Settings.serExecutabil;
                 //infoLbl.Content = Settings.serExecutabil;
 
-                serChk.IsEnabled = false;
-                serChk.IsChecked = true;
+                serLbl.Content = Services.IsInstalled(Settings.serName) ? "on":"off";
             }
             else
             {
@@ -95,6 +94,7 @@ namespace VwSyncSever
                 {
                     //Services.Start(Settings.serName, 0);
                     Utils.ExecuteCommand("net start" + Settings.serName);
+                    serLbl.Content = "on";
                 }
 
             }
@@ -105,8 +105,36 @@ namespace VwSyncSever
 
         }
 
+
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            o.CleanUp();
+        }
+
+        private void btnSaveEditedText_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
         private void btnSync_Click(object sender, RoutedEventArgs e)
         {
+
+            //Exec.SerStop();
+            Exec.SerDelete();
+            serLbl.Content = "off";
+
+            /*
+            // directorul local modificat -> restart serviciul 
+            string s1 = RegistryLocal.GetLocalPath(),
+                s2 = textBox2.Text;
+            if(s1.length==(s2.length+1))
+            if(!hh.Equals())
+            {
+                MessageBox.Show(hh+Environment.NewLine+ textBox2.Text);
+                Exec.SerDelete();
+            }*/
+
             SyncOperationStatistics stats =
             o.Sync(textBox2.Text, atextBox2.Text);
 
@@ -136,14 +164,16 @@ namespace VwSyncSever
 
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void btnSerDel_Click(object sender, RoutedEventArgs e)
         {
-            o.CleanUp();
+            infoLbl.Content = string.Empty;
+            Exec.SerDelete();
+            serLbl.Content =  "off";
         }
 
-        private void btnSaveEditedText_Click(object sender, RoutedEventArgs e)
+        private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Close();
+            DragMove();
         }
     }
 }

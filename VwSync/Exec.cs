@@ -1,12 +1,16 @@
-﻿using VwSyncSever;
-
-namespace VwSync
+﻿
+namespace VwSyncSever
 {
-    static class Exec
+    public static class Exec
     {
+        public static void SerStop()
+        {
+            Utils.ExecuteCommand("net stop \"" + Settings.serName + "\"");
+        }
         public static void SerDelete()
         {
-            Utils.ExecuteCommand("sc delete " + Settings.serName);
+            SerStop();
+            Utils.ExecuteCommand("sc delete \"" + Settings.serName + "\"");
         }
 
         public static void Sync()
