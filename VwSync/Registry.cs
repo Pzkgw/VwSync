@@ -28,7 +28,12 @@ namespace VwSyncSever
     {
         //const string strCDir = "\\Clienti";
 
-        public void UpdateBase(IPAddress ipLocal, int portListener, string path)
+        public void UpdateBase(IPAddress ipLocal, string path)
+        {
+            Update(ipLocal, path);
+        }
+
+        public static void Update(IPAddress ipLocal, string path)
         {
             RegistryKey keySv = null;
 

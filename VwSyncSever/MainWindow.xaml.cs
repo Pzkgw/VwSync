@@ -35,13 +35,20 @@ namespace VwSyncSever
                 Settings.serExecutabil = s.Substring(0, s.LastIndexOf('\\') + 1) + Settings.serExecutabil;
                 //infoLbl.Content = Settings.serExecutabil;
 
-                serLbl.Content = Services.IsInstalled(Settings.serName) ? "on":"off";
+                SetServiceGui(Services.IsInstalled(Settings.serName)); // 
             }
             else
             {
                 btnService.IsEnabled = false;
                 infoLbl.Content = "No service start available";
             }
+        }
+
+        private void SetServiceGui(bool v)
+        {
+            serLbl.Content = v ? "on" : "off";
+            btnService.Visibility = v ? Visibility.Collapsed : Visibility.Visible;
+            btnSerDel.Visibility = v ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdateSyncPathGui(Settings set)
@@ -83,18 +90,28 @@ namespace VwSyncSever
         {
             if (!Services.IsInstalled(Settings.serName))
             {
-                bool started = Services.InstallAndStart(
-                                    Settings.serName, Settings.serName, Settings.serExecutabil);
-
-                Services.SetDescriereServiciu(Settings.serName, Settings.serDesc);
-
-                infoLbl.Content = "Service " + (started ? "" : "was not") + "started";
-
-                if (started)
+                string path = textBox2.Text;
+                if (Directory.Exists(path) && Utils.DirectoryExists(path))
                 {
-                    //Services.Start(Settings.serName, 0);
-                    Utils.ExecuteCommand("net start" + Settings.serName);
-                    serLbl.Content = "on";
+                    RegistryLocal.Update(null, path);
+
+                    bool started = Services.InstallAndStart(
+                                        Settings.serName, Settings.serName, Settings.serExecutabil);
+
+                    Services.SetDescriereServiciu(Settings.serName, Settings.serDesc);
+
+                    infoLbl.Content = "Service " + (started ? "" : "was not") + "started";
+
+                    if (started)
+                    {
+                        //Services.Start(Settings.serName, 0);
+                        Utils.ExecuteCommand("net start" + Settings.serName);
+                        SetServiceGui(true);
+                    }
+                }
+                else
+                {
+                    infoLbl.Content = "Cannot start service with the current local path";
                 }
 
             }
@@ -119,10 +136,15 @@ namespace VwSyncSever
 
         private void btnSync_Click(object sender, RoutedEventArgs e)
         {
+            //VwService.SerSettings.dirLocal = textBox2.Text; // TODO: ver ca e path valabil
+            //VwService.FileStructClass.RunSync();
+
+            //return;
 
             //Exec.SerStop();
+            VwService.SerSettings.run = false;
             Exec.SerDelete();
-            serLbl.Content = "off";
+            SetServiceGui(false);
 
             /*
             // directorul local modificat -> restart serviciul 
@@ -167,8 +189,10 @@ namespace VwSyncSever
         private void btnSerDel_Click(object sender, RoutedEventArgs e)
         {
             infoLbl.Content = string.Empty;
+            VwService.SerSettings.run = false;
             Exec.SerDelete();
-            serLbl.Content =  "off";
+
+            SetServiceGui(false);
         }
 
         private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

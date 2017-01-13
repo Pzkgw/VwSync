@@ -3,6 +3,8 @@
 //using System.Configuration.Install;
 //using System.ServiceProcess;
 
+// ----------------- FOLOSIT DOAR PENTRU TESTE
+
 //namespace WindowsService
 //{
 //    [RunInstaller(true)]

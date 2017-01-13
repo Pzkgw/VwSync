@@ -46,6 +46,8 @@ namespace VwSyncSever
         public static string[] excludeFileExtensions =
             new string[] { "*.tmp", "*.lnk", "*.pst" };
 
+        public static char chSlash = '$'; // caracterul ce inlocuieste slash
+
         public bool directoryStructureIsOk;
 
         public Settings(string localDir, string remoteDir)
@@ -58,7 +60,7 @@ namespace VwSyncSever
         {
             string rFileName = null;
 
-            rFileName = remoteDir.Replace('\\', '$');
+            rFileName = remoteDir.Replace('\\', chSlash);
 
             switch (remoteDir[1])
             {

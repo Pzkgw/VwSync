@@ -19,8 +19,8 @@ namespace VwService
         /// </summary>
         public Service()
         {
-            ServiceName = "CAVISync";
-            //this.EventLog.Source = "My Windows Service";
+            ServiceName = Settings.serName;
+            //this.EventLog.Source = "Un Serviciu";
             //this.EventLog.Log = "Application";
             
             // These Flags set whether or not to handle that specific
@@ -59,16 +59,17 @@ namespace VwService
         /// <param name="args"></param>
         protected override void OnStart(string[] args)
         {
+            SerSettings.dirLocal = @"c:\_sync\";
             base.OnStart(args);
 
-            FileStructClass.Start();
+            FileStructClass.RunSync();
 
             tim = new Timer();
-            tim.Interval = 1000;
+            tim.Interval = SerSettings.interval;
             tim.Elapsed += Tim_Elapsed;
             tim.Start();
 
-            if(debug) Lib.WrLog("---Start");
+            if(debug) Lib.WrLog("---Start at : "+ SerSettings.dirLocal);
 
         }
 
@@ -87,6 +88,8 @@ namespace VwService
         private void Tim_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (debug) Lib.WrLog(" timer_elapsed ");
+
+            FileStructClass.RunSync();
         }
 
         /// <summary>

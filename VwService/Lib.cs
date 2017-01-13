@@ -6,7 +6,7 @@ namespace VwService
     public static class Lib
     {
 
-        
+        // ----------------- FOLOSIT DOAR PENTRU TESTE
 
         public static void WrLog(Exception ex)
         {

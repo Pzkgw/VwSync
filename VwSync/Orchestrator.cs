@@ -100,7 +100,7 @@ namespace VwSyncSever
             if (reg == null)
             {
                 reg = new RegistryLocal();
-                reg.UpdateBase(set.IPServer, 4500, set.dirLocal);
+                reg.UpdateBase(set.IPServer, set.dirLocal);
             }            
 
             // 3. WCF Sync

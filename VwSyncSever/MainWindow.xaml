@@ -17,7 +17,7 @@
 
                 <StackPanel Orientation="Horizontal" Margin="10">
                     <Label x:Name="label2" Content="Path:" HorizontalAlignment="Left" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" VerticalAlignment="Top" />
-                    <TextBox x:Name="textBox2" Width="799" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
+                    <TextBox x:Name="textBox2" Width="799" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" FontFamily="Times New Roman" VerticalAlignment="Center"/>
 
                 </StackPanel>
 
@@ -46,7 +46,7 @@
 
                 <StackPanel Orientation="Horizontal" Margin="10">
                     <Label x:Name="alabel2" Content="Path:" HorizontalAlignment="Left" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" VerticalAlignment="Top" />
-                    <TextBox x:Name="atextBox2" Width="799" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
+                    <TextBox x:Name="atextBox2" Width="799" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" FontFamily="Times New Roman" VerticalAlignment="Center"/>
 
                 </StackPanel>
 
@@ -76,11 +76,14 @@
 
         </GroupBox>
 
-        <GroupBox x:Name="serGroupBox" Header="Windows service" FontSize="16" Foreground="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" HorizontalAlignment="Left" BorderThickness="1,0,0,1">
+        <GroupBox x:Name="serGroupBox" Header="Local windows service" FontSize="16" Foreground="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" HorizontalAlignment="Left" BorderThickness="1,0,0,1">
 
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 
 
+                <Label Content="Current service status:" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Verdana"/>
+                <Label Name="serLbl" Content="off" Foreground="{DynamicResource {x:Static SystemColors.MenuBrushKey}}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Verdana" FontSize="16"/>
+                <Label Content=", so:" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Verdana"/>
 
 
                 <Button Content=" Start " Name="btnService" 
@@ -91,7 +94,7 @@
                     Click="btnService_Click"
                 BorderThickness="0" HorizontalAlignment="Right" DockPanel.Dock="Right" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontFamily="Times New Roman" Height="41"/>
 
-                <Button Content=" End " Name="btnSerDel" 
+                <Button Content=" Stop " Name="btnSerDel" 
                 Background="Transparent" 
                 FontSize="18" 
                 Margin="10"
@@ -99,15 +102,13 @@
                     Click="btnSerDel_Click"
                 BorderThickness="0" HorizontalAlignment="Right" DockPanel.Dock="Right" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontFamily="Times New Roman" Height="41"/>
 
-                <Label Content="Current status:" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Verdana"/>
-                <Label Name="serLbl" Content="off" Foreground="{DynamicResource {x:Static SystemColors.MenuBrushKey}}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Verdana" FontSize="16"/>
 
 
             </StackPanel>
 
         </GroupBox>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="4,0">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
 
             <Button Content=" Synchronize " Name="btnSync" 
                 Background="Transparent" 

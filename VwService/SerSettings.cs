@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace VwService
+﻿namespace VwService
 {
     public static class SerSettings
     {
-        public static string dirLocal = @"c:\___\";
+        // = @"c:\___\";
+        public static string dirLocal; // citit din registru 
+
+        public static double interval = 1000;// milisecunde de asteptat pana la urmatoare rulare
+
+        public static bool run;
     }
 }
