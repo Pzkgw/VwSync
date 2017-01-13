@@ -105,7 +105,7 @@ namespace VwSyncSever
                     if (started)
                     {
                         //Services.Start(Settings.serName, 0);
-                        Utils.ExecuteCommand("net start" + Settings.serName);
+                        //Utils.ExecuteCommand("net start" + Settings.serName);
                         SetServiceGui(true);
                     }
                 }

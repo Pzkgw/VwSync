@@ -13,11 +13,8 @@ namespace VwService
 
             bool retVal = false;
 
-            string path = SerSettings.dirLocal;// RegistryLocal.GetLocalPath();
-            //path SerSettings.dirLocal = @"c:\_sync\";
-
-            retVal = (path != null &&
-                Directory.Exists(path));
+            retVal = (SerSettings.dirLocal != null &&
+                Directory.Exists(SerSettings.dirLocal));
 
             if (retVal)
             {
@@ -27,7 +24,7 @@ namespace VwService
                 Orchestrator o;
                 SyncOperationStatistics stats;                
 
-                foreach (string s in Directory.GetDirectories(path))
+                foreach (string s in Directory.GetDirectories(SerSettings.dirLocal))
                 {
                     startIdx = s.LastIndexOf('\\') + 1;
                     if (startIdx > 0)
@@ -41,11 +38,20 @@ namespace VwService
                             {
                                 ++count;
                                 
-                                o = new Orchestrator(new Settings(path, rs));
+                                o = new Orchestrator(new Settings(SerSettings.dirLocal, rs));
 
-                                stats = o.Sync(path, rs);
+                                stats = o.Sync(SerSettings.dirLocal, rs);
 
-                                Lib.WrLog(" L: " + path + " ||| R: " + rs);
+                                if (SerSettings.debug)
+                                {
+                                    Lib.WrLog(string.Format(" Sync done at {0} in {1}ms", rs, stats.SyncEndTime.Subtract(stats.SyncStartTime).Milliseconds));
+                                    /*
+                                    Lib.WrLog(string.Format(
+                                        " Task done in {0}ms.  Download changes total:{1}  Download changes applied:{2}  Download changes failed:{3}, UploadChangesTotal: {4}",
+                                        stats.SyncEndTime.Subtract(stats.SyncStartTime).Milliseconds,
+                                        stats.DownloadChangesTotal, stats.DownloadChangesApplied, stats.DownloadChangesFailed,
+                                        stats.UploadChangesTotal)); */   
+                                }
 
                                 if (!SerSettings.run) return false;
                             }
@@ -54,11 +60,6 @@ namespace VwService
                 }
 
                 retVal = count > 0;
-            }
-
-            if(retVal)
-            {
-                SerSettings.dirLocal = path;
             }
 
             SerSettings.run = false;

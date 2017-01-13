@@ -8,5 +8,7 @@
         public static double interval = 1000;// milisecunde de asteptat pana la urmatoare rulare
 
         public static bool run;
+
+        public const bool debug = true;
     }
 }

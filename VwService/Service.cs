@@ -6,12 +6,12 @@ using VwSyncSever;
 
 namespace VwService
 {
-    class Service : ServiceBase
+    public class Service : ServiceBase
     {
 
-        private Timer tim;
+        private Timer tim;        
 
-        const bool debug = true;
+        public static string cv;
 
         /// <summary>
         /// Public Constructor for WindowsService.
@@ -31,8 +31,8 @@ namespace VwService
             CanShutdown = true;
             CanStop = true;
 
-            //if (!EventLog.SourceExists("My Windows Service"))
-            //    EventLog.CreateEventSource("My Windows Service", "Application");
+            //if (!EventLog.SourceExists("Un text pe aici"))
+            //    EventLog.CreateEventSource("Un text pe aici", "Application");
         }
 
         /// <summary>
@@ -59,7 +59,12 @@ namespace VwService
         /// <param name="args"></param>
         protected override void OnStart(string[] args)
         {
-            SerSettings.dirLocal = @"c:\_sync\";
+            if (SerSettings.run) return;
+
+            if (SerSettings.debug) Lib.WrLog("_Synchronization service start. Local dir: " + SerSettings.dirLocal);
+
+            SerSettings.dirLocal = RegistryLocal.GetLocalPath();
+
             base.OnStart(args);
 
             FileStructClass.RunSync();
@@ -67,10 +72,7 @@ namespace VwService
             tim = new Timer();
             tim.Interval = SerSettings.interval;
             tim.Elapsed += Tim_Elapsed;
-            tim.Start();
-
-            if(debug) Lib.WrLog("---Start at : "+ SerSettings.dirLocal);
-
+            tim.Start();           
         }
 
         /// <summary>
@@ -82,12 +84,14 @@ namespace VwService
             base.OnStop();
 
             tim.Enabled = false;
-            if (debug) Lib.WrLog("---Stop");
+            if (SerSettings.debug) Lib.WrLog("_Synchronization stop");
         }
 
         private void Tim_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (debug) Lib.WrLog(" timer_elapsed ");
+            if (SerSettings.run) return;
+
+            //if (SerSettings.debug) Lib.WrLog(" timer_elapsed ");
 
             FileStructClass.RunSync();
         }
