@@ -1,7 +1,10 @@
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.ServiceProcess;
 using System.Timers;
+using Microsoft.Synchronization;
 using VwSyncSever;
 
 namespace VwService
@@ -9,9 +12,10 @@ namespace VwService
     public class Service : ServiceBase
     {
 
-        private Timer tim;        
+        private Timer tim;
 
-        public static string cv;
+        public static double ultimulTimpTotalDeExecutie; // in milisecunde
+
 
         /// <summary>
         /// Public Constructor for WindowsService.
@@ -67,10 +71,10 @@ namespace VwService
 
             base.OnStart(args);
 
-            FileStructClass.RunSync();
+            //RunSync();
 
             tim = new Timer();
-            tim.Interval = SerSettings.interval;
+            tim.Interval = 1000;
             tim.Elapsed += Tim_Elapsed;
             tim.Start();           
         }
@@ -93,7 +97,11 @@ namespace VwService
 
             //if (SerSettings.debug) Lib.WrLog(" timer_elapsed ");
 
-            FileStructClass.RunSync();
+            RunSync();
+
+            tim.Interval = ultimulTimpTotalDeExecutie * 3;
+            if (tim.Interval < 1000) tim.Interval = 1000;
+            if (tim.Interval > uint.MaxValue) tim.Interval = uint.MaxValue;
         }
 
         /// <summary>
@@ -161,5 +169,81 @@ namespace VwService
         {
             base.OnSessionChange(changeDescription);
         }
+
+
+
+
+        public bool RunSync()
+        {
+            SerSettings.run = true;
+
+            bool retVal = false;
+
+            retVal = (SerSettings.dirLocal != null &&
+                Directory.Exists(SerSettings.dirLocal));
+
+            if (retVal)
+            {
+                string rs;
+                int startIdx, count = 0, execTime;
+
+                Orchestrator o;
+                SyncOperationStatistics stats;
+
+                ultimulTimpTotalDeExecutie = 0;
+
+                foreach (string s in Directory.GetDirectories(SerSettings.dirLocal))
+                {
+                    startIdx = s.LastIndexOf('\\') + 1;
+                    if (startIdx > 0)
+                    {
+                        rs = s.Substring(startIdx, s.Length - startIdx);
+
+                        if (rs.Contains(Settings.chSlash))
+                        {
+                            rs = rs.Replace(Settings.chSlash, '\\');
+                            if (rs[0] != '\\') rs = rs.Insert(1, ":"); // director local
+                            if (Directory.Exists(rs) && Utils.DirectoryExists(rs))
+                            {
+                                ++count;
+
+                                o = new Orchestrator(new Settings(SerSettings.dirLocal, rs));
+
+                                stats = o.Sync(SerSettings.dirLocal, rs);
+
+                                execTime = stats.SyncEndTime.Subtract(stats.SyncStartTime).Milliseconds;
+
+                                ultimulTimpTotalDeExecutie += execTime;
+
+                                if (SerSettings.debug)
+                                {
+                                    Lib.WrLog(string.Format(" Sync done at {0} in {1}ms", rs, execTime));
+                                    /*
+                                    Lib.WrLog(string.Format(
+                                        " Task done in {0}ms.  Download changes total:{1}  Download changes applied:{2}  Download changes failed:{3}, UploadChangesTotal: {4}",
+                                        stats.SyncEndTime.Subtract(stats.SyncStartTime).Milliseconds,
+                                        stats.DownloadChangesTotal, stats.DownloadChangesApplied, stats.DownloadChangesFailed,
+                                        stats.UploadChangesTotal)); */
+                                }
+
+                                if (!SerSettings.run) return false;
+                            }
+                        }
+                    }
+                }
+
+                retVal = count > 0;
+            }
+
+            SerSettings.run = false;
+            return retVal;
+        }
+
+
+
+
+
+
+
     }
 }

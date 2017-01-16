@@ -3,9 +3,7 @@
     public static class SerSettings
     {
         // = @"c:\___\";
-        public static string dirLocal; // citit din registru 
-
-        public static double interval = 1000;// milisecunde de asteptat pana la urmatoare rulare
+        public static string dirLocal; // 
 
         public static bool run;
 

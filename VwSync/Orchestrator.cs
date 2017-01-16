@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Windows;
+using System.Linq;
 using Microsoft.Synchronization;
 using Microsoft.Synchronization.Files;
 
@@ -26,8 +26,9 @@ namespace VwSyncSever
 
             bool retVal = false;
 
+            set.ErrCount = 0;
 
-            if (!set.directoryStructureIsOk) return retVal;
+            if (!set.directoryStructureIsOk || !set.remotePathIsOk) return retVal;
 
             try
             {
@@ -63,18 +64,16 @@ namespace VwSyncSever
                 //orchestrator.SessionProgress += Orchestrator_SessionProgress;
                 retVal = true;
             }
-            catch (Exception ex)
+            catch //(Exception ex)
             {
-                MessageBox.Show("Sync fail: " + ex.ToString());
+                //("Sync fail: " + ex.ToString());
 
                 CleanUp();
 
                 retVal = false;
             }
-            finally
-            {
+            //finally
 
-            }
 
             return retVal;
         }
@@ -92,6 +91,9 @@ namespace VwSyncSever
 
         public SyncOperationStatistics Sync(string lStr, string rStr)
         {
+
+            //if (set.ErrCount > Settings.ErrCountMax) return null;
+
             // 1. dir struct
             set.dirLocalSync = set.dirLocal + set.GetDirLocalSync(rStr);
             set.RefreshPaths(lStr, rStr);
@@ -100,7 +102,7 @@ namespace VwSyncSever
             if (reg == null)
             {
                 reg = new RegistryLocal();
-                reg.UpdateBase(set.IPServer, set.dirLocal);
+                reg.UpdateBase(null, set.dirLocal);
             }            
 
             // 3. WCF Sync
@@ -113,6 +115,8 @@ namespace VwSyncSever
             set.directoryStructureIsOk =
                 set.PrepareDirectories(set.dirLocal, set.dirRemote);
 
+            set.remotePathIsOk = !set.dirRemote.Contains(Settings.chSlash);
+
             if (InitSync(set.optWay, set.optFilter, set.optFileSync))
             {
                 return Sync();
@@ -123,15 +127,20 @@ namespace VwSyncSever
 
         private SyncOperationStatistics Sync()
         {
-            if (!set.directoryStructureIsOk) return null;
+            if (!set.directoryStructureIsOk || !set.remotePathIsOk) return null;
 
             SyncOperationStatistics retVal = null;
 
             if (orchestrator != null)
             {
-                //try                {
-                retVal = orchestrator.Synchronize();
-                //}                catch                {                }
+                try
+                {
+                    retVal = orchestrator.Synchronize();
+                }
+                catch
+                {
+                    if (set.ErrCount < Settings.ErrCountMax) ++set.ErrCount;
+                }
             }
             else
             {

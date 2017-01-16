@@ -21,7 +21,7 @@ namespace VwSyncSever
         {
             InitializeComponent();
 
-            o = new Orchestrator(new Settings(@"c:\_sync\", @"c:\__###\SDL1\"));
+            o = new Orchestrator(new Settings(@"c:\_sync\", @"\\10.10.10.47\video\gi test"));
 
             UpdateSyncPathGui(o.set);
 
@@ -88,31 +88,41 @@ namespace VwSyncSever
 
         private void btnService_Click(object sender, RoutedEventArgs e)
         {
-            if (!Services.IsInstalled(Settings.serName))
+            string path = textBox2.Text;
+            bool btnCall = !(sender == null && e == null);
+
+            if (!Directory.Exists(path) || !Utils.DirectoryExists(path))
             {
-                string path = textBox2.Text;
-                if (Directory.Exists(path) && Utils.DirectoryExists(path))
+                if (btnCall) infoLbl.Content = "Cannot start service with the current local path";
+                return;
+            }
+
+            if (btnCall)
+            {
+                if (!Verify.LocalDirCheck(path))
                 {
-                    RegistryLocal.Update(null, path);
-
-                    bool started = Services.InstallAndStart(
-                                        Settings.serName, Settings.serName, Settings.serExecutabil);
-
-                    Services.SetDescriereServiciu(Settings.serName, Settings.serDesc);
-
-                    infoLbl.Content = "Service " + (started ? "" : "was not") + "started";
-
-                    if (started)
-                    {
-                        //Services.Start(Settings.serName, 0);
-                        //Utils.ExecuteCommand("net start" + Settings.serName);
-                        SetServiceGui(true);
-                    }
+                    infoLbl.Content = "Synchronize at least one path. Void service not started.";
+                    return;
                 }
-                else
-                {
-                    infoLbl.Content = "Cannot start service with the current local path";
-                }
+            }
+
+            if (!Exec.SerIsOn())
+            {
+
+                RegistryLocal.Update(null, path);
+
+                bool started = Services.InstallAndStart(
+                                    Settings.serName, Settings.serName, Settings.serExecutabil);
+
+                Services.SetDescriereServiciu(Settings.serName, Settings.serDesc);
+
+                if (btnCall) infoLbl.Content = "Service " + (started ? "" : "was not") + "started";
+
+
+                    Exec.SerStart();
+                    SetServiceGui(true);
+                
+
 
             }
             else
@@ -141,9 +151,10 @@ namespace VwSyncSever
 
             //return;
 
+            bool serviceWasRunning = Exec.SerIsOn();
             //Exec.SerStop();
             VwService.SerSettings.run = false;
-            Exec.SerDelete();
+            Exec.SerDelete(serviceWasRunning);
             SetServiceGui(false);
 
             /*
@@ -157,13 +168,22 @@ namespace VwSyncSever
                 Exec.SerDelete();
             }*/
 
+            if (Exec.SerIsOn()) System.Threading.Thread.Sleep(2000);
+
             SyncOperationStatistics stats =
             o.Sync(textBox2.Text, atextBox2.Text);
 
             if (stats == null)
             {
+                infoLbl.Content = "Failed sync. ";
+
+                if (o.set.directoryStructureIsOk && !o.set.remotePathIsOk)
+                {
+                    infoLbl.Content += string.Format("Remote path should not contain the '{0}' character", Settings.chSlash);
+                }
+
                 if (!o.set.directoryStructureIsOk)
-                    infoLbl.Content = "Failed sync. " +
+                    infoLbl.Content +=
                         (Utils.DirectoryExists(o.set.dirRemote) ? "Directory exists, but without rights." : "Directory does not exist.");
             }
             else
@@ -182,6 +202,7 @@ namespace VwSyncSever
                 //    Settings.dirLocalSync.Substring(
                 //        Settings.dirLocalSync.LastIndexOf('\\')));
 
+                if (serviceWasRunning && !Exec.SerIsOn()) btnService_Click(null, null);
             }
 
         }

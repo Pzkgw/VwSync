@@ -48,7 +48,11 @@ namespace VwSyncSever
 
         public static char chSlash = '$'; // caracterul ce inlocuieste slash
 
-        public bool directoryStructureIsOk;
+        public bool directoryStructureIsOk, remotePathIsOk;
+
+        // de cate ori am avut fail de syncronizare
+        internal int ErrCount;
+        internal static readonly int ErrCountMax = 512;
 
         public Settings(string localDir, string remoteDir)
         {

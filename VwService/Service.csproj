@@ -75,13 +75,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileStructClass.cs" />
     <Compile Include="Lib.cs" />
     <Compile Include="SerSettings.cs" />
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ServiceInstaller.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
