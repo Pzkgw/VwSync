@@ -1,15 +1,20 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.ServiceProcess;
+using System.Text;
+using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Synchronization;
 using VwSyncSever;
 
-namespace VwService
+namespace VwSer
 {
-    public class Service : ServiceBase
+    public partial class VwService : ServiceBase
     {
 
         private Timer tim;
@@ -21,8 +26,9 @@ namespace VwService
         /// Public Constructor for WindowsService.
         /// - Put all of your Initialization code here.
         /// </summary>
-        public Service()
+        public VwService()
         {
+            InitializeComponent();
             ServiceName = Settings.serName;
 
             //this.EventLog.Source = "Un Serviciu";
@@ -40,22 +46,6 @@ namespace VwService
             //    EventLog.CreateEventSource("Un text pe aici", "Application");
         }
 
-        /// <summary>
-        /// The Main Thread: This is where your Service is Run.
-        /// </summary>
-        static void Main()
-        {
-            ServiceBase.Run(new Service());
-        }
-
-        /// <summary>
-        /// Dispose of objects that need it here.
-        /// </summary>
-        /// <param name="disposing">Whether or not disposing is going on.</param>
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-        }
 
         /// <summary>
         /// OnStart: Put startup code here
@@ -207,8 +197,8 @@ namespace VwService
                             if (rs[0] != '\\') rs = rs.Insert(1, ":"); // director local
                             //Lib.WrLog(string.Format(":: {1} {2} {0} ", rs, Directory.Exists(rs), Utils.DirectoryExists(rs)));
                             bool res =
-                                //(Directory.Exists(rs) && Utils.DirectoryExists(rs));
-                                VwSync.Imperson.DoWorkUnderImpersonation(rs);
+                                (Directory.Exists(rs) && Utils.DirectoryExists(rs));
+                                //VwSync.Imperson.DoWorkUnderImpersonation(rs);
                             Lib.WrLog(string.Format("{0} {1} :: ===>{2}", res, rs, VwSync.Imperson.mesaj));
 
                             if (res)//(rs[0] == '\\') || 
@@ -228,7 +218,7 @@ namespace VwService
 
                                 if (SerSettings.debug)
                                 {
-                                    Lib.WrLog(string.Format(" Sync done at {0} in {1}ms", rs, execTime));
+                                    Lib.WrLog(string.Format("Done at {0} in {1}ms", rs, execTime));
                                     /*
                                     Lib.WrLog(string.Format(
                                         " Task done in {0}ms.  Download changes total:{1}  Download changes applied:{2}  Download changes failed:{3}, UploadChangesTotal: {4}",

@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace VwService
+namespace VwSer
 {
     public static class Lib
     {
@@ -25,7 +29,7 @@ namespace VwService
             {
                 string logPathNew = SerSettings.dirLocal + "\\Log.txt";
 
-                
+
                 ++logCheckDelay;
 
                 if (logCheckDelay > 32)

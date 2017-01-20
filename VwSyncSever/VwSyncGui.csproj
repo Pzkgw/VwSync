@@ -45,6 +45,7 @@
     <Reference Include="Microsoft.Synchronization.Files, Version=2.1.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Synchronization.MetadataStorage, Version=2.1.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
@@ -110,6 +111,10 @@
     <ProjectReference Include="..\VwService\Service.csproj">
       <Project>{2fa3ee86-6125-4c79-b122-35dfd0083eba}</Project>
       <Name>Service</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VwSer\VwSer.csproj">
+      <Project>{68a57b50-17bc-4d6c-a985-52b970a1ac4f}</Project>
+      <Name>VwSer</Name>
     </ProjectReference>
     <ProjectReference Include="..\VwSync\VwSync.csproj">
       <Project>{9697fc96-54bf-4bff-b929-65849968800e}</Project>

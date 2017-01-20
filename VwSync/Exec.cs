@@ -10,7 +10,7 @@ namespace VwSyncSever
         public static void SerStart()
         {            
             Services.Start(Settings.serName, 100);
-            Utils.ExecuteCommand("net start" + Settings.serName);
+            //Utils.ExecuteCommand("net start" + Settings.serName);
         }
         public static void SerStop()
         {

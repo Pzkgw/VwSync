@@ -274,9 +274,9 @@ namespace VwSyncSever
                 service.WaitForStatus(ServiceControllerStatus.Running, 
                     TimeSpan.FromMilliseconds(timeoutMilliseconds));
             }
-            catch
+            catch(Exception ex)
             {
-                // ...
+                throw ex;
             }
         }
 
@@ -336,9 +336,13 @@ namespace VwSyncSever
         #endregion
 
         #region "ServiceCalls API"
-        private const int STANDARD_RIGHTS_REQUIRED = 0xF0000;
-        private const int SERVICE_WIN32_OWN_PROCESS = 0x00000010;
-        private const int SERVICE_CONFIG_DESCRIPTION = 0x01;
+        private const int
+            STANDARD_RIGHTS_REQUIRED = 0xF0000,
+            SERVICE_WIN32_OWN_PROCESS = 0x00000010,
+            SERVICE_CONFIG_DESCRIPTION = 0x01,
+            SERVICE_WIN32_SHARE_PROCESS = 0x00000020,
+            SERVICE_USER_OWN_PROCESS = 0x00000050,
+            SERVICE_INTERACTIVE_PROCESS = 0x00000100;
 
         [Flags]
         public enum ServiceManagerRights
@@ -553,22 +557,22 @@ namespace VwSyncSever
         /// <param name="ServiceName">The service name that this service will have</param>
         /// <param name="DisplayName">The display name that this service will have</param>
         /// <param name="FileName">The path to the executable of the service</param>
-        public static bool InstallAndStart(string ServiceName, string DisplayName,
+        public static bool Install(string ServiceName, string DisplayName,
         string FileName)
         {
             bool retVal = false;
-            IntPtr scman = OpenSCManager(ServiceManagerRights.Connect |
-            ServiceManagerRights.CreateService);
+            IntPtr scman = OpenSCManager(ServiceManagerRights.AllAccess);
+            // ServiceManagerRights.Connect |  ServiceManagerRights.CreateService
             try
             {
                 IntPtr service = OpenService(scman, ServiceName,
-                ServiceRights.QueryStatus | ServiceRights.Start);
+                ServiceRights.AllAccess);
                 if (service == IntPtr.Zero)
                 {
                     service = CreateService(scman, ServiceName, DisplayName,
-                    ServiceRights.QueryStatus | ServiceRights.Start, SERVICE_WIN32_OWN_PROCESS,
-                    ServiceBootFlag.AutoStart, ServiceError.Normal, FileName, null, IntPtr.Zero,
-                    null, null, null);                    
+                    ServiceRights.AllAccess, SERVICE_WIN32_OWN_PROCESS | SERVICE_INTERACTIVE_PROCESS,
+                    ServiceBootFlag.DemandStart, ServiceError.Critical, FileName, null, IntPtr.Zero,
+                    null, null, null);              //"GI", "1qaz@WSX"    // "GI\\bogdan.visoiu", "rets"  
                 }
                 if (service == IntPtr.Zero)
                 {
@@ -576,7 +580,7 @@ namespace VwSyncSever
                 }
                 try
                 {
-                    StartService(service);
+                    //StartService(service);
                     retVal = true;
                 }
                 finally

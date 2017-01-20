@@ -56,21 +56,23 @@ namespace VwSyncSever
                 localPro.DetectChanges();
                 remotePro.DetectChanges();
 
-                // Init Sync
-                orchestrator = new SyncOrchestrator();
+                 // Init Sync
+                 orchestrator = new SyncOrchestrator();
                 orchestrator.LocalProvider = localPro;
                 orchestrator.RemoteProvider = remotePro;
                 orchestrator.Direction = way;
                 //orchestrator.SessionProgress += Orchestrator_SessionProgress;
                 retVal = true;
             }
-            catch //(Exception ex)
+            catch (Exception ex)
             {
                 //("Sync fail: " + ex.ToString());
 
                 CleanUp();
 
                 retVal = false;
+
+                throw ex;
             }
             //finally
 
@@ -137,9 +139,10 @@ namespace VwSyncSever
                 {
                     retVal = orchestrator.Synchronize();
                 }
-                catch
+                catch(Exception ex)
                 {
                     if (set.ErrCount < Settings.ErrCountMax) ++set.ErrCount;
+                    throw ex;
                 }
             }
             else

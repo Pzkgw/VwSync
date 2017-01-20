@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +7,8 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Synchronization;
 using Microsoft.Synchronization.Files;
+using VwSer;
+using WindowsService;
 
 namespace VwSyncSever
 {
@@ -111,10 +114,22 @@ namespace VwSyncSever
 
                 RegistryLocal.Update(null, path);
 
-                bool started = Services.InstallAndStart(
+
+
+                bool started = true;
+
+                //VwSer.ProjectInstaller l = new VwSer.ProjectInstaller();
+                //l.Install();
+                Utils.ExecuteCommand(
+                    System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()+
+                    "\\InstallUtil.exe /i /unattended /user=GI\bogdan.visoiu /password=Parola32167 "+
+                    Settings.serExe);
+
+                /*
+                started = Services.Install(
                                     Settings.serName, Settings.serName, Settings.serExecutabil);
 
-                Services.SetDescriereServiciu(Settings.serName, Settings.serDesc);
+                Services.SetDescriereServiciu(Settings.serName, Settings.serDesc);*/
 
                 if (btnCall) infoLbl.Content = "Service " + (started ? "" : "was not") + "started";
 
@@ -153,7 +168,7 @@ namespace VwSyncSever
 
             bool serviceWasRunning = Exec.SerIsOn();
             //Exec.SerStop();
-            VwService.SerSettings.run = false;
+            SerSettings.run = false;
             Exec.SerDelete(serviceWasRunning);
             SetServiceGui(false);
 
@@ -210,7 +225,7 @@ namespace VwSyncSever
         private void btnSerDel_Click(object sender, RoutedEventArgs e)
         {
             infoLbl.Content = string.Empty;
-            VwService.SerSettings.run = false;
+            SerSettings.run = false;
             Exec.SerDelete();
 
             SetServiceGui(false);
