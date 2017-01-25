@@ -246,7 +246,7 @@ namespace VwSyncSever
         {
             if (ExpandVariables)
             {
-                return System.Environment.GetEnvironmentVariable(name);
+                return Environment.GetEnvironmentVariable(name);
             }
             else
             {
@@ -256,7 +256,7 @@ namespace VwSyncSever
 
         public static void SetEnvironment(string name, string value)
         {
-            System.Environment.SetEnvironmentVariable(name, value);
+            Environment.SetEnvironmentVariable(name, value);
         }
         #endregion
 

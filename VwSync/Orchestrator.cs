@@ -14,6 +14,8 @@ namespace VwSyncSever
 
         public RegistryLocal reg;
         public Settings set;
+
+        Guid sourceId, destId;
         public Orchestrator(Settings settings)
         {
             set = settings;
@@ -34,12 +36,20 @@ namespace VwSyncSever
             {
                 set.SetupDirectoryStruct();
 
-                // file sync providers
-                localPro = new FileSyncProvider(set.dirLocalSync, scopeFilter, fileSyncOptions,
+
+
+                //Generate a unique Id for the source and store it in file or database for refer it further
+                sourceId = NewSyncGuid();
+                //Generate a unique Id for the destination and store it in a file or database for refer it further
+                destId = NewSyncGuid();
+                //ReplicaId se genereaza in constructor
+
+              // file sync providers
+              localPro = new FileSyncProvider(sourceId, set.dirLocalSync, scopeFilter, fileSyncOptions,
                     set.metadataDirectoryPath, Settings.metaLocalFile,
                     set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
 
-                remotePro = new FileSyncProvider(set.dirRemote, scopeFilter, fileSyncOptions,
+                remotePro = new FileSyncProvider(destId, set.dirRemote, scopeFilter, fileSyncOptions,
                     set.metadataDirectoryPath, Settings.metaRemoteFile,
                     set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
 
@@ -52,12 +62,21 @@ namespace VwSyncSever
                 remotePro.ApplyingChange += ProviderEvent_ApplyingChange;
                 localPro.ApplyingChange += ProviderEvent_ApplyingChange;
 
+                
+
                 // Ask providers to detect changes
+                //FileSyncProvider.DetectChanges( ) is called either implicitly 
+                //by the SyncOrchestrator.Synchronize( ) method,
+                //or explicitly if the FileSyncProvider options specifies
+                //that DetectChanges is to be called explicitly
                 localPro.DetectChanges();
                 remotePro.DetectChanges();
 
-                 // Init Sync
-                 orchestrator = new SyncOrchestrator();
+                sourceId = localPro.ReplicaId;
+                destId = remotePro.ReplicaId;
+
+                // Init Sync
+                orchestrator = new SyncOrchestrator();
                 orchestrator.LocalProvider = localPro;
                 orchestrator.RemoteProvider = remotePro;
                 orchestrator.Direction = way;
@@ -78,6 +97,24 @@ namespace VwSyncSever
 
 
             return retVal;
+        }
+
+        private Guid NewSyncGuid()
+        {
+            //return new SyncId(Guid.NewGuid());
+            return Guid.NewGuid();
+        }
+
+        public Guid GetIdLocal()
+        {
+            return sourceId;
+           // return localPro.ReplicaId;
+        }
+
+        public Guid GetIdRemote()
+        {
+            return destId;
+            //return remotePro.ReplicaId;
         }
 
         private void ProviderEvent_ApplyingChange(object sender, ApplyingChangeEventArgs e)

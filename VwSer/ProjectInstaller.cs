@@ -19,7 +19,37 @@ namespace VwSer
         {
             InitializeComponent();
             //this.vwSerProcessInstaller.Username = "GI\\bogdan.visoiu";
-            //this.vwSerProcessInstaller.Password = "Parola32167";
+            //this.vwSerProcessInstaller.Password = "ytr";
+        }
+
+
+        public string GetContextParameter(string key)
+        {
+            string sValue = "";
+            try
+            {
+                sValue = this.Context.Parameters[key].ToString();
+            }
+            catch
+            {
+                sValue = "";
+            }
+            return sValue;
+        }
+
+
+        // Override the 'OnBeforeInstall' method.
+        protected override void OnBeforeInstall(IDictionary savedState)
+        {
+            string username = GetContextParameter("user").Trim();
+            string password = GetContextParameter("password").Trim();
+
+            if (username != "")
+                vwSerProcessInstaller.Username = username;
+            if (password != "")
+                vwSerProcessInstaller.Password = password;
+
+            base.OnBeforeInstall(savedState);
         }
 
 

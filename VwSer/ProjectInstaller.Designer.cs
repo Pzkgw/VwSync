@@ -33,9 +33,7 @@
             // 
             // vwSerProcessInstaller
             // 
-            this.vwSerProcessInstaller.Account = System.ServiceProcess.ServiceAccount.User;
-            this.vwSerProcessInstaller.Username = "GI\\bogdan.visoiu";
-            this.vwSerProcessInstaller.Password = "Parola32167";
+            this.vwSerProcessInstaller.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
             // 
             // vsSerInstaller
             // 

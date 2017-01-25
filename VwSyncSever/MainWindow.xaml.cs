@@ -118,12 +118,24 @@ namespace VwSyncSever
 
                 bool started = true;
 
+                //  The switches (username, password, etc) must
+                //be placed before the name of the service to be installed, 
+                //otherwise the switches will not be used.I made this mistake
+                //so I initially thought that these switches were not working :)
+
+                //Use the /? or / help switch to learn more about the other options
+                //that can be used in installing the service
+
+                // InstallUtil.exe /? Service.exe
+
+                // /unattended : will not prompt for username and password
+
                 //VwSer.ProjectInstaller l = new VwSer.ProjectInstaller();
                 //l.Install();
                 Utils.ExecuteCommand(
                     System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()+
-                    "\\InstallUtil.exe /i /unattended /user=GI\bogdan.visoiu /password=Parola32167 "+
-                    Settings.serExe);
+                    "\\InstallUtil.exe /i /unattended " +
+                    Settings.serExe); //  /user=GI\bogdan.visoiu /password=
 
                 /*
                 started = Services.Install(

@@ -199,13 +199,18 @@ namespace VwSer
                             bool res =
                                 (Directory.Exists(rs) && Utils.DirectoryExists(rs));
                                 //VwSync.Imperson.DoWorkUnderImpersonation(rs);
-                            Lib.WrLog(string.Format("{0} {1} :: ===>{2}", res, rs, VwSync.Imperson.mesaj));
 
-                            if (res)//(rs[0] == '\\') || 
+
+                            if (res)//res)//(rs[0] == '\\') || 
                             {
                                 ++count;
                                 //Lib.WrLog("CHK2" + rs);
                                 o = new Orchestrator(new Settings(SerSettings.dirLocal, rs));
+                                string
+                                    s1 = (o.GetIdLocal() == null) ? "null" : o.GetIdLocal().ToString(),
+                                    s2 = (o.GetIdRemote() == null) ? "null" : o.GetIdRemote().ToString();
+                                Lib.WrLog(string.Format("{0} {1} :: ===>{2} {3} {4}",
+                                        res, rs, VwSync.Imperson.mesaj, s1, s2));
 
                                 stats = o.Sync(SerSettings.dirLocal, rs);
 

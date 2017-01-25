@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace VwSer
 {
@@ -11,42 +8,52 @@ namespace VwSer
     {
 
         // ----------------- LOGGER
-        private static int logCheckDelay = 0;
-        private const int maxLogCheckDelay = 4000000; // 4 MB
+        //private static int logCheckDelay = 0;
+        //private const int maxLogCheckDelay = 4000000; // 4 MB
+
         public static void WrLog(Exception ex)
         {
-            WrLog(DateTime.Now.ToString() + " : " + ex.Source.ToString().Trim() + " : " +
+            Log(DateTime.Now.ToString() + " : " + ex.Source.ToString().Trim() + " : " +
                 ex.Message.ToString().Trim());
         }
 
 
         public static void WrLog(string s)
         {
+            Log(s);
+        }
 
-            StreamWriter sw = null;
-
-            try
+        private static void Log(string s)
+        {
+            (new Thread(() =>
             {
-                string logPathNew = SerSettings.dirLocal + "\\Log.txt";
+                StreamWriter sw = null;
 
-
-                ++logCheckDelay;
-
-                if (logCheckDelay > 32)
+                try
                 {
-                    if ((new FileInfo(logPathNew)).Length > maxLogCheckDelay) // clear file
-                    {
-                        File.WriteAllText(logPathNew, string.Empty);
-                    }
-                    logCheckDelay = 0;
-                }
+                    string logPathNew = SerSettings.dirLocal + "\\Log.txt";
 
-                sw = new StreamWriter(logPathNew, true);
-                sw.WriteLine(DateTime.Now.ToString() + " : " + s);
-                sw.Flush();
-                sw.Close();
-            }
-            catch { }
+
+                    //++logCheckDelay;
+
+                    //if (logCheckDelay > 32)
+                    //{
+                    //    if ((new FileInfo(logPathNew)).Length > maxLogCheckDelay) // clear file
+                    //    {
+                    //        File.WriteAllText(logPathNew, string.Empty);
+                    //    }
+                    //    logCheckDelay = 0;
+                    //}
+
+                    sw = new StreamWriter(logPathNew, true);
+                    sw.WriteLine(DateTime.Now.ToString() + " : " + s);
+                    sw.Flush();
+                    sw.Close();
+                }
+                catch { }
+
+            })).Start();
+
         }
 
     }
