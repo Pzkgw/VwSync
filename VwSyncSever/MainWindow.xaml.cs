@@ -112,7 +112,7 @@ namespace VwSyncSever
             if (!Exec.SerIsOn())
             {
 
-                RegistryLocal.Update(null, path);
+                RegistryLocal.Update(null, Settings.port, Guid.Empty, path);
 
 
 

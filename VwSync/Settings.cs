@@ -19,7 +19,8 @@ namespace VwSyncSever
             dirForConflictedFiles = "\\___conf___",
             metaLocalFile = "L_filesync.metadata",
             metaRemoteFile = "R_filesync.metadata",
-            registryPath = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI Sync",
+            regLocalPath = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI SyncHere",
+            regRemotePath = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI SyncThere",
             serName = "CAVISync",
             serDesc = "File syncronization service";
 
@@ -51,8 +52,8 @@ namespace VwSyncSever
         public bool directoryStructureIsOk, remotePathIsOk;
 
         // de cate ori am avut fail de syncronizare
-        internal int ErrCount;
-        internal static readonly int ErrCountMax = 512;
+        public int ErrCount;
+        public static readonly int ErrCountMax = 512, port = 3216;
 
         public Settings(string localDir, string remoteDir)
         {

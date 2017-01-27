@@ -13,7 +13,7 @@ namespace VwSyncSever
 
             object retVal = null;
 
-            keySv = Registry.LocalMachine.OpenSubKey(Settings.registryPath, false); // open to just read
+            keySv = Registry.LocalMachine.OpenSubKey(Settings.regLocalPath, false); // open to just read
             if (keySv == null)
             {
                 retVal = keySv.GetValue("Path");
@@ -28,20 +28,15 @@ namespace VwSyncSever
     {
         //const string strCDir = "\\Clienti";
 
-        public void UpdateBase(IPAddress ipLocal, string path)
-        {
-            Update(ipLocal, path);
-        }
-
-        public static void Update(IPAddress ipLocal, string path)
+        public static void Update(IPAddress ip, int port, Guid id, string path)
         {
             RegistryKey keySv = null;
 
-            keySv = Registry.LocalMachine.OpenSubKey(Settings.registryPath, true);
+            keySv = Registry.LocalMachine.OpenSubKey(Settings.regLocalPath, true);
 
             if (keySv == null) // HKEY_LOCAL_MACHINE\
             {
-                keySv = Registry.LocalMachine.CreateSubKey(Settings.registryPath,
+                keySv = Registry.LocalMachine.CreateSubKey(Settings.regLocalPath,
                     RegistryKeyPermissionCheck.ReadWriteSubTree);
 
                 //Microsoft.Win32.Registry.LocalMachine.CreateSubKey(Settings.registryPath + strCDir,
@@ -49,10 +44,12 @@ namespace VwSyncSever
             }
 
             //if (IPAddress.TryParse(ipLocal.ToString(), out ipLocalNonStr))
-            if (ipLocal != null)
-                keySv.SetValue("IPLocal", ipLocal);
-            //keySv.SetValue("portListener", "portListener");
-            keySv.SetValue("Path", path);
+
+            if (ip != null) keySv.SetValue("ip", ip);
+            if (port > 0) keySv.SetValue("port", port);
+            if (id != Guid.Empty) keySv.SetValue("ID", id);
+            if (path != null) keySv.SetValue("Path", path);
+
             keySv.Close();
         }
 
@@ -60,7 +57,7 @@ namespace VwSyncSever
         {
             RegistryKey keySv = null;
 
-            keySv = Registry.LocalMachine.OpenSubKey(Settings.registryPath, false);
+            keySv = Registry.LocalMachine.OpenSubKey(Settings.regLocalPath, false);
 
             if (keySv != null)
             {

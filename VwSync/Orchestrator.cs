@@ -61,7 +61,6 @@ namespace VwSyncSever
                 // Rename A file or folder will be renamed.
                 remotePro.ApplyingChange += ProviderEvent_ApplyingChange;
                 localPro.ApplyingChange += ProviderEvent_ApplyingChange;
-
                 
 
                 // Ask providers to detect changes
@@ -74,6 +73,13 @@ namespace VwSyncSever
 
                 sourceId = localPro.ReplicaId;
                 destId = remotePro.ReplicaId;
+
+                // 2. registry
+                if (reg == null)
+                {
+                    reg = new RegistryLocal();
+                    RegistryLocal.Update(null, Settings.port, sourceId, set.dirLocal);
+                }
 
                 // Init Sync
                 orchestrator = new SyncOrchestrator();
@@ -135,14 +141,7 @@ namespace VwSyncSever
 
             // 1. dir struct
             set.dirLocalSync = set.dirLocal + set.GetDirLocalSync(rStr);
-            set.RefreshPaths(lStr, rStr);
-
-            // 2. registry
-            if (reg == null)
-            {
-                reg = new RegistryLocal();
-                reg.UpdateBase(null, set.dirLocal);
-            }            
+            set.RefreshPaths(lStr, rStr);          
 
             // 3. WCF Sync
             set.optFilter = new FileSyncScopeFilter();
