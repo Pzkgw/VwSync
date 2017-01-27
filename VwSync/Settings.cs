@@ -24,7 +24,7 @@ namespace VwSyncSever
             serName = "CAVISync",
             serDesc = "File syncronization service";
 
-        public static string serExecutabil = "VwService.exe", serExe = "VwSer.exe"; //c:\_ToDo\Sync\trunk\VwSyncSever\bin\Release\
+        public static string serExe = "VwSer.exe"; //c:\_ToDo\Sync\trunk\VwSyncSever\bin\Release\
             
 
         public string

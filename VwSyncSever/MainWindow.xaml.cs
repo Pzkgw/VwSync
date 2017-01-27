@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Synchronization;
-using Microsoft.Synchronization.Files;
 using VwSer;
-using WindowsService;
 
 namespace VwSyncSever
 {
@@ -32,10 +29,10 @@ namespace VwSyncSever
             if (o.set.IPServer != null) lblIpServer.Content = o.set.IPServer.ToString();
 
             //MessageBox.Show(Application.ResourceAssembly.Location);
-            if (File.Exists(Settings.serExecutabil))
+            if (File.Exists(Settings.serExe))
             {
                 string s = Application.ResourceAssembly.Location;
-                Settings.serExecutabil = s.Substring(0, s.LastIndexOf('\\') + 1) + Settings.serExecutabil;
+                Settings.serExe = s.Substring(0, s.LastIndexOf('\\') + 1) + Settings.serExe;
                 //infoLbl.Content = Settings.serExecutabil;
 
                 SetServiceGui(Services.IsInstalled(Settings.serName)); // 
@@ -161,10 +158,7 @@ namespace VwSyncSever
 
 
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            o.CleanUp();
-        }
+
 
         private void btnSaveEditedText_Click(object sender, RoutedEventArgs e)
         {
@@ -246,6 +240,11 @@ namespace VwSyncSever
         private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             DragMove();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            o.CleanUp();
         }
     }
 }
