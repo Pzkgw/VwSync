@@ -52,8 +52,6 @@ namespace VwSer
         {
             if (SerSettings.run) return;
 
-            if (SerSettings.debug) Lib.WrLog("_Synchronization service start. Local dir: " + SerSettings.dirLocal);
-
             SerSettings.dirLocal = RegistryLocal.GetLocalPath();
 
             base.OnStart(args);
@@ -75,7 +73,7 @@ namespace VwSer
             base.OnStop();
 
             tim.Enabled = false;
-            if (SerSettings.debug) Lib.WrLog("_Synchronization stop");
+            Lib.WrLog("_Synchronization stop");
         }
 
         private void Tim_Elapsed(object sender, ElapsedEventArgs e)
@@ -165,7 +163,7 @@ namespace VwSer
         {
             SerSettings.run = true;
 
-            bool retVal = false;
+            bool retVal = false, mapNetwork;
 
             retVal = (SerSettings.dirLocal != null &&
                 Directory.Exists(SerSettings.dirLocal));
@@ -175,13 +173,11 @@ namespace VwSer
                 string rs;
                 int startIdx, count = 0, execTime;
 
-                Orchestrator o;
-                SyncOperationStatistics stats;
-
                 ultimulTimpTotalDeExecutie = 0;
 
                 foreach (string s in Directory.GetDirectories(SerSettings.dirLocal))
                 {
+                    mapNetwork = false;
                     startIdx = s.LastIndexOf('\\') + 1;
                     if (startIdx > 0)
                     {
@@ -191,46 +187,64 @@ namespace VwSer
                         {
                             rs = rs.Replace(Settings.chSlash, '\\');
 
-                            bool res;
+                            if (rs[0] != '\\') rs = rs.Insert(1, ":"); // director local             
 
-                            if (rs[0] != '\\')
+                            bool res = (Directory.Exists(rs) && Utils.DirectoryExists(rs));
+
+                            Lib.WrLog(string.Format(":--> {0} ", rs));
+
+                            // && (Char.IsNumber(rs[2]) || Char.IsNumber(rs[3]))
+                            if (rs.Contains('.')) //  ---> TRULLY REMOTE <--- 
                             {
-                                rs = rs.Insert(1, ":"); // director local
-                                res = (Directory.Exists(rs) && Utils.DirectoryExists(rs));
-                            }
-                            else
-                            { //  ---> TRULLY REMOTE <---
-
                                 //Checks if the last character is \ as this causes error on mapping a drive.
                                 if (rs.Substring(rs.Length - 1, 1) == @"\")
                                 {
                                     rs = rs.Substring(0, rs.Length - 1);
                                 }
 
-                                if (DriveSettings.IsDriveMapped(Settings.mapNetDrive + "\\"))
-                                {
-                                    //Utils.ExecuteCommand(string.Format("net use {0} /delete", Settings.mapNetDrive));
-                                }
-
                                 string
-                                    dev = "\"\\\\10.10.10.47\\video\\gi test\"",
                                     usr = "GI",
                                     pas = "1qaz@WSX";
 
-                                Utils.ExecuteCommand(string.Format("net use {0} {1} /user:{2} {3}", Settings.mapNetDrive, rs, usr, pas));
-                                //Utils.ExecuteCommand("net use W: \"\\\\10.10.10.47\\video\\gi test\" /user:GI 1qaz@WSX");
-                                //$$10.10.10.47$video$gi test
-                                //\\10.10.10.47\video\gi test
+
+                                if (DriveSettings.IsDriveMapped(Settings.mapNetDrives[0] + '\\'))
+                                {
+                                    //Utils.ExecuteCommand(string.Format("net use {0} /delete", Settings.mapNetDrive));
+                                    DriveSettings.DisconnectNetworkDrive(Settings.mapNetDrives[0], true);
+
+                                   // System.Threading.Thread.Sleep(100);
+                                }
+                                /*
+
+                                                                //DriveSettings.MapNetworkDrive(Settings.mapNetDrive, rs, usr, pas);
+                                                                Utils.ExecuteCommand(string.Format("net use {0} {1} /user:{2} {3} /persistent:no", Settings.mapNetDrive, rs, usr, pas));
+                                                                //Utils.ExecuteCommand("net use W: \"\\\\10.10.10.47\\video\\gi test\" /user:GI 1qaz@WSX");
+                                                                //$$10.10.10.47$video$gi test
+                                                                //\\10.10.10.47\video\gi test
 
 
-                                //DriveSettings.MapNetworkDrive("W", "\\\\10.10.10.47\\video\\gi test", "GI", "1qaz@WSX");
+                                                                //DriveSettings.MapNetworkDrive("W", "\\\\10.10.10.47\\video\\gi test", "GI", "1qaz@WSX");
+
+                                                                */
+                                string md = Settings.mapNetDrives[Settings.mapNetIdx];// + "\\" + s;
+                                //if (!Directory.Exists(md)) Directory.CreateDirectory(md);
+
+                                 NetworkDrive l = new NetworkDrive();
+                                if (l.MapNetworkDrive(rs, md, usr, pas) == 0)
+                                {
+                                    mapNetwork = true;
+                                }
+                                else
+                                {
+                                }
+
 
                                 res = true;
 
                                 //rs = "W:";
                             }
 
-                            Lib.WrLog(string.Format(":: {1} {2} {0} ", rs, Directory.Exists(rs), Utils.DirectoryExists(rs)));
+                            
 
                             //VwSync.Imperson.DoWorkUnderImpersonation(rs);
 
@@ -239,6 +253,10 @@ namespace VwSer
                             {
                                 ++count;
                                 //Lib.WrLog("CHK2" + rs);
+
+                                Orchestrator o;
+                                SyncOperationStatistics stats;
+
                                 o = new Orchestrator(new Settings(SerSettings.dirLocal, rs));
                                 //string
                                 //    s1 = (o.GetIdLocal() == null) ? "null" : o.GetIdLocal().ToString(),
@@ -255,16 +273,16 @@ namespace VwSer
 
                                 ultimulTimpTotalDeExecutie += execTime;
 
-                                if (SerSettings.debug)
-                                {
-                                    Lib.WrLog(string.Format("Done at {0} in {1}ms", rs, execTime));
-                                    /*
-                                    Lib.WrLog(string.Format(
-                                        " Task done in {0}ms.  Download changes total:{1}  Download changes applied:{2}  Download changes failed:{3}, UploadChangesTotal: {4}",
-                                        stats.SyncEndTime.Subtract(stats.SyncStartTime).Milliseconds,
-                                        stats.DownloadChangesTotal, stats.DownloadChangesApplied, stats.DownloadChangesFailed,
-                                        stats.UploadChangesTotal)); */
-                                }
+                                    Lib.WrLog(string.Format("  Done at {0} in {1}ms", rs, execTime));
+                                
+
+                                //Lib.WrLog("xxmapNetwork0" + mapNetwork.ToString());
+                                //if (mapNetwork)
+                                //{
+                                //    Lib.WrLog("xxmapNetwork1");
+                                //    Utils.ExecuteCommand(string.Format("net use {0} /delete", Settings.mapNetDrives[Settings.mapNetIdx]));
+                                //    //DriveSettings.DisconnectNetworkDrive(Settings.mapNetDrives[Settings.mapNetIdx], true);
+                                //}
 
                                 if (!SerSettings.run) return false;
                             }

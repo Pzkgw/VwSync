@@ -14,8 +14,6 @@ namespace VwSer
 
             public static bool run;
 
-            public const bool debug = true;
-
         }
     
 }

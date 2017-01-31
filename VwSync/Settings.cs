@@ -14,7 +14,6 @@ namespace VwSyncSever
         public IPAddress IPServer;
 
         public const string
-            mapNetDrive = "W:",
             dirForMetadata = "\\___meta___",
             dirForTemporaryFiles = "\\___temp___",
             dirForConflictedFiles = "\\___conf___",
@@ -23,6 +22,9 @@ namespace VwSyncSever
             regPathLoc = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI SyncLoc",
             regPathRem = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI SyncRem",
             serNameLoc = "CAVISync";
+
+        public static string[] mapNetDrives = { "W:", "K:", "Q:" };
+        public static int mapNetIdx = 0;
 
         public static string serExe = "VwSer.exe"; //c:\_ToDo\Sync\trunk\VwSyncSever\bin\Release\
             

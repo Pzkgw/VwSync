@@ -8,7 +8,7 @@ namespace VwSyncSever
     public class Orchestrator
     {
         SyncOrchestrator orchestrator;
-        FileSyncProvider 
+        FileSyncProvider
             localPro = null,
             remotePro = null;
 
@@ -44,13 +44,13 @@ namespace VwSyncSever
                 destId = NewSyncGuid();
                 //ReplicaId se genereaza in constructor
 
-              // file sync providers
-              localPro = new FileSyncProvider(sourceId, set.dirLocalSync,
-                  scopeFilter, fileSyncOptions,
-                    set.metadataDirectoryPath, Settings.metaFileLoc,
-                    set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
+                // file sync providers
+                localPro = new FileSyncProvider(sourceId, set.dirLocalSync,
+                    scopeFilter, fileSyncOptions,
+                      set.metadataDirectoryPath, Settings.metaFileLoc,
+                      set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
 
-                remotePro = new FileSyncProvider(destId, (set.dirRemote[0]=='\\')?"W:\\":set.dirRemote,
+                remotePro = new FileSyncProvider(destId, (set.dirRemote.Contains('.')) ? Settings.mapNetDrives[Settings.mapNetIdx] : set.dirRemote,
                     scopeFilter, fileSyncOptions,
                     set.metadataDirectoryPath, Settings.metaFileRem,
                     set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
@@ -63,7 +63,7 @@ namespace VwSyncSever
                 // Rename A file or folder will be renamed.
                 remotePro.ApplyingChange += ProviderEvent_ApplyingChange;
                 localPro.ApplyingChange += ProviderEvent_ApplyingChange;
-                
+
 
                 // Ask providers to detect changes
                 //FileSyncProvider.DetectChanges( ) is called either implicitly 
@@ -116,7 +116,7 @@ namespace VwSyncSever
         public Guid GetIdLocal()
         {
             return sourceId;
-           // return localPro.ReplicaId;
+            // return localPro.ReplicaId;
         }
 
         public Guid GetIdRemote()
@@ -143,7 +143,7 @@ namespace VwSyncSever
 
             // 1. dir struct
             set.dirLocalSync = set.dirLocal + set.GetDirLocalSync(rStr);
-            set.RefreshPaths(lStr, rStr);          
+            set.RefreshPaths(lStr, rStr);
 
             // 3. WCF Sync
             set.optFilter = new FileSyncScopeFilter();
@@ -177,7 +177,7 @@ namespace VwSyncSever
                 {
                     retVal = orchestrator.Synchronize();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     if (set.ErrCount < Settings.ErrCountMax) ++set.ErrCount;
                     throw ex;
