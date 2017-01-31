@@ -13,7 +13,7 @@ namespace VwSyncSever
 
             object retVal = null;
 
-            keySv = Registry.LocalMachine.OpenSubKey(Settings.regLocalPath, false); // open to just read
+            keySv = Registry.LocalMachine.OpenSubKey(Settings.regPathLoc, false); // open to just read
             if (keySv == null)
             {
                 retVal = keySv.GetValue("Path");
@@ -28,15 +28,15 @@ namespace VwSyncSever
     {
         //const string strCDir = "\\Clienti";
 
-        public static void Update(IPAddress ip, int port, Guid id, string path)
+        public static void Update(IPAddress ip, int port, Guid guid, string path)
         {
             RegistryKey keySv = null;
 
-            keySv = Registry.LocalMachine.OpenSubKey(Settings.regLocalPath, true);
+            keySv = Registry.LocalMachine.OpenSubKey(Settings.regPathLoc, true);
 
             if (keySv == null) // HKEY_LOCAL_MACHINE\
             {
-                keySv = Registry.LocalMachine.CreateSubKey(Settings.regLocalPath,
+                keySv = Registry.LocalMachine.CreateSubKey(Settings.regPathLoc,
                     RegistryKeyPermissionCheck.ReadWriteSubTree);
 
                 //Microsoft.Win32.Registry.LocalMachine.CreateSubKey(Settings.registryPath + strCDir,
@@ -45,9 +45,9 @@ namespace VwSyncSever
 
             //if (IPAddress.TryParse(ipLocal.ToString(), out ipLocalNonStr))
 
-            if (ip != null) keySv.SetValue("ip", ip);
-            if (port > 0) keySv.SetValue("port", port);
-            if (id != Guid.Empty) keySv.SetValue("ID", id);
+            if (ip != null) keySv.SetValue("Ip", ip);
+            if (port > 0) keySv.SetValue("Port", port);
+            if (guid != Guid.Empty) keySv.SetValue("Guid", guid);
             if (path != null) keySv.SetValue("Path", path);
 
             keySv.Close();
@@ -57,7 +57,7 @@ namespace VwSyncSever
         {
             RegistryKey keySv = null;
 
-            keySv = Registry.LocalMachine.OpenSubKey(Settings.regLocalPath, false);
+            keySv = Registry.LocalMachine.OpenSubKey(Settings.regPathLoc, false);
 
             if (keySv != null)
             {

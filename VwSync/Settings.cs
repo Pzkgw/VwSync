@@ -14,15 +14,15 @@ namespace VwSyncSever
         public IPAddress IPServer;
 
         public const string
+            mapNetDrive = "W:",
             dirForMetadata = "\\___meta___",
             dirForTemporaryFiles = "\\___temp___",
             dirForConflictedFiles = "\\___conf___",
-            metaLocalFile = "L_filesync.metadata",
-            metaRemoteFile = "R_filesync.metadata",
-            regLocalPath = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI SyncHere",
-            regRemotePath = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI SyncThere",
-            serName = "CAVISync",
-            serDesc = "File syncronization service";
+            metaFileLoc = "L_filesync.metadata",
+            metaFileRem = "R_filesync.metadata",
+            regPathLoc = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI SyncLoc",
+            regPathRem = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI SyncRem",
+            serNameLoc = "CAVISync";
 
         public static string serExe = "VwSer.exe"; //c:\_ToDo\Sync\trunk\VwSyncSever\bin\Release\
             

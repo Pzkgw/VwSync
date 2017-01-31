@@ -29,18 +29,14 @@ namespace VwSer
         public VwService()
         {
             InitializeComponent();
-            ServiceName = Settings.serName;
+            ServiceName = Settings.serNameLoc;
 
             //this.EventLog.Source = "Un Serviciu";
             //this.EventLog.Log = "Application";
 
             // These Flags set whether or not to handle that specific
             //  type of event. Set to true if you need it, false otherwise.
-            CanHandlePowerEvent = true;
-            CanHandleSessionChangeEvent = true;
-            CanPauseAndContinue = true;
-            CanShutdown = true;
-            CanStop = true;
+
 
             //if (!EventLog.SourceExists("Un text pe aici"))
             //    EventLog.CreateEventSource("Un text pe aici", "Application");
@@ -194,11 +190,49 @@ namespace VwSer
                         if (rs.Contains(Settings.chSlash))
                         {
                             rs = rs.Replace(Settings.chSlash, '\\');
-                            if (rs[0] != '\\') rs = rs.Insert(1, ":"); // director local
-                            //Lib.WrLog(string.Format(":: {1} {2} {0} ", rs, Directory.Exists(rs), Utils.DirectoryExists(rs)));
-                            bool res =
-                                (Directory.Exists(rs) && Utils.DirectoryExists(rs));
-                                //VwSync.Imperson.DoWorkUnderImpersonation(rs);
+
+                            bool res;
+
+                            if (rs[0] != '\\')
+                            {
+                                rs = rs.Insert(1, ":"); // director local
+                                res = (Directory.Exists(rs) && Utils.DirectoryExists(rs));
+                            }
+                            else
+                            { //  ---> TRULLY REMOTE <---
+
+                                //Checks if the last character is \ as this causes error on mapping a drive.
+                                if (rs.Substring(rs.Length - 1, 1) == @"\")
+                                {
+                                    rs = rs.Substring(0, rs.Length - 1);
+                                }
+
+                                if (DriveSettings.IsDriveMapped(Settings.mapNetDrive + "\\"))
+                                {
+                                    //Utils.ExecuteCommand(string.Format("net use {0} /delete", Settings.mapNetDrive));
+                                }
+
+                                string
+                                    dev = "\"\\\\10.10.10.47\\video\\gi test\"",
+                                    usr = "GI",
+                                    pas = "1qaz@WSX";
+
+                                Utils.ExecuteCommand(string.Format("net use {0} {1} /user:{2} {3}", Settings.mapNetDrive, rs, usr, pas));
+                                //Utils.ExecuteCommand("net use W: \"\\\\10.10.10.47\\video\\gi test\" /user:GI 1qaz@WSX");
+                                //$$10.10.10.47$video$gi test
+                                //\\10.10.10.47\video\gi test
+
+
+                                //DriveSettings.MapNetworkDrive("W", "\\\\10.10.10.47\\video\\gi test", "GI", "1qaz@WSX");
+
+                                res = true;
+
+                                //rs = "W:";
+                            }
+
+                            Lib.WrLog(string.Format(":: {1} {2} {0} ", rs, Directory.Exists(rs), Utils.DirectoryExists(rs)));
+
+                            //VwSync.Imperson.DoWorkUnderImpersonation(rs);
 
 
                             if (res)//res)//(rs[0] == '\\') || 
@@ -206,11 +240,11 @@ namespace VwSer
                                 ++count;
                                 //Lib.WrLog("CHK2" + rs);
                                 o = new Orchestrator(new Settings(SerSettings.dirLocal, rs));
-                                string
-                                    s1 = (o.GetIdLocal() == null) ? "null" : o.GetIdLocal().ToString(),
-                                    s2 = (o.GetIdRemote() == null) ? "null" : o.GetIdRemote().ToString();
-                                Lib.WrLog(string.Format("{0} {1} :: ===>{2} {3} {4}",
-                                        res, rs, VwSync.Imperson.mesaj, s1, s2));
+                                //string
+                                //    s1 = (o.GetIdLocal() == null) ? "null" : o.GetIdLocal().ToString(),
+                                //    s2 = (o.GetIdRemote() == null) ? "null" : o.GetIdRemote().ToString();
+                                //Lib.WrLog(string.Format("{0} {1} :: ===>{2} {3} {4}",
+                                //        res, rs, VwSync.Imperson.mesaj, s1, s2));
 
                                 stats = o.Sync(SerSettings.dirLocal, rs);
 

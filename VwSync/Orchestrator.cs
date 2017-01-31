@@ -39,18 +39,20 @@ namespace VwSyncSever
 
 
                 //Generate a unique Id for the source and store it in file or database for refer it further
-                sourceId = NewSyncGuid();
+                sourceId = NewSyncGuid(); // SyncId()
                 //Generate a unique Id for the destination and store it in a file or database for refer it further
                 destId = NewSyncGuid();
                 //ReplicaId se genereaza in constructor
 
               // file sync providers
-              localPro = new FileSyncProvider(sourceId, set.dirLocalSync, scopeFilter, fileSyncOptions,
-                    set.metadataDirectoryPath, Settings.metaLocalFile,
+              localPro = new FileSyncProvider(sourceId, set.dirLocalSync,
+                  scopeFilter, fileSyncOptions,
+                    set.metadataDirectoryPath, Settings.metaFileLoc,
                     set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
 
-                remotePro = new FileSyncProvider(destId, set.dirRemote, scopeFilter, fileSyncOptions,
-                    set.metadataDirectoryPath, Settings.metaRemoteFile,
+                remotePro = new FileSyncProvider(destId, (set.dirRemote[0]=='\\')?"W:\\":set.dirRemote,
+                    scopeFilter, fileSyncOptions,
+                    set.metadataDirectoryPath, Settings.metaFileRem,
                     set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
 
                 // Task curent: Skip delete

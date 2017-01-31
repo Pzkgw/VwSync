@@ -21,7 +21,7 @@ namespace VwSyncSever
         /// <param name="directory"></param>
         /// <param name="excludedExtensions"></param>
         /// <returns></returns>
-        public static List<string> GetFilesAndDirectories(String directory, string excludeDirNameStart, params string[] excludedExtensions)
+        public static List<string> GetFiles(String directory, string excludeDirNameStart, params string[] excludedExtensions)
         {
 
             List<string> result = new List<string>();
@@ -224,17 +224,121 @@ namespace VwSyncSever
 
                 #endregion StringCompress
                 */
-
-
-
     }
 
 
+    public class DriveSettings
+    {
+        public enum ResourceScope
+        {
+            RESOURCE_CONNECTED = 1,
+            RESOURCE_GLOBALNET,
+            RESOURCE_REMEMBERED,
+            RESOURCE_RECENT,
+            RESOURCE_CONTEXT
+        }
+        public enum ResourceType
+        {
+            RESOURCETYPE_ANY,
+            RESOURCETYPE_DISK,
+            RESOURCETYPE_PRINT,
+            RESOURCETYPE_RESERVED
+        }
+        public enum ResourceUsage
+        {
+            RESOURCEUSAGE_CONNECTABLE = 0x00000001,
+            RESOURCEUSAGE_CONTAINER = 0x00000002,
+            RESOURCEUSAGE_NOLOCALDEVICE = 0x00000004,
+            RESOURCEUSAGE_SIBLING = 0x00000008,
+            RESOURCEUSAGE_ATTACHED = 0x00000010
+        }
+        public enum ResourceDisplayType
+        {
+            RESOURCEDISPLAYTYPE_GENERIC,
+            RESOURCEDISPLAYTYPE_DOMAIN,
+            RESOURCEDISPLAYTYPE_SERVER,
+            RESOURCEDISPLAYTYPE_SHARE,
+            RESOURCEDISPLAYTYPE_FILE,
+            RESOURCEDISPLAYTYPE_GROUP,
+            RESOURCEDISPLAYTYPE_NETWORK,
+            RESOURCEDISPLAYTYPE_ROOT,
+            RESOURCEDISPLAYTYPE_SHAREADMIN,
+            RESOURCEDISPLAYTYPE_DIRECTORY,
+            RESOURCEDISPLAYTYPE_TREE,
+            RESOURCEDISPLAYTYPE_NDSCONTAINER
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        public class NetResource
+        {
+            public ResourceScope dwScope;
+            public ResourceType dwType;
+            public ResourceDisplayType dwDisplayType;
+            public ResourceUsage dwUsage;
+            public string lpLocalName;
+            public string lpRemoteName;
+            public string lpComment;
+            public string lpProvider;
+        }
+        [DllImport("mpr.dll")]
+        public static extern int WNetAddConnection2
+            (ref NetResource oNetworkResource, string sPassword,
+            string sUserName, int iFlags);
+
+        [DllImport("mpr.dll")]
+        public static extern int WNetCancelConnection2
+            (string sLocalName, uint iFlags, int iForce);
+
+        /* Uses Struct rather than class version of NETRESOURCE */
+        [DllImport("mpr.dll")]
+        private static extern int WNetAddConnection3(IntPtr hWndOwner,
+            ref NetResource lpNetResource, string lpPassword,
+            string lpUserName, int dwFlags);
+
+        public static void MapNetworkDrive(string sDriveLetter, string sNetworkPath, string user, string pass)
+        {
+            NetResource oNetworkResource;
+            oNetworkResource = new NetResource();
+            oNetworkResource.dwType = ResourceType.RESOURCETYPE_DISK;
+            oNetworkResource.lpLocalName = sDriveLetter + ":";
+            oNetworkResource.lpRemoteName = sNetworkPath;
+
+            //If Drive is already mapped disconnect the current 
+            //mapping before adding the new mapping
+            if (IsDriveMapped(sDriveLetter))
+            {
+                DisconnectNetworkDrive(sDriveLetter, true);
+            }
+
+            WNetAddConnection2(ref oNetworkResource, user, pass, 0);
 
 
+        }
 
+        public static int DisconnectNetworkDrive(string sDriveLetter, bool bForceDisconnect)
+        {
+            if (bForceDisconnect)
+            {
+                return WNetCancelConnection2(sDriveLetter + ":", 0, 1);
+            }
+            else
+            {
+                return WNetCancelConnection2(sDriveLetter + ":", 0, 0);
+            }
+        }
 
-
+        public static bool IsDriveMapped(string sDriveLetter)
+        {
+            string[] DriveList = Environment.GetLogicalDrives();
+            for (int i = 0; i < DriveList.Length; i++)
+            {
+                if (sDriveLetter == DriveList[i].ToString())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
 
 
 
@@ -271,10 +375,10 @@ namespace VwSyncSever
             try
             {
                 service.Start();
-                service.WaitForStatus(ServiceControllerStatus.Running, 
+                service.WaitForStatus(ServiceControllerStatus.Running,
                     TimeSpan.FromMilliseconds(timeoutMilliseconds));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -494,7 +598,7 @@ namespace VwSyncSever
 
         public static void SetDescriereServiciu(string ServiceName, string txt)
         {
-            
+
             IntPtr scman = OpenSCManager(ServiceManagerRights.Connect);
             try
             {
@@ -509,7 +613,7 @@ namespace VwSyncSever
                     {
                         lpDescription = txt
                     };
-                                        
+
                     if (!ChangeServiceConfig2(service, SERVICE_CONFIG_DESCRIPTION, ref pinfo))
                     {
                         //int error = Marshal.GetLastWin32Error();
@@ -524,8 +628,8 @@ namespace VwSyncSever
             finally
             {
                 CloseServiceHandle(scman);
-            }          
-            
+            }
+
         }
 
 

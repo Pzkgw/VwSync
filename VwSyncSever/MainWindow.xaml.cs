@@ -35,7 +35,7 @@ namespace VwSyncSever
                 Settings.serExe = s.Substring(0, s.LastIndexOf('\\') + 1) + Settings.serExe;
                 //infoLbl.Content = Settings.serExecutabil;
 
-                SetServiceGui(Services.IsInstalled(Settings.serName)); // 
+                SetServiceGui(Services.IsInstalled(Settings.serNameLoc)); // 
             }
             else
             {
@@ -70,7 +70,7 @@ namespace VwSyncSever
             List<string> ff = null;
 
             if (Directory.Exists(dir)) ff =
-                    Utils.GetFilesAndDirectories(dir,
+                    Utils.GetFiles(dir,
                 "___", Settings.excludeFileExtensions);
 
             if (ff != null && ff.Count() > 0)
@@ -151,7 +151,7 @@ namespace VwSyncSever
             }
             else
             {
-                infoLbl.Content = Settings.serName + " is already installed";
+                infoLbl.Content = Settings.serNameLoc + " is already installed";
             }
 
         }
