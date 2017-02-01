@@ -62,6 +62,21 @@ namespace VwSyncSever
             return result;
         }
 
+        public static bool IsDriveMapped(string sDriveLetter)
+        {
+            foreach (string s in Environment.GetLogicalDrives())
+            {
+                if (s.Equals(sDriveLetter)) return true;
+            }
+            return false;
+        }
+
+        public static bool IsRemotePath(string s)
+        {
+            //return s.Contains('.');
+            return (s.Count(c => c == '.') > 2); // mai mult de 2 punte => e un ip pe acolo => e necesar un mapping
+        }
+
 
 
 
@@ -289,106 +304,36 @@ namespace VwSyncSever
         [DllImport("mpr.dll")]
         private static extern int WNetAddConnection2(NETRESOURCE lpNetResource, string lpPassword, string lpUsername, int dwFlags);
 
+        [DllImport("mpr.dll")]
+        public static extern int WNetCancelConnection2(string sLocalName, uint iFlags, int iForce);
+
+        /* Uses Struct rather than class version of NETRESOURCE */
+        /*
+        [DllImport("mpr.dll")]
+        private static extern int WNetAddConnection3(IntPtr hWndOwner, ref NETRESOURCE lpNetResource, string lpPassword, string lpUserName, int dwFlags);
+        */
+
+
         public int MapNetworkDrive(string unc, string drive, string user, string password)
         {
+            /*
+            //If Drive is already mapped disconnect the current 
+            //mapping before adding the new mapping
+            if (IsDriveMapped(sDriveLetter))
+            {
+                DisconnectNetworkDrive(sDriveLetter, true);
+            }*/
+
             NETRESOURCE myNetResource = new NETRESOURCE();
+            //myNetResource.dwType = ResourceType.RESOURCETYPE_DISK;
             myNetResource.lpLocalName = drive;
             myNetResource.lpRemoteName = unc;
             myNetResource.lpProvider = null;
             int result = WNetAddConnection2(myNetResource, password, user, 0);
             return result;
         }
-    }
 
-
-    public class DriveSettings
-    {
-        public enum ResourceScope
-        {
-            RESOURCE_CONNECTED = 1,
-            RESOURCE_GLOBALNET,
-            RESOURCE_REMEMBERED,
-            RESOURCE_RECENT,
-            RESOURCE_CONTEXT
-        }
-        public enum ResourceType
-        {
-            RESOURCETYPE_ANY,
-            RESOURCETYPE_DISK,
-            RESOURCETYPE_PRINT,
-            RESOURCETYPE_RESERVED
-        }
-        public enum ResourceUsage
-        {
-            RESOURCEUSAGE_CONNECTABLE = 0x00000001,
-            RESOURCEUSAGE_CONTAINER = 0x00000002,
-            RESOURCEUSAGE_NOLOCALDEVICE = 0x00000004,
-            RESOURCEUSAGE_SIBLING = 0x00000008,
-            RESOURCEUSAGE_ATTACHED = 0x00000010
-        }
-        public enum ResourceDisplayType
-        {
-            RESOURCEDISPLAYTYPE_GENERIC,
-            RESOURCEDISPLAYTYPE_DOMAIN,
-            RESOURCEDISPLAYTYPE_SERVER,
-            RESOURCEDISPLAYTYPE_SHARE,
-            RESOURCEDISPLAYTYPE_FILE,
-            RESOURCEDISPLAYTYPE_GROUP,
-            RESOURCEDISPLAYTYPE_NETWORK,
-            RESOURCEDISPLAYTYPE_ROOT,
-            RESOURCEDISPLAYTYPE_SHAREADMIN,
-            RESOURCEDISPLAYTYPE_DIRECTORY,
-            RESOURCEDISPLAYTYPE_TREE,
-            RESOURCEDISPLAYTYPE_NDSCONTAINER
-        }
-        [StructLayout(LayoutKind.Sequential)]
-        public class NetResource
-        {
-            public ResourceScope dwScope;
-            public ResourceType dwType;
-            public ResourceDisplayType dwDisplayType;
-            public ResourceUsage dwUsage;
-            public string lpLocalName;
-            public string lpRemoteName;
-            public string lpComment;
-            public string lpProvider;
-        }
-        [DllImport("mpr.dll")]
-        public static extern int WNetAddConnection2
-            (ref NetResource oNetworkResource, string sPassword,
-            string sUserName, int iFlags);
-
-        [DllImport("mpr.dll")]
-        public static extern int WNetCancelConnection2
-            (string sLocalName, uint iFlags, int iForce);
-
-        /* Uses Struct rather than class version of NETRESOURCE */
-        [DllImport("mpr.dll")]
-        private static extern int WNetAddConnection3(IntPtr hWndOwner,
-            ref NetResource lpNetResource, string lpPassword,
-            string lpUserName, int dwFlags);
-
-        public static void MapNetworkDrive(string sDriveLetter, string sNetworkPath, string user, string pass)
-        {
-            NetResource oNetworkResource;
-            oNetworkResource = new NetResource();
-            oNetworkResource.dwType = ResourceType.RESOURCETYPE_DISK;
-            oNetworkResource.lpLocalName = sDriveLetter;
-            oNetworkResource.lpRemoteName = sNetworkPath;
-
-            //If Drive is already mapped disconnect the current 
-            //mapping before adding the new mapping
-            if (IsDriveMapped(sDriveLetter))
-            {
-                DisconnectNetworkDrive(sDriveLetter, true);
-            }
-
-            WNetAddConnection2(ref oNetworkResource, user, pass, 0);
-
-
-        }
-
-        public static int DisconnectNetworkDrive(string sDriveLetter, bool bForceDisconnect)
+        public int DisconnectNetworkDrive(string sDriveLetter, bool bForceDisconnect)
         {
             if (bForceDisconnect)
             {
@@ -400,15 +345,11 @@ namespace VwSyncSever
             }
         }
 
-        public static bool IsDriveMapped(string sDriveLetter)
-        {
-            foreach(string s in Environment.GetLogicalDrives())
-            {
-                if (s == sDriveLetter) return true;
-            }
-            return false;
-        }
+
+
     }
+
+
 
 
 

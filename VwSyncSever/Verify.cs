@@ -18,15 +18,15 @@ namespace VwSyncSever
 
             foreach (string s in Directory.GetDirectories(dir))
             {
-                startIdx = s.LastIndexOf('\\') + 1;
+                startIdx = s.LastIndexOf(Settings.backSlash) + 1;
                 if (startIdx > 0)
                 {
                     rs = s.Substring(startIdx, s.Length - startIdx);
 
                     if (rs.Contains(Settings.chSlash))
                     {
-                        rs = rs.Replace(Settings.chSlash, '\\');
-                        if (rs[0] != '\\') rs = rs.Insert(1, ":"); // director local
+                        rs = rs.Replace(Settings.chSlash, Settings.backSlash);
+                        if (rs[0] != Settings.backSlash) rs = rs.Insert(1, ":"); // director local
                         if (Directory.Exists(rs) && Utils.DirectoryExists(rs))
                         {
                             return true;

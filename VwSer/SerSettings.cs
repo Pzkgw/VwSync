@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VwSer
+﻿namespace VwSer
 {
 
-        public static class SerSettings
-        {
-            // = @"c:\_sync\";
-            public static string dirLocal; // 
+    public static class SerSettings
+    {
+        // = @"c:\_sync\";
+        public static string
+            dirLocal,
+            logPath; // 
 
-            public static bool run;
+        public static int errCount;
+        public static int errCountMax = 1024;
+        public static bool run, logPathInit;
 
-        }
-    
+    }
+
 }

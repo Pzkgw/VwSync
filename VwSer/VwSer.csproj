@@ -50,6 +50,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Egg.cs" />
     <Compile Include="Lib.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>

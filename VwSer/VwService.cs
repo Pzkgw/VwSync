@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Synchronization;
 using VwSyncSever;
@@ -17,9 +12,22 @@ namespace VwSer
     public partial class VwService : ServiceBase
     {
 
-        private Timer tim;
-
+        bool retVal = false, mapNetwork, isHatched = false, res;
+        int idx, count = 0, execTime;
         public static double ultimulTimpTotalDeExecutie; // in milisecunde
+
+        private string aux, rs;
+        private Timer tim;
+        private NetworkDrive l;
+        private Egg egg;
+        private EggArray eggs;
+
+        Orchestrator o;
+        SyncOperationStatistics stats;
+
+        string
+            usr = "GI",
+            pas = "1qaz@WSX";
 
 
         /// <summary>
@@ -52,11 +60,12 @@ namespace VwSer
         {
             if (SerSettings.run) return;
 
-            SerSettings.dirLocal = RegistryLocal.GetLocalPath();
+            l = new NetworkDrive();
+            eggs = new EggArray();
+
+            SerSettings.errCount = 0;
 
             base.OnStart(args);
-
-            //RunSync();
 
             tim = new Timer();
             tim.Interval = 1000;
@@ -80,9 +89,47 @@ namespace VwSer
         {
             if (SerSettings.run) return;
 
-            //if (SerSettings.debug) Lib.WrLog(" timer_elapsed ");
+            GC.Collect();
 
-            RunSync();
+            ultimulTimpTotalDeExecutie = 0;
+
+            aux = RegistryLocal.GetLocalPath();
+
+            if (aux != null)
+            {
+                if (SerSettings.dirLocal == null || !SerSettings.dirLocal.Equals(aux))
+                {
+                    SerSettings.logPathInit = false;
+                    SerSettings.dirLocal = aux;
+
+                    /*
+                    // verifica ce map drive e liber
+                    for(int i=0;i< Settings.mapNetDrives.Length;i++)
+                    {
+                        if(!Utils.IsDriveMapped(Settings.mapNetDrives[i]))
+                        {
+                            Settings.mapNetIdx = i;
+                            i = 100;
+                        }
+                    }
+                    */
+
+                }
+            }
+
+            try
+            {
+                RunSync();
+            }
+            catch (Exception ex)
+            {
+                Lib.WrLog(ex);
+                ++SerSettings.errCount;
+                if (SerSettings.errCount > SerSettings.errCountMax)
+                {
+                    Stop();
+                }
+            }
 
             ultimulTimpTotalDeExecutie *= 3;
             if (ultimulTimpTotalDeExecutie < 1000) ultimulTimpTotalDeExecutie = 1000;
@@ -156,86 +203,86 @@ namespace VwSer
             base.OnSessionChange(changeDescription);
         }
 
-
-
-
         public bool RunSync()
         {
             SerSettings.run = true;
-
-            bool retVal = false, mapNetwork;
+            count = 0;
 
             retVal = (SerSettings.dirLocal != null &&
                 Directory.Exists(SerSettings.dirLocal));
 
             if (retVal)
             {
-                string rs;
-                int startIdx, count = 0, execTime;
-
-                ultimulTimpTotalDeExecutie = 0;
+                eggs.Start();
 
                 foreach (string s in Directory.GetDirectories(SerSettings.dirLocal))
                 {
                     mapNetwork = false;
-                    startIdx = s.LastIndexOf('\\') + 1;
-                    if (startIdx > 0)
+                    egg = eggs.GetEgg(s);
+                    isHatched = (egg != null);
+
+                    idx = 0;
+
+                    if (!isHatched)
+                        idx = s.LastIndexOf(Settings.backSlash) + 1; // path length
+
+                    if (idx > 0 || isHatched)
                     {
-                        rs = s.Substring(startIdx, s.Length - startIdx);
+                        if (!isHatched) rs = s.Substring(idx, s.Length - idx);
 
-                        if (rs.Contains(Settings.chSlash))
+                        if (rs.Contains(Settings.chSlash) || isHatched)
                         {
-                            rs = rs.Replace(Settings.chSlash, '\\');
-
-                            if (rs[0] != '\\') rs = rs.Insert(1, ":"); // director local             
-
-                            bool res = (Directory.Exists(rs) && Utils.DirectoryExists(rs));
-
-                            Lib.WrLog(string.Format(":--> {0} ", rs));
-
-                            // && (Char.IsNumber(rs[2]) || Char.IsNumber(rs[3]))
-                            if (rs.Contains('.')) //  ---> TRULLY REMOTE <--- 
+                            if (!isHatched)
                             {
+                                rs = rs.Replace(Settings.chSlash, Settings.backSlash);
+
+                                if (rs[0] != Settings.backSlash) rs = rs.Insert(1, ":"); // director local
+
                                 //Checks if the last character is \ as this causes error on mapping a drive.
                                 if (rs.Substring(rs.Length - 1, 1) == @"\")
                                 {
                                     rs = rs.Substring(0, rs.Length - 1);
                                 }
+                            }
+                            else
+                            {
+                                rs = egg.orc.set.dirRemote;
+                            }
 
-                                string
-                                    usr = "GI",
-                                    pas = "1qaz@WSX";
+                            res = (Directory.Exists(rs) && Utils.DirectoryExists(rs));
 
+                            //Lib.WrLog(string.Format(":--> {0} ", rs));
 
-                                if (DriveSettings.IsDriveMapped(Settings.mapNetDrives[0] + '\\'))
+                            // && (Char.IsNumber(rs[2]) || Char.IsNumber(rs[3]))
+                            if (Utils.IsRemotePath(rs)) //  ---> TRULLY REMOTE <--- 
+                            {
+
+                                if (Utils.IsDriveMapped(Settings.mapNetDrives[Settings.mapNetIdx] + Settings.backSlash))
                                 {
                                     //Utils.ExecuteCommand(string.Format("net use {0} /delete", Settings.mapNetDrive));
-                                    DriveSettings.DisconnectNetworkDrive(Settings.mapNetDrives[0], true);
+                                    l.DisconnectNetworkDrive(Settings.mapNetDrives[Settings.mapNetIdx], true);
 
-                                   // System.Threading.Thread.Sleep(100);
+                                    // System.Threading.Thread.Sleep(100);
                                 }
-                                /*
 
-                                                                //DriveSettings.MapNetworkDrive(Settings.mapNetDrive, rs, usr, pas);
-                                                                Utils.ExecuteCommand(string.Format("net use {0} {1} /user:{2} {3} /persistent:no", Settings.mapNetDrive, rs, usr, pas));
-                                                                //Utils.ExecuteCommand("net use W: \"\\\\10.10.10.47\\video\\gi test\" /user:GI 1qaz@WSX");
-                                                                //$$10.10.10.47$video$gi test
-                                                                //\\10.10.10.47\video\gi test
+                                //DriveSettings.MapNetworkDrive(Settings.mapNetDrive, rs, usr, pas);
+                                //Utils.ExecuteCommand(string.Format("net use {0} {1} /user:{2} {3} /persistent:no", Settings.mapNetDrive, rs, usr, pas));
+                                //Utils.ExecuteCommand("net use W: \"\\\\10.10.10.47\\video\\gi test\" /user:GI 1qaz@WSX");
+                                //$$10.10.10.47$video$gi test
+                                //\\10.10.10.47\video\gi test
+
+                                //DriveSettings.MapNetworkDrive("W", "\\\\10.10.10.47\\video\\gi test", "GI", "1qaz@WSX");
 
 
-                                                                //DriveSettings.MapNetworkDrive("W", "\\\\10.10.10.47\\video\\gi test", "GI", "1qaz@WSX");
+                                //string md = ;// + "\\" + s;
 
-                                                                */
-                                string md = Settings.mapNetDrives[Settings.mapNetIdx];// + "\\" + s;
-                                //if (!Directory.Exists(md)) Directory.CreateDirectory(md);
-
-                                 NetworkDrive l = new NetworkDrive();
-                                if (l.MapNetworkDrive(rs, md, usr, pas) == 0)
+                                if (l.MapNetworkDrive(rs, Settings.mapNetDrives[Settings.mapNetIdx], usr, pas) == 0)
                                 {
                                     mapNetwork = true;
                                 }
                                 else
                                 {
+
                                 }
 
 
@@ -244,37 +291,52 @@ namespace VwSer
                                 //rs = "W:";
                             }
 
-                            
-
                             //VwSync.Imperson.DoWorkUnderImpersonation(rs);
 
-
-                            if (res)//res)//(rs[0] == '\\') || 
+                            if (res)
                             {
                                 ++count;
-                                //Lib.WrLog("CHK2" + rs);
-
-                                Orchestrator o;
-                                SyncOperationStatistics stats;
-
-                                o = new Orchestrator(new Settings(SerSettings.dirLocal, rs));
+                                if (isHatched)
+                                {
+                                    o = egg.orc;
+                                }
+                                else
+                                {
+                                    o = new Orchestrator(new Settings(SerSettings.dirLocal, rs));
+                                }
                                 //string
                                 //    s1 = (o.GetIdLocal() == null) ? "null" : o.GetIdLocal().ToString(),
                                 //    s2 = (o.GetIdRemote() == null) ? "null" : o.GetIdRemote().ToString();
                                 //Lib.WrLog(string.Format("{0} {1} :: ===>{2} {3} {4}",
                                 //        res, rs, VwSync.Imperson.mesaj, s1, s2));
 
-                                stats = o.Sync(SerSettings.dirLocal, rs);
+                                stats = o.Sync(true, SerSettings.dirLocal, rs);
 
                                 execTime = 0;
 
                                 if (stats != null)
+                                {
                                     execTime = stats.SyncEndTime.Subtract(stats.SyncStartTime).Milliseconds;
+
+                                    if (!isHatched)
+                                    {
+                                        egg = new Egg();
+                                        egg.lastExecTimeMs = execTime;
+                                        egg.dir = s;
+                                        egg.orc = o;
+                                        egg.isMapped = mapNetwork;
+
+                                        eggs.AddEgg(egg);
+                                    }
+
+                                    if (egg != null) egg.wasChecked = true;
+
+                                }
 
                                 ultimulTimpTotalDeExecutie += execTime;
 
-                                    Lib.WrLog(string.Format("  Done at {0} in {1}ms", rs, execTime));
-                                
+                                Lib.WrLog(string.Format(" done {0} in {1}ms", rs, execTime));
+
 
                                 //Lib.WrLog("xxmapNetwork0" + mapNetwork.ToString());
                                 //if (mapNetwork)
@@ -291,6 +353,10 @@ namespace VwSer
                 }
 
                 retVal = count > 0;
+
+                eggs.Stop();
+
+                Lib.WrLog(eggs.GetCount().ToString());
             }
 
             SerSettings.run = false;

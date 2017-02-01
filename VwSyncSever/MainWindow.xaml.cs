@@ -21,7 +21,7 @@ namespace VwSyncSever
         {
             InitializeComponent();
 
-            o = new Orchestrator(new Settings(@"c:\_sync\", @"\\10.10.10.47\video\gi test"));
+            o = new Orchestrator(new Settings(@"c:\_sync", @"\\10.10.10.47\video\gi test"));
 
             UpdateSyncPathGui(o.set);
 
@@ -32,7 +32,7 @@ namespace VwSyncSever
             if (File.Exists(Settings.serExe))
             {
                 string s = Application.ResourceAssembly.Location;
-                Settings.serExe = s.Substring(0, s.LastIndexOf('\\') + 1) + Settings.serExe;
+                Settings.serExe = s.Substring(0, s.LastIndexOf(Settings.backSlash) + 1) + Settings.serExe;
                 //infoLbl.Content = Settings.serExecutabil;
 
                 SetServiceGui(Services.IsInstalled(Settings.serNameLoc)); // 
@@ -53,8 +53,8 @@ namespace VwSyncSever
 
         private void UpdateSyncPathGui(Settings set)
         {
-            textBox2.Text = set.dirLocal.Substring(0, set.dirLocal.Length - 1);
-            atextBox2.Text = set.dirRemote.Substring(0, set.dirRemote.Length - 1);
+            textBox2.Text = set.dirLocal;
+            atextBox2.Text = set.dirRemote;
 
             const string f0 = "No files found", f1 = "Files:";
             lblLstServer.Content = ListFiles(set.dirLocalSync, lstServerFiles) ? f1 : f0;
@@ -189,10 +189,10 @@ namespace VwSyncSever
                 Exec.SerDelete();
             }*/
 
-            if (Exec.SerIsOn()) System.Threading.Thread.Sleep(2000);
+            if (Exec.SerIsOn()) System.Threading.Thread.Sleep(500);
 
             SyncOperationStatistics stats =
-            o.Sync(textBox2.Text, atextBox2.Text);
+            o.Sync(false, textBox2.Text, atextBox2.Text);
 
             if (stats == null)
             {
@@ -218,10 +218,6 @@ namespace VwSyncSever
                         //stats.UploadChangesTotal    
                         );
                 UpdateSyncPathGui(o.set);
-
-                //o.reg.UpdateDeriv(1525, 5000, 
-                //    Settings.dirLocalSync.Substring(
-                //        Settings.dirLocalSync.LastIndexOf('\\')));
 
                 if (serviceWasRunning && !Exec.SerIsOn()) btnService_Click(null, null);
             }

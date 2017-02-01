@@ -21,7 +21,9 @@ namespace VwSyncSever
             set = settings;
         }
 
-        public bool InitSync(SyncDirectionOrder way,
+        public bool InitSync(
+            bool serviceCall,
+            SyncDirectionOrder way,
             FileSyncScopeFilter scopeFilter,
             FileSyncOptions fileSyncOptions)
         {
@@ -37,7 +39,6 @@ namespace VwSyncSever
                 set.SetupDirectoryStruct();
 
 
-
                 //Generate a unique Id for the source and store it in file or database for refer it further
                 sourceId = NewSyncGuid(); // SyncId()
                 //Generate a unique Id for the destination and store it in a file or database for refer it further
@@ -50,7 +51,7 @@ namespace VwSyncSever
                       set.metadataDirectoryPath, Settings.metaFileLoc,
                       set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
 
-                remotePro = new FileSyncProvider(destId, (set.dirRemote.Contains('.')) ? Settings.mapNetDrives[Settings.mapNetIdx] : set.dirRemote,
+                remotePro = new FileSyncProvider(destId, (serviceCall && Utils.IsRemotePath(set.dirRemote)) ? Settings.mapNetDrives[Settings.mapNetIdx] : set.dirRemote,
                     scopeFilter, fileSyncOptions,
                     set.metadataDirectoryPath, Settings.metaFileRem,
                     set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
@@ -136,7 +137,7 @@ namespace VwSyncSever
             Show("Total work: " + e.CompletedWork.ToString());
         }*/
 
-        public SyncOperationStatistics Sync(string lStr, string rStr)
+        public SyncOperationStatistics Sync(bool serviceCall, string lStr, string rStr)
         {
 
             //if (set.ErrCount > Settings.ErrCountMax) return null;
@@ -157,7 +158,7 @@ namespace VwSyncSever
 
             set.remotePathIsOk = !set.dirRemote.Contains(Settings.chSlash);
 
-            if (InitSync(set.optWay, set.optFilter, set.optFileSync))
+            if (InitSync(serviceCall, set.optWay, set.optFilter, set.optFileSync))
             {
                 return Sync();
             }

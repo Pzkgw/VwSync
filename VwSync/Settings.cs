@@ -20,14 +20,14 @@ namespace VwSyncSever
             metaFileLoc = "L_filesync.metadata",
             metaFileRem = "R_filesync.metadata",
             regPathLoc = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI SyncLoc",
-            regPathRem = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI SyncRem",
-            serNameLoc = "CAVISync";
+            //regPathRem = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI SyncRem",
+            serNameLoc = "CAVISync",
+            serLogFile = "Log.txt";
 
-        public static string[] mapNetDrives = { "W:", "K:", "Q:" };
+        public static string[] mapNetDrives = { "V:", "I:", "S:" };
         public static int mapNetIdx = 0;
 
-        public static string serExe = "VwSer.exe"; //c:\_ToDo\Sync\trunk\VwSyncSever\bin\Release\
-            
+        public static string serExe = "VwSer.exe"; //c:\_ToDo\Sync\trunk\VwSyncSever\bin\Release\            
 
         public string
             dirLocal, dirRemote, dirLocalSync,
@@ -35,8 +35,6 @@ namespace VwSyncSever
         //@"\\CJ-PC\Users\Default\AppData",
         //@"\\10.10.10.47\video\gi test\demo\";
         //@"c:\_ToDo\TestHik\TestHik\bin\x86\Debug\DbgMessages\";
-
-
 
 
         public FileAttributes excludeFileAttributes =
@@ -49,7 +47,7 @@ namespace VwSyncSever
         public static string[] excludeFileExtensions =
             new string[] { "*.tmp", "*.lnk", "*.pst" };
 
-        public static char chSlash = '$'; // caracterul ce inlocuieste slash
+        public const char backSlash = '\\', chSlash = '$'; // caracterul ce inlocuieste slash
 
         public bool directoryStructureIsOk, remotePathIsOk;
 
@@ -67,15 +65,15 @@ namespace VwSyncSever
         {
             string rFileName = null;
 
-            rFileName = remoteDir.Replace('\\', chSlash);
+            rFileName = remoteDir.Replace(backSlash, chSlash);
 
             switch (remoteDir[1])
             {
                 case ':':// Windows local prezent la inspectie
                     rFileName = rFileName.Remove(1, 1);
                     break;
-                case '\\':
-                    //if (remoteDirectory[0] == '\\') // network Windows device
+                case backSlash:
+                    //if (remoteDirectory[0] == Settings.backSlash) // network Windows device
                     // rFileName = rFileName;
                     break;
                 default:
@@ -92,8 +90,7 @@ namespace VwSyncSever
             dirRemote = remoteDir;
 
             if (!dirLocal.EndsWith("\\")) dirLocal = dirLocal + "\\";
-            if (!dirRemote.EndsWith("\\")) dirRemote = dirRemote + "\\";
-            if (!dirLocalSync.EndsWith("\\")) dirLocalSync = dirLocalSync + "\\";
+
         }
 
         public void SetupDirectoryStruct()
