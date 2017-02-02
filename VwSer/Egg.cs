@@ -15,6 +15,8 @@ namespace VwSer
             usr,
             pas;
 
+        internal Exception err; // ultima eroare intalnita pt acest ou
+
         internal Orchestrator orc;
     }
 

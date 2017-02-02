@@ -67,6 +67,8 @@ namespace VwSer
 
             base.OnStart(args);
 
+            Lib.WrLog("_Synchronization start");
+
             tim = new Timer();
             tim.Interval = 1000;
             tim.Elapsed += Tim_Elapsed;
@@ -89,11 +91,11 @@ namespace VwSer
         {
             if (SerSettings.run) return;
 
-            GC.Collect();
-
             ultimulTimpTotalDeExecutie = 0;
 
-            aux = RegistryLocal.GetLocalPath();
+            GC.Collect();
+
+            aux = RegistryCon.GetLocalPath();
 
             if (aux != null)
             {
@@ -213,11 +215,13 @@ namespace VwSer
 
             if (retVal)
             {
+
                 eggs.Start();
 
                 foreach (string s in Directory.GetDirectories(SerSettings.dirLocal))
                 {
                     mapNetwork = false;
+                    stats = null;
                     egg = eggs.GetEgg(s);
                     isHatched = (egg != null);
 
@@ -296,21 +300,32 @@ namespace VwSer
                             if (res)
                             {
                                 ++count;
-                                if (isHatched)
+                                try
                                 {
-                                    o = egg.orc;
+                                    if (isHatched)
+                                    {
+                                        o = egg.orc;
+                                        stats = o.SyncOperationExecute();
+                                    }
+                                    else
+                                    {
+                                        o = new Orchestrator(new Settings(SerSettings.dirLocal, rs));
+                                        stats = o.Sync(true, SerSettings.dirLocal, rs);
+                                    }
                                 }
-                                else
+                                catch (Exception ex)
                                 {
-                                    o = new Orchestrator(new Settings(SerSettings.dirLocal, rs));
+                                    if (o.set.ErrCount < Settings.ErrCountMax) ++o.set.ErrCount;
+                                    if (egg != null) egg.err = ex;
                                 }
+
                                 //string
                                 //    s1 = (o.GetIdLocal() == null) ? "null" : o.GetIdLocal().ToString(),
                                 //    s2 = (o.GetIdRemote() == null) ? "null" : o.GetIdRemote().ToString();
                                 //Lib.WrLog(string.Format("{0} {1} :: ===>{2} {3} {4}",
                                 //        res, rs, VwSync.Imperson.mesaj, s1, s2));
 
-                                stats = o.Sync(true, SerSettings.dirLocal, rs);
+
 
                                 execTime = 0;
 
@@ -355,6 +370,7 @@ namespace VwSer
                 retVal = count > 0;
 
                 eggs.Stop();
+
 
                 Lib.WrLog(eggs.GetCount().ToString());
             }

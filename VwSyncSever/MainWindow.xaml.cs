@@ -108,10 +108,7 @@ namespace VwSyncSever
 
             if (!Exec.SerIsOn())
             {
-
-                RegistryLocal.Update(null, Settings.port, Guid.Empty, path);
-
-
+                RegistryCon.Update(null, -1, Guid.Empty, path);
 
                 bool started = true;
 

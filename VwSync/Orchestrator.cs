@@ -12,7 +12,6 @@ namespace VwSyncSever
             localPro = null,
             remotePro = null;
 
-        public RegistryLocal reg;
         public Settings set;
 
         Guid sourceId, destId;
@@ -37,7 +36,6 @@ namespace VwSyncSever
             try
             {
                 set.SetupDirectoryStruct();
-
 
                 //Generate a unique Id for the source and store it in file or database for refer it further
                 sourceId = NewSyncGuid(); // SyncId()
@@ -76,13 +74,6 @@ namespace VwSyncSever
 
                 sourceId = localPro.ReplicaId;
                 destId = remotePro.ReplicaId;
-
-                // 2. registry
-                if (reg == null)
-                {
-                    reg = new RegistryLocal();
-                    RegistryLocal.Update(null, Settings.port, sourceId, set.dirLocal);
-                }
 
                 // Init Sync
                 orchestrator = new SyncOrchestrator();
@@ -160,13 +151,13 @@ namespace VwSyncSever
 
             if (InitSync(serviceCall, set.optWay, set.optFilter, set.optFileSync))
             {
-                return Sync();
+                return SyncOperationExecute();
             }
 
             return null;
         }
 
-        private SyncOperationStatistics Sync()
+        public SyncOperationStatistics SyncOperationExecute()
         {
             if (!set.directoryStructureIsOk || !set.remotePathIsOk) return null;
 
@@ -174,15 +165,7 @@ namespace VwSyncSever
 
             if (orchestrator != null)
             {
-                try
-                {
-                    retVal = orchestrator.Synchronize();
-                }
-                catch (Exception ex)
-                {
-                    if (set.ErrCount < Settings.ErrCountMax) ++set.ErrCount;
-                    throw ex;
-                }
+                retVal = orchestrator.Synchronize();
             }
             else
             {

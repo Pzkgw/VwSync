@@ -5,7 +5,7 @@ using Microsoft.Win32;
 namespace VwSyncSever
 {
 
-    class RegistryService
+    public class RegistryCon
     {
         public static string GetSyncPath()
         {
@@ -23,9 +23,7 @@ namespace VwSyncSever
 
             return ((retVal == null) ? null : retVal.ToString());
         }
-    }
-    public class RegistryLocal
-    {
+
         //const string strCDir = "\\Clienti";
 
         public static void Update(IPAddress ip, int port, Guid guid, string path)
