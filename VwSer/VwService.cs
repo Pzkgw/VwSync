@@ -16,7 +16,7 @@ namespace VwSer
         int idx, count = 0, execTime;
         public static double ultimulTimpTotalDeExecutie; // in milisecunde
 
-        private string aux, rs;
+        private string lastDirLocal, rs, aux;
         private Timer tim;
         private NetworkDrive l;
         private Egg egg;
@@ -26,8 +26,8 @@ namespace VwSer
         SyncOperationStatistics stats;
 
         string
-            usr = "GI",
-            pas = "1qaz@WSX";
+            usr = "",
+            pas = "";
 
 
         /// <summary>
@@ -95,14 +95,14 @@ namespace VwSer
 
             GC.Collect();
 
-            aux = RegistryCon.GetLocalPath();
+            lastDirLocal = RegistryCon.GetLocalPath();
 
-            if (aux != null)
+            if (lastDirLocal != null)
             {
-                if (SerSettings.dirLocal == null || !SerSettings.dirLocal.Equals(aux))
+                if (SerSettings.dirLocal == null || !SerSettings.dirLocal.Equals(lastDirLocal))
                 {
                     SerSettings.logPathInit = false;
-                    SerSettings.dirLocal = aux;
+                    SerSettings.dirLocal = lastDirLocal;
 
                     /*
                     // verifica ce map drive e liber
@@ -233,6 +233,7 @@ namespace VwSer
                     if (idx > 0 || isHatched)
                     {
                         if (!isHatched) rs = s.Substring(idx, s.Length - idx);
+                        aux = rs;
 
                         if (rs.Contains(Settings.chSlash) || isHatched)
                         {
@@ -269,30 +270,33 @@ namespace VwSer
                                     // System.Threading.Thread.Sleep(100);
                                 }
 
-                                //DriveSettings.MapNetworkDrive(Settings.mapNetDrive, rs, usr, pas);
                                 //Utils.ExecuteCommand(string.Format("net use {0} {1} /user:{2} {3} /persistent:no", Settings.mapNetDrive, rs, usr, pas));
-                                //Utils.ExecuteCommand("net use W: \"\\\\10.10.10.47\\video\\gi test\" /user:GI 1qaz@WSX");
+                                //Utils.ExecuteCommand("net use V: \"\\\\10.10.10.47\\video\\gi test\" /user:GI 1qaz@WSX");
                                 //$$10.10.10.47$video$gi test
                                 //\\10.10.10.47\video\gi test
 
                                 //DriveSettings.MapNetworkDrive("W", "\\\\10.10.10.47\\video\\gi test", "GI", "1qaz@WSX");
 
+                                // get user and password from the Passwords file
+                                if (egg == null)
+                                {
+                                    FindUserDetails(
+                                        SerSettings.dirLocal + Settings.backSlash + "Passwords.txt",
+                                        aux, ref usr, ref pas);
 
-                                //string md = ;// + "\\" + s;
+                                    usr = "GI";
+                                    pas = "1qaz@WSX";
+                                }
 
                                 if (l.MapNetworkDrive(rs, Settings.mapNetDrives[Settings.mapNetIdx], usr, pas) == 0)
                                 {
                                     mapNetwork = true;
+                                    res = true;
                                 }
                                 else
                                 {
-
+                                    res = false;
                                 }
-
-
-                                res = true;
-
-                                //rs = "W:";
                             }
 
                             //VwSync.Imperson.DoWorkUnderImpersonation(rs);
@@ -379,11 +383,33 @@ namespace VwSer
             return retVal;
         }
 
-
-
-
-
-
-
+        private void FindUserDetails(string passFile, string url, ref string usr, ref string pas)
+        {
+            if (File.Exists(passFile))
+            {
+                StreamReader sr = new StreamReader(passFile);
+                string line = null;
+                int i;
+                //Lib.WrLog("||FindUserDetails " + passFile + " || " + url);
+                while ((line = sr.ReadLine()) != null)
+                {
+                    if (line.StartsWith(url))
+                    {
+                        line = line.Substring(url.Length + 1, line.Length - url.Length - 1);
+                        i = line.IndexOf(',');
+                        if (i > 0)
+                        {
+                            usr = line.Substring(0, i);
+                            pas = line.Substring(i + 1, line.Length - i - 1);
+                        }
+                        //Lib.WrLog("||FindUserDetails " + usr + " || " + pas);
+                        sr.Close();
+                        return;
+                    }
+                    //line.Substring(line.fi)
+                }
+                sr.Close();
+            }
+        }
     }
 }
