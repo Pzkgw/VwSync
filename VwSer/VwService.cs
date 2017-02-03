@@ -262,13 +262,13 @@ namespace VwSer
                             if (Utils.IsRemotePath(rs)) //  ---> TRULLY REMOTE <--- 
                             {
 
-                                if (Utils.IsDriveMapped(Settings.mapNetDrives[Settings.mapNetIdx] + Settings.backSlash))
-                                {
-                                    //Utils.ExecuteCommand(string.Format("net use {0} /delete", Settings.mapNetDrive));
-                                    l.DisconnectNetworkDrive(Settings.mapNetDrives[Settings.mapNetIdx], true);
+                                //if (Utils.IsDriveMapped(Settings.mapNetDrives[Settings.mapNetIdx] + Settings.backSlash))
+                                //{
+                                //    //Utils.ExecuteCommand(string.Format("net use {0} /delete", Settings.mapNetDrive));
+                                //    l.DisconnectNetworkDrive(Settings.mapNetDrives[Settings.mapNetIdx], true);
 
-                                    // System.Threading.Thread.Sleep(100);
-                                }
+                                //    // System.Threading.Thread.Sleep(100);
+                                //}
 
                                 //Utils.ExecuteCommand(string.Format("net use {0} {1} /user:{2} {3} /persistent:no", Settings.mapNetDrive, rs, usr, pas));
                                 //Utils.ExecuteCommand("net use V: \"\\\\10.10.10.47\\video\\gi test\" /user:GI 1qaz@WSX");
@@ -312,15 +312,44 @@ namespace VwSer
                                 }
 
                                 if (!string.IsNullOrEmpty(usr))
-                                    if (l.MapNetworkDrive(rs, Settings.mapNetDrives[Settings.mapNetIdx], usr, pas) == 0)
+                                {
+                                    //if (s[s.Length - 1] == 'w')                                    
+                                    //Utils.ExecuteCommand("net use C: \"\\\\10.10.10.47\\home\\www\" /user:GI 1qaz@WSX", @"c:\_sync\$$_temp");
+
+
+                                    //try
+                                    //{
+                                    //    Utils.ExecuteCommand(string.Format("net use {0} \"{1}\" /user:{2} {3}", "\\", rs, usr, pas), @"C:\_sync\$$_temp");
+                                    //    mapNetwork = true;
+                                    //    res = true;
+                                    //}
+                                    //catch
+                                    //{
+                                    //    res = false;
+                                    //}
+
+                                   if( PinvokeWindowsNetworking.connectToRemote(rs, usr, pas)==null)
                                     {
                                         mapNetwork = true;
-                                        res = true;
+                                            res = true;
                                     }
                                     else
                                     {
                                         res = false;
                                     }
+
+
+
+                                    //if (l.MapNetworkDrive(rs, Settings.mapNetDrives[Settings.mapNetIdx], usr, pas) == 0)
+                                    //{
+                                    //    mapNetwork = true;
+                                    //    res = true;
+                                    //}
+                                    //else
+                                    //{
+                                    //    res = false;
+                                    //}
+                                }
                             }
 
                             //VwSync.Imperson.DoWorkUnderImpersonation(rs);
@@ -395,12 +424,20 @@ namespace VwSer
                                 if (!SerSettings.run) return false;
                             }
                         }
+
+                        if (mapNetwork)
+                        {
+                            PinvokeWindowsNetworking.disconnectRemote(rs);
+                        }
+
                     }
                 }
 
                 retVal = count > 0;
 
                 eggs.Stop();
+
+
 
 
                 Lib.WrLog(eggs.GetCount().ToString());

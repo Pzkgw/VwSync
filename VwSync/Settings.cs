@@ -25,9 +25,6 @@ namespace VwSyncSever
             serLogFile = "Log.txt",
             serPasswFile = "Passwords.txt";
 
-        public static string[] mapNetDrives = { "V:", "I:", "S:" };
-        public static int mapNetIdx = 0;
-
         public static string serExe = "VwSer.exe"; //c:\_ToDo\Sync\trunk\VwSyncSever\bin\Release\            
 
         public string
@@ -54,7 +51,7 @@ namespace VwSyncSever
 
         // de cate ori am avut fail de syncronizare
         public int ErrCount;
-        public static readonly int ErrCountMax = 512, port = 3216;
+        public static readonly int ErrCountMax = 512;
 
         public Settings(string localDir, string remoteDir)
         {

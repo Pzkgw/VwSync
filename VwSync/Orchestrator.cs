@@ -49,7 +49,7 @@ namespace VwSyncSever
                       set.metadataDirectoryPath, Settings.metaFileLoc,
                       set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
 
-                remotePro = new FileSyncProvider(destId, (serviceCall && Utils.IsRemotePath(set.dirRemote)) ? Settings.mapNetDrives[Settings.mapNetIdx] : set.dirRemote,
+                remotePro = new FileSyncProvider(destId, set.dirRemote,
                     scopeFilter, fileSyncOptions,
                     set.metadataDirectoryPath, Settings.metaFileRem,
                     set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);

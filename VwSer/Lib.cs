@@ -10,7 +10,7 @@ namespace VwSer
         private static int logCheckDelay = 0;
         private const int maxLogCheckDelay = 4000000; // 4 MB
 
-       // private static Func<string, int> logFunc = Log;
+        // private static Func<string, int> logFunc = Log;
 
         public static void WrLog(Exception ex)
         {
