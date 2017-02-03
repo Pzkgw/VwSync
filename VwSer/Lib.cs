@@ -36,8 +36,11 @@ namespace VwSer
             {
                 if (!SerSettings.logPathInit)
                 {
-                    SerSettings.logPath = SerSettings.dirLocal +
-                        Settings.backSlash + Settings.serLogFile;
+                    SerSettings.logPath = string.Format("{0}{1}{2}",
+                        SerSettings.dirLocal, Settings.backSlash, Settings.serLogFile);
+
+                    SerSettings.passwFilePath = string.Format("{0}{1}{2}",
+                        SerSettings.dirLocal, Settings.backSlash, Settings.serPasswFile);
 
                     SerSettings.logPathInit = true;
                 }

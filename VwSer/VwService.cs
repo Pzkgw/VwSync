@@ -12,7 +12,8 @@ namespace VwSer
     public partial class VwService : ServiceBase
     {
 
-        bool retVal = false, mapNetwork, isHatched = false, res;
+        bool mapNetwork, isHatched = false, res;
+        private DateTime pasFileLastWriteTime;
         int idx, count = 0, execTime;
         public static double ultimulTimpTotalDeExecutie; // in milisecunde
 
@@ -210,12 +211,11 @@ namespace VwSer
             SerSettings.run = true;
             count = 0;
 
-            retVal = (SerSettings.dirLocal != null &&
+            bool retVal = (SerSettings.dirLocal != null &&
                 Directory.Exists(SerSettings.dirLocal));
 
             if (retVal)
             {
-
                 eggs.Start();
 
                 foreach (string s in Directory.GetDirectories(SerSettings.dirLocal))
@@ -278,25 +278,49 @@ namespace VwSer
                                 //DriveSettings.MapNetworkDrive("W", "\\\\10.10.10.47\\video\\gi test", "GI", "1qaz@WSX");
 
                                 // get user and password from the Passwords file
-                                if (egg == null)
+                                pasFileLastWriteTime = DateTime.MinValue;
+                                bool pasFileUpdate = false;
+
+                                if (egg != null && File.Exists(SerSettings.passwFilePath))
+                                {
+                                    pasFileLastWriteTime = (new FileInfo(SerSettings.passwFilePath)).LastWriteTime;
+                                    pasFileUpdate = eggs.pasFileLastWriteTimeVal != pasFileLastWriteTime.Second;
+                                }      
+
+                                if (egg == null || pasFileUpdate)
                                 {
                                     FindUserDetails(
-                                        SerSettings.dirLocal + Settings.backSlash + "Passwords.txt",
+                                        SerSettings.passwFilePath,
                                         aux, ref usr, ref pas);
 
-                                    usr = "GI";
-                                    pas = "1qaz@WSX";
+                                    if (pasFileUpdate)
+                                    {
+                                        eggs.pasFileLastWriteTimeVal = pasFileLastWriteTime.Second;
+                                        egg.usr = usr;
+                                        egg.pas = pas;
+                                    }
+
+                                    //usr = "GI";
+                                    //pas = "1qaz@WSX";
                                 }
 
-                                if (l.MapNetworkDrive(rs, Settings.mapNetDrives[Settings.mapNetIdx], usr, pas) == 0)
+
+                                if (egg != null)
                                 {
-                                    mapNetwork = true;
-                                    res = true;
+                                    usr = egg.usr;
+                                    pas = egg.pas;
                                 }
-                                else
-                                {
-                                    res = false;
-                                }
+
+                                if (!string.IsNullOrEmpty(usr))
+                                    if (l.MapNetworkDrive(rs, Settings.mapNetDrives[Settings.mapNetIdx], usr, pas) == 0)
+                                    {
+                                        mapNetwork = true;
+                                        res = true;
+                                    }
+                                    else
+                                    {
+                                        res = false;
+                                    }
                             }
 
                             //VwSync.Imperson.DoWorkUnderImpersonation(rs);
@@ -344,6 +368,9 @@ namespace VwSer
                                         egg.dir = s;
                                         egg.orc = o;
                                         egg.isMapped = mapNetwork;
+
+                                        egg.usr = usr;
+                                        egg.pas = pas;
 
                                         eggs.AddEgg(egg);
                                     }

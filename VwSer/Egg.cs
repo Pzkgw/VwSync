@@ -23,6 +23,8 @@ namespace VwSer
     class EggArray
     {
         private List<Egg> eggs;
+
+        public int pasFileLastWriteTimeVal;
         public EggArray()
         {
             eggs = new List<Egg>();

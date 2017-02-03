@@ -22,7 +22,8 @@ namespace VwSyncSever
             regPathLoc = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI SyncLoc",
             //regPathRem = @"SOFTWARE\Wow6432Node\GTS Global Intelligence\CAVI SyncRem",
             serNameLoc = "CAVISync",
-            serLogFile = "Log.txt";
+            serLogFile = "Log.txt",
+            serPasswFile = "Passwords.txt";
 
         public static string[] mapNetDrives = { "V:", "I:", "S:" };
         public static int mapNetIdx = 0;
