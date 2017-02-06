@@ -62,14 +62,14 @@ namespace VwSyncSever
             return result;
         }
 
-        public static bool IsDriveMapped(string sDriveLetter)
-        {
-            foreach (string s in Environment.GetLogicalDrives())
-            {
-                if (s.Equals(sDriveLetter)) return true;
-            }
-            return false;
-        }
+        //public static bool IsDriveMapped(string sDriveLetter)
+        //{
+        //    foreach (string s in Environment.GetLogicalDrives())
+        //    {
+        //        if (s.Equals(sDriveLetter)) return true;
+        //    }
+        //    return false;
+        //}
 
         public static bool IsRemotePath(string s)
         {
@@ -273,28 +273,27 @@ namespace VwSyncSever
         #endregion
 
         #region Errors
-        const int NO_ERROR = 0;
-
-        const int ERROR_ACCESS_DENIED = 5;
-        const int ERROR_ALREADY_ASSIGNED = 85;
-        const int ERROR_BAD_DEVICE = 1200;
-        const int ERROR_BAD_NET_NAME = 67;
-        const int ERROR_BAD_PROVIDER = 1204;
-        const int ERROR_CANCELLED = 1223;
-        const int ERROR_EXTENDED_ERROR = 1208;
-        const int ERROR_INVALID_ADDRESS = 487;
-        const int ERROR_INVALID_PARAMETER = 87;
-        const int ERROR_INVALID_PASSWORD = 1216;
-        const int ERROR_MORE_DATA = 234;
-        const int ERROR_NO_MORE_ITEMS = 259;
-        const int ERROR_NO_NET_OR_BAD_PATH = 1203;
-        const int ERROR_NO_NETWORK = 1222;
-
-        const int ERROR_BAD_PROFILE = 1206;
-        const int ERROR_CANNOT_OPEN_PROFILE = 1205;
-        const int ERROR_DEVICE_IN_USE = 2404;
-        const int ERROR_NOT_CONNECTED = 2250;
-        const int ERROR_OPEN_FILES = 2401;
+        const int NO_ERROR = 0,
+        ERROR_ACCESS_DENIED = 5,
+        ERROR_ALREADY_ASSIGNED = 85,
+        ERROR_BAD_DEVICE = 1200,
+        ERROR_BAD_NET_NAME = 67,
+        ERROR_BAD_PROVIDER = 1204,
+        ERROR_CANCELLED = 1223,
+        ERROR_EXTENDED_ERROR = 1208,
+        ERROR_INVALID_ADDRESS = 487,
+        ERROR_INVALID_PARAMETER = 87,
+        ERROR_INVALID_PASSWORD = 1216,
+        ERROR_MORE_DATA = 234,
+        ERROR_NO_MORE_ITEMS = 259,
+        ERROR_NO_NET_OR_BAD_PATH = 1203,
+        ERROR_NO_NETWORK = 1222,
+        ERROR_LOGON_FAILURE = 1326, // (0x52E) The user name or password is incorrect
+        ERROR_BAD_PROFILE = 1206,
+        ERROR_CANNOT_OPEN_PROFILE = 1205,
+        ERROR_DEVICE_IN_USE = 2404,
+        ERROR_NOT_CONNECTED = 2250,
+        ERROR_OPEN_FILES = 2401;
 
         private struct ErrorClass
         {
@@ -311,26 +310,27 @@ namespace VwSyncSever
         // Created with excel formula:
         // ="new ErrorClass("&A1&", """&PROPER(SUBSTITUTE(MID(A1,7,LEN(A1)-6), "_", " "))&"""), "
         private static ErrorClass[] ERROR_LIST = new ErrorClass[] {
-            new ErrorClass(ERROR_ACCESS_DENIED, "Error: Access Denied"),
-            new ErrorClass(ERROR_ALREADY_ASSIGNED, "Error: Already Assigned"),
-            new ErrorClass(ERROR_BAD_DEVICE, "Error: Bad Device"),
-            new ErrorClass(ERROR_BAD_NET_NAME, "Error: Bad Net Name"),
-            new ErrorClass(ERROR_BAD_PROVIDER, "Error: Bad Provider"),
-            new ErrorClass(ERROR_CANCELLED, "Error: Cancelled"),
-            new ErrorClass(ERROR_EXTENDED_ERROR, "Error: Extended Error"),
-            new ErrorClass(ERROR_INVALID_ADDRESS, "Error: Invalid Address"),
-            new ErrorClass(ERROR_INVALID_PARAMETER, "Error: Invalid Parameter"),
-            new ErrorClass(ERROR_INVALID_PASSWORD, "Error: Invalid Password"),
-            new ErrorClass(ERROR_MORE_DATA, "Error: More Data"),
-            new ErrorClass(ERROR_NO_MORE_ITEMS, "Error: No More Items"),
-            new ErrorClass(ERROR_NO_NET_OR_BAD_PATH, "Error: No Net Or Bad Path"),
-            new ErrorClass(ERROR_NO_NETWORK, "Error: No Network"),
-            new ErrorClass(ERROR_BAD_PROFILE, "Error: Bad Profile"),
-            new ErrorClass(ERROR_CANNOT_OPEN_PROFILE, "Error: Cannot Open Profile"),
-            new ErrorClass(ERROR_DEVICE_IN_USE, "Error: Device In Use"),
-            new ErrorClass(ERROR_EXTENDED_ERROR, "Error: Extended Error"),
-            new ErrorClass(ERROR_NOT_CONNECTED, "Error: Not Connected"),
-            new ErrorClass(ERROR_OPEN_FILES, "Error: Open Files"),
+            new ErrorClass(ERROR_ACCESS_DENIED, " Error: Access Denied"),
+            new ErrorClass(ERROR_ALREADY_ASSIGNED, " Error: Already Assigned"),
+            new ErrorClass(ERROR_BAD_DEVICE, " Error: Bad Device"),
+            new ErrorClass(ERROR_BAD_NET_NAME, " Error: Bad Net Name"),
+            new ErrorClass(ERROR_BAD_PROVIDER, " Error: Bad Provider"),
+            new ErrorClass(ERROR_CANCELLED, " Error: Cancelled"),
+            new ErrorClass(ERROR_EXTENDED_ERROR, " Error: Extended Error"),
+            new ErrorClass(ERROR_INVALID_ADDRESS, " Error: Invalid Address"),
+            new ErrorClass(ERROR_INVALID_PARAMETER, " Error: Invalid Parameter"),
+            new ErrorClass(ERROR_INVALID_PASSWORD, " Error: Invalid Password"),
+            new ErrorClass(ERROR_MORE_DATA, " Error: More Data"),
+            new ErrorClass(ERROR_NO_MORE_ITEMS, " Error: No More Items"),
+            new ErrorClass(ERROR_NO_NET_OR_BAD_PATH, " Error: No Net Or Bad Path"),
+            new ErrorClass(ERROR_NO_NETWORK, " Error: No Network"),
+            new ErrorClass(ERROR_BAD_PROFILE, " Error: Bad Profile"),
+            new ErrorClass(ERROR_CANNOT_OPEN_PROFILE, " Error: Cannot Open Profile"),
+            new ErrorClass(ERROR_DEVICE_IN_USE, " Error: Device In Use"),
+            new ErrorClass(ERROR_EXTENDED_ERROR, " Error: Extended Error"),
+            new ErrorClass(ERROR_NOT_CONNECTED, " Error: Not Connected"),
+            new ErrorClass(ERROR_OPEN_FILES, " Error: Open Files"),
+            new ErrorClass(ERROR_LOGON_FAILURE, " Error: The user name or password is incorrect"),
         };
 
         private static string getErrorForNumber(int errNum)
@@ -411,7 +411,7 @@ namespace VwSyncSever
 
 
 
-
+    /*
     public class NetworkDrive
     {
         public enum ResourceScope
@@ -476,22 +476,22 @@ namespace VwSyncSever
         [DllImport("mpr.dll")]
         public static extern int WNetCancelConnection2(string sLocalName, uint iFlags, int iForce);
 
-        /* Uses Struct rather than class version of NETRESOURCE */
-        /*
+         //Uses Struct rather than class version of NETRESOURCE 
+        
         [DllImport("mpr.dll")]
         private static extern int WNetAddConnection3(IntPtr hWndOwner, ref NETRESOURCE lpNetResource, string lpPassword, string lpUserName, int dwFlags);
-        */
+        
 
 
         public int MapNetworkDrive(string unc, string drive, string user, string password)
         {
-            /*
+            
             //If Drive is already mapped disconnect the current 
             //mapping before adding the new mapping
             if (IsDriveMapped(sDriveLetter))
             {
                 DisconnectNetworkDrive(sDriveLetter, true);
-            }*/
+            }
 
             NETRESOURCE myNetResource = new NETRESOURCE();
             //myNetResource.dwType = ResourceType.RESOURCETYPE_DISK;
@@ -518,7 +518,7 @@ namespace VwSyncSever
 
     }
 
-
+*/
 
 
 
@@ -776,41 +776,41 @@ namespace VwSyncSever
             }
         }
 
-        public static void SetDescriereServiciu(string ServiceName, string txt)
-        {
+        //public static void SetDescriereServiciu(string ServiceName, string txt)
+        //{
 
-            IntPtr scman = OpenSCManager(ServiceManagerRights.Connect);
-            try
-            {
-                IntPtr service = OpenService(scman, ServiceName, ServiceRights.AllAccess);
-                if (service == IntPtr.Zero)
-                {
-                    throw new ApplicationException("Service not installed.");
-                }
-                try
-                {
-                    var pinfo = new SERVICE_DESCRIPTION
-                    {
-                        lpDescription = txt
-                    };
+        //    IntPtr scman = OpenSCManager(ServiceManagerRights.Connect);
+        //    try
+        //    {
+        //        IntPtr service = OpenService(scman, ServiceName, ServiceRights.AllAccess);
+        //        if (service == IntPtr.Zero)
+        //        {
+        //            throw new ApplicationException("Service not installed.");
+        //        }
+        //        try
+        //        {
+        //            var pinfo = new SERVICE_DESCRIPTION
+        //            {
+        //                lpDescription = txt
+        //            };
 
-                    if (!ChangeServiceConfig2(service, SERVICE_CONFIG_DESCRIPTION, ref pinfo))
-                    {
-                        //int error = Marshal.GetLastWin32Error();
-                        //throw new ApplicationException("Could not delete service " + error);
-                    }
-                }
-                finally
-                {
-                    CloseServiceHandle(service);
-                }
-            }
-            finally
-            {
-                CloseServiceHandle(scman);
-            }
+        //            if (!ChangeServiceConfig2(service, SERVICE_CONFIG_DESCRIPTION, ref pinfo))
+        //            {
+        //                //int error = Marshal.GetLastWin32Error();
+        //                //throw new ApplicationException("Could not delete service " + error);
+        //            }
+        //        }
+        //        finally
+        //        {
+        //            CloseServiceHandle(service);
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        CloseServiceHandle(scman);
+        //    }
 
-        }
+        //}
 
 
         /// <summary>
@@ -856,7 +856,7 @@ namespace VwSyncSever
                     service = CreateService(scman, ServiceName, DisplayName,
                     ServiceRights.AllAccess, SERVICE_WIN32_OWN_PROCESS | SERVICE_INTERACTIVE_PROCESS,
                     ServiceBootFlag.DemandStart, ServiceError.Critical, FileName, null, IntPtr.Zero,
-                    null, null, null);              //"GI", "1qaz@WSX"    // "GI\\bogdan.visoiu", "rets"  
+                    null, null, null);
                 }
                 if (service == IntPtr.Zero)
                 {

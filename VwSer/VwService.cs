@@ -17,9 +17,9 @@ namespace VwSer
         int idx, count = 0, execTime;
         public static double ultimulTimpTotalDeExecutie; // in milisecunde
 
-        private string lastDirLocal, rs, aux;
+        private string lastDirLocal, rs, aux, connectStringResult;
         private Timer tim;
-        private NetworkDrive l;
+        //private NetworkDrive l;
         private Egg egg;
         private EggArray eggs;
 
@@ -61,7 +61,6 @@ namespace VwSer
         {
             if (SerSettings.run) return;
 
-            l = new NetworkDrive();
             eggs = new EggArray();
 
             SerSettings.errCount = 0;
@@ -285,7 +284,7 @@ namespace VwSer
                                 {
                                     pasFileLastWriteTime = (new FileInfo(SerSettings.passwFilePath)).LastWriteTime;
                                     pasFileUpdate = eggs.pasFileLastWriteTimeVal != pasFileLastWriteTime.Second;
-                                }      
+                                }
 
                                 if (egg == null || pasFileUpdate)
                                 {
@@ -328,17 +327,18 @@ namespace VwSer
                                     //    res = false;
                                     //}
 
-                                   if( PinvokeWindowsNetworking.connectToRemote(rs, usr, pas)==null)
+                                    connectStringResult = PinvokeWindowsNetworking.connectToRemote(rs, usr, pas);
+
+                                    if (connectStringResult == null)
                                     {
                                         mapNetwork = true;
-                                            res = true;
+                                        res = true;
                                     }
                                     else
                                     {
+                                        Lib.WrLog(rs + connectStringResult);
                                         res = false;
                                     }
-
-
 
                                     //if (l.MapNetworkDrive(rs, Settings.mapNetDrives[Settings.mapNetIdx], usr, pas) == 0)
                                     //{
