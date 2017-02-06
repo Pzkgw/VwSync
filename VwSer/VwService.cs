@@ -134,7 +134,7 @@ namespace VwSer
                 }
             }
 
-            ultimulTimpTotalDeExecutie *= 3;
+            ultimulTimpTotalDeExecutie *= 2;
             if (ultimulTimpTotalDeExecutie < 1000) ultimulTimpTotalDeExecutie = 1000;
             if (ultimulTimpTotalDeExecutie > uint.MaxValue) ultimulTimpTotalDeExecutie = uint.MaxValue;
             tim.Interval = ultimulTimpTotalDeExecutie;
