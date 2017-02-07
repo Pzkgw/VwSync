@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
 using System.ServiceProcess;
 
 namespace VwSyncSever
@@ -236,7 +237,51 @@ namespace VwSyncSever
 
                 #endregion StringCompress
                 */
+
+        public static bool IsEnglishLetter(char c)
+        {
+            return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+        }
+
+        /// <summary>
+        /// True = path valid cu AccessControl sau URI care respecta conventia de nume UNC
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static bool IsValidPath(string directoryPath)
+        {
+            try
+            {
+                AuthorizationRuleCollection rules = Directory.GetAccessControl(directoryPath).GetAccessRules(true, true, typeof(System.Security.Principal.SecurityIdentifier));
+                return true;
+            }
+            catch
+            {
+                Uri uri = null;
+
+                try
+                {
+                    uri = new Uri(directoryPath);
+                }
+                catch
+                {
+
+                }
+
+                if (uri != null)
+                {
+                    if (uri.IsUnc) return true;
+                }
+
+                return false;
+            }
+        }
+
+
     }
+
+
+
 
 
 
@@ -275,6 +320,7 @@ namespace VwSyncSever
         #region Errors
         const int NO_ERROR = 0,
         ERROR_ACCESS_DENIED = 5,
+        ERROR_BAD_NETPATH = 53, //(0x35) The network path was not found.
         ERROR_ALREADY_ASSIGNED = 85,
         ERROR_BAD_DEVICE = 1200,
         ERROR_BAD_NET_NAME = 67,
@@ -331,6 +377,7 @@ namespace VwSyncSever
             new ErrorClass(ERROR_NOT_CONNECTED, " Error: Not Connected"),
             new ErrorClass(ERROR_OPEN_FILES, " Error: Open Files"),
             new ErrorClass(ERROR_LOGON_FAILURE, " Error: The user name or password is incorrect"),
+            new ErrorClass(ERROR_BAD_NETPATH, " Error: The network path was not found")
         };
 
         private static string getErrorForNumber(int errNum)
@@ -339,7 +386,8 @@ namespace VwSyncSever
             {
                 if (er.num == errNum) return er.message;
             }
-            return "Error: Unknown, " + errNum;
+
+            return " Error: Unknown, " + errNum;
         }
         #endregion
 

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.ServiceProcess;
 using System.Timers;
 using Microsoft.Synchronization;
@@ -66,8 +68,6 @@ namespace VwSer
             SerSettings.errCount = 0;
 
             base.OnStart(args);
-
-            Lib.WrLog("_Synchronization start");
 
             tim = new Timer();
             tim.Interval = 1000;
@@ -325,6 +325,16 @@ namespace VwSer
                                     //catch
                                     //{
                                     //    res = false;
+                                    //}
+
+                                    // DirectoryInfo di = new DirectoryInfo(rs);
+                                    ///DirectorySecurity ds = di.GetAccessControl();
+                                    ///
+
+                                    //foreach (AccessRule rule in ds.GetAccessRules(true, true, typeof(NTAccount)))
+                                    //{
+                                    //Lib.WrLog(string.Format("Identity = {0}; Access = {1}",
+                                    //rule.IdentityReference.Value, rule.AccessControlType));
                                     //}
 
                                     connectStringResult = PinvokeWindowsNetworking.connectToRemote(rs, usr, pas);

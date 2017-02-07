@@ -26,8 +26,9 @@ namespace VwSyncSever
                     if (rs.Contains(Settings.chSlash))
                     {
                         rs = rs.Replace(Settings.chSlash, Settings.backSlash);
-                        if (rs[0] != Settings.backSlash) rs = rs.Insert(1, ":"); // director local
-                        if (Directory.Exists(rs) && Utils.DirectoryExists(rs))
+                        if (Utils.IsEnglishLetter(rs[0])) rs = rs.Insert(1, ":"); // director local
+                        VwSer.Lib.WrLog(rs);
+                        if (Utils.IsValidPath(rs) || (Directory.Exists(rs) && Utils.DirectoryExists(rs)))
                         {
                             return true;
                         }

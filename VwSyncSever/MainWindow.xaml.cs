@@ -14,8 +14,13 @@ namespace VwSyncSever
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Orchestrator o;
 
-        Orchestrator o;
+        private ConnectionMessage mesaj;
+
+        public string
+            pathProviderLocal, pathProviderRemote,
+            user, pass;
 
         public MainWindow()
         {
@@ -88,18 +93,21 @@ namespace VwSyncSever
 
         private void btnService_Click(object sender, RoutedEventArgs e)
         {
-            string path = textBox2.Text;
+            pathProviderLocal = textBox2.Text;
             bool btnCall = !(sender == null && e == null);
 
-            if (!Directory.Exists(path) || !Utils.DirectoryExists(path))
+            if (!Directory.Exists(pathProviderLocal) || !Utils.DirectoryExists(pathProviderLocal))
             {
                 if (btnCall) infoLbl.Content = "Cannot start service with the current local path";
                 return;
             }
 
+            SerSettings.dirLocal = pathProviderLocal;
+
+
             if (btnCall)
             {
-                if (!Verify.LocalDirCheck(path))
+                if (!Verify.LocalDirCheck(pathProviderLocal))
                 {
                     infoLbl.Content = "Synchronize at least one path. Void service not started.";
                     return;
@@ -108,7 +116,7 @@ namespace VwSyncSever
 
             if (!Exec.SerIsOn())
             {
-                RegistryCon.Update(null, -1, Guid.Empty, path);
+                RegistryCon.Update(null, -1, Guid.Empty, pathProviderLocal);
 
                 bool started = true;
 
@@ -127,7 +135,7 @@ namespace VwSyncSever
                 //VwSer.ProjectInstaller l = new VwSer.ProjectInstaller();
                 //l.Install();
                 Utils.ExecuteCommand(
-                    System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()+
+                    System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory() +
                     "\\InstallUtil.exe /i /unattended " +
                     Settings.serExe); //  /user=GI\bogdan.visoiu /password=
 
@@ -140,9 +148,9 @@ namespace VwSyncSever
                 if (btnCall) infoLbl.Content = "Service " + (started ? "" : "was not") + "started";
 
 
-                    Exec.SerStart();
-                    SetServiceGui(true);
-                
+                Exec.SerStart();
+                SetServiceGui(true);
+
 
 
             }
@@ -159,15 +167,42 @@ namespace VwSyncSever
 
         private void btnSaveEditedText_Click(object sender, RoutedEventArgs e)
         {
+            Window_Closing(null, null);
             Close();
         }
 
-        private void btnSync_Click(object sender, RoutedEventArgs e)
+        public void btnSync_Click(object sender, RoutedEventArgs e)
         {
             //VwService.SerSettings.dirLocal = textBox2.Text; // TODO: ver ca e path valabil
             //VwService.FileStructClass.RunSync();
 
             //return;
+            bool mapNetwork = false;
+
+            if (mesaj != null)
+            {
+                mesaj = null;
+            }
+
+            if (e != null)
+            {
+                pathProviderLocal = textBox2.Text;
+                pathProviderRemote = atextBox2.Text;
+            }
+            else // test pentru o noua parola
+            {
+                string connectStringResult =
+                PinvokeWindowsNetworking.connectToRemote(pathProviderRemote, user, pass);
+
+                if (connectStringResult == null)
+                {
+                    mapNetwork = true;
+                }
+                else
+                {
+                    infoLbl.Content = connectStringResult;
+                }
+            }
 
             bool serviceWasRunning = Exec.SerIsOn();
             //Exec.SerStop();
@@ -186,23 +221,53 @@ namespace VwSyncSever
                 Exec.SerDelete();
             }*/
 
-            if (Exec.SerIsOn()) System.Threading.Thread.Sleep(500);
+            if (Exec.SerIsOn()) System.Threading.Thread.Sleep(100);
 
-            SyncOperationStatistics stats =
-            o.Sync(false, textBox2.Text, atextBox2.Text);
+            SyncOperationStatistics stats = null;
+            Exception exc;
+
+            try
+            {
+                stats = o.Sync(false, pathProviderLocal, pathProviderRemote);
+            }
+            catch (Exception ex)
+            {
+                exc = ex;
+            }
+
+            if (mapNetwork)
+            {
+                PinvokeWindowsNetworking.disconnectRemote(pathProviderRemote);
+            }
 
             if (stats == null)
             {
-                infoLbl.Content = "Failed sync. ";
-
-                if (o.set.directoryStructureIsOk && !o.set.remotePathIsOk)
+                if (e != null)
                 {
-                    infoLbl.Content += string.Format("Remote path should not contain the '{0}' character", Settings.chSlash);
-                }
+                    infoLbl.Content = "Failed sync. ";
 
-                if (!o.set.directoryStructureIsOk)
-                    infoLbl.Content +=
-                        (Utils.DirectoryExists(o.set.dirRemote) ? "Directory exists, but without rights." : "Directory does not exist.");
+                    if (o.set.directoryStructureIsOk && !o.set.remotePathIsOk)
+                    {
+                        infoLbl.Content += string.Format("Remote path should not contain the '{0}' character", Settings.chSlash);
+                    }
+                    else
+                    if (!o.set.directoryStructureIsOk)
+                        infoLbl.Content +=
+                            (Utils.DirectoryExists(o.set.dirRemote) ? "Directory exists, but without rights." : "Directory does not exist.");
+                    else
+                    if (Utils.IsValidPath(o.set.dirRemote))
+                    {
+
+                        mesaj = new ConnectionMessage(this);
+                        mesaj.lblInfo.Content =
+                            "Cannot connect to client path.";
+
+
+                        mesaj.lblInfo.Content += (Environment.NewLine +
+                                " Update username and password ");
+                        if (e != null) mesaj.Show();
+                    }
+                }
             }
             else
             {
@@ -238,6 +303,11 @@ namespace VwSyncSever
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             o.CleanUp();
+            if (mesaj != null)
+            {
+                mesaj.Close();
+                mesaj = null;
+            }
         }
     }
 }

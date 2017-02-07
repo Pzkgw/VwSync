@@ -45,7 +45,7 @@ namespace VwSyncSever
         public static string[] excludeFileExtensions =
             new string[] { "*.tmp", "*.lnk", "*.pst" };
 
-        public const char backSlash = '\\', chSlash = '$'; // caracterul ce inlocuieste slash
+        public const char backSlash = '\\', chSlash = '@'; // caracterul ce inlocuieste slash
 
         public bool directoryStructureIsOk, remotePathIsOk;
 
@@ -124,7 +124,7 @@ namespace VwSyncSever
                 Directory.CreateDirectory(dir[0]);
             }
 
-            if (!Directory.Exists(dir[1]))
+            if (!Directory.Exists(dir[1]) && !Utils.IsValidPath(dir[1]))
             {
                 //("No directory for remote provider");
                 return false;
