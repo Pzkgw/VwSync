@@ -322,6 +322,7 @@ namespace VwSyncSever
         ERROR_ACCESS_DENIED = 5,
         ERROR_BAD_NETPATH = 53, //(0x35) The network path was not found.
         ERROR_ALREADY_ASSIGNED = 85,
+        ERROR_INVALID_PASSWORD = 86,
         ERROR_BAD_DEVICE = 1200,
         ERROR_BAD_NET_NAME = 67,
         ERROR_BAD_PROVIDER = 1204,
@@ -329,7 +330,7 @@ namespace VwSyncSever
         ERROR_EXTENDED_ERROR = 1208,
         ERROR_INVALID_ADDRESS = 487,
         ERROR_INVALID_PARAMETER = 87,
-        ERROR_INVALID_PASSWORD = 1216,
+        ERROR_INVALID_PASSWORDNAME = 1216,
         ERROR_MORE_DATA = 234,
         ERROR_NO_MORE_ITEMS = 259,
         ERROR_NO_NET_OR_BAD_PATH = 1203,
@@ -365,7 +366,7 @@ namespace VwSyncSever
             new ErrorClass(ERROR_EXTENDED_ERROR, " Error: Extended Error"),
             new ErrorClass(ERROR_INVALID_ADDRESS, " Error: Invalid Address"),
             new ErrorClass(ERROR_INVALID_PARAMETER, " Error: Invalid Parameter"),
-            new ErrorClass(ERROR_INVALID_PASSWORD, " Error: Invalid Password"),
+            new ErrorClass(ERROR_INVALID_PASSWORDNAME, " Error: Password format is invalid"),
             new ErrorClass(ERROR_MORE_DATA, " Error: More Data"),
             new ErrorClass(ERROR_NO_MORE_ITEMS, " Error: No More Items"),
             new ErrorClass(ERROR_NO_NET_OR_BAD_PATH, " Error: No Net Or Bad Path"),
@@ -377,7 +378,8 @@ namespace VwSyncSever
             new ErrorClass(ERROR_NOT_CONNECTED, " Error: Not Connected"),
             new ErrorClass(ERROR_OPEN_FILES, " Error: Open Files"),
             new ErrorClass(ERROR_LOGON_FAILURE, " Error: The user name or password is incorrect"),
-            new ErrorClass(ERROR_BAD_NETPATH, " Error: The network path was not found")
+            new ErrorClass(ERROR_BAD_NETPATH, " Error: The network path was not found"),
+            new ErrorClass(ERROR_INVALID_PASSWORD, " Error: The specified network password is not correct")
         };
 
         private static string getErrorForNumber(int errNum)

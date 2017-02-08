@@ -11,17 +11,17 @@
         Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
         WindowStyle="None">
     <StackPanel Orientation="Vertical">
-        <Grid MinWidth="200" MinHeight="80" Margin="40,10,40,0">
-            <Label Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" Name="lblInfo" FontSize="16"></Label>
-        </Grid>
+
+            <Label MinHeight="40" MinWidth="200" Margin="40,40,40,0" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" Name="lblInfo" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"></Label>
+
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Vertical" Margin="10">
-                <Label Content="User:" HorizontalAlignment="Center" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontSize="16"/>
+                <Label Content="Username" HorizontalAlignment="Center" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontSize="16"/>
                 <TextBox x:Name="textBoxUser" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" FontFamily="Times New Roman" Width="200"/>
             </StackPanel>
 
             <StackPanel Orientation="Vertical" Margin="10">
-                <Label  Content="Password:" HorizontalAlignment="Center" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontSize="16"/>
+                <Label  Content="Password" HorizontalAlignment="Center" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontSize="16"/>
                 <TextBox x:Name="textBoxPassword"  Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" FontFamily="Times New Roman" Width="200"/>
             </StackPanel>
         </StackPanel>

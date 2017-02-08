@@ -69,7 +69,6 @@
     <Compile Include="ConnectionMessage.xaml.cs">
       <DependentUpon>ConnectionMessage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Verify.cs" />
     <Page Include="ConnectionMessage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

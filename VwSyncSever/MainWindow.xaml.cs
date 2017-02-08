@@ -61,8 +61,8 @@ namespace VwSyncSever
             textBox2.Text = set.dirLocal;
             atextBox2.Text = set.dirRemote;
 
-            const string f0 = "No files found", f1 = "Files:";
-            lblLstServer.Content = ListFiles(set.dirLocalSync, lstServerFiles) ? f1 : f0;
+            const string f0 = "", f1 = "Files:";
+            //lblLstServer.Content = ListFiles(set.dirLocalSync, lstServerFiles) ? f1 : f0;
             lblLstClient.Content = ListFiles(set.dirRemote, lstClientFiles) ? f1 : f0;
 
         }
@@ -107,7 +107,7 @@ namespace VwSyncSever
 
             if (btnCall)
             {
-                if (!Verify.LocalDirCheck(pathProviderLocal))
+                if (!Settings.LocalDirCheck(pathProviderLocal))
                 {
                     infoLbl.Content = "Synchronize at least one path. Void service not started.";
                     return;
@@ -184,24 +184,31 @@ namespace VwSyncSever
                 mesaj = null;
             }
 
-            if (e != null)
+            if (e == null) // mesaj window call
             {
-                pathProviderLocal = textBox2.Text;
-                pathProviderRemote = atextBox2.Text;
+                // user, pass disponibile
+                mapNetwork = ConnectToRemote();
             }
-            else // test pentru o noua parola
+            else // synchronize press call
             {
-                string connectStringResult =
-                PinvokeWindowsNetworking.connectToRemote(pathProviderRemote, user, pass);
+                pathProviderRemote = atextBox2.Text;
+                if (!string.IsNullOrEmpty(textBox2.Text) && 
+                    !textBox2.Text.Equals(pathProviderLocal))
+                {
+                    pathProviderLocal = textBox2.Text;
+                    SerSettings.dirLocal = pathProviderLocal;
 
-                if (connectStringResult == null)
-                {
-                    mapNetwork = true;
+                    SerSettings.UpdateFileLocations(Settings.backSlash,
+                        Settings.serLogFile, Settings.serPasswFile);
                 }
-                else
-                {
-                    infoLbl.Content = connectStringResult;
-                }
+
+                Settings.SearchPasswordFile(
+                    SerSettings.passwFilePath,
+                    Settings.GetDirLocalName(pathProviderRemote),
+                    ref user, ref pass);
+
+                if (!string.IsNullOrEmpty(user)) mapNetwork = ConnectToRemote();
+
             }
 
             bool serviceWasRunning = Exec.SerIsOn();
@@ -224,27 +231,23 @@ namespace VwSyncSever
             if (Exec.SerIsOn()) System.Threading.Thread.Sleep(100);
 
             SyncOperationStatistics stats = null;
-            Exception exc;
+
 
             try
             {
                 stats = o.Sync(false, pathProviderLocal, pathProviderRemote);
             }
-            catch (Exception ex)
+            catch //(Exception ex)
             {
-                exc = ex;
+
             }
 
-            if (mapNetwork)
-            {
-                PinvokeWindowsNetworking.disconnectRemote(pathProviderRemote);
-            }
-
+            // Get stats => show result
             if (stats == null)
             {
                 if (e != null)
                 {
-                    infoLbl.Content = "Failed sync. ";
+                    infoLbl.Content = "Synchronization failed";
 
                     if (o.set.directoryStructureIsOk && !o.set.remotePathIsOk)
                     {
@@ -258,13 +261,16 @@ namespace VwSyncSever
                     if (Utils.IsValidPath(o.set.dirRemote))
                     {
 
-                        mesaj = new ConnectionMessage(this);
+                        mesaj = new ConnectionMessage();
+
+                        mesaj.OkClick += Mesaj_OkClick;
+
                         mesaj.lblInfo.Content =
-                            "Cannot connect to client path.";
+                            string.Format("Connection solutions:{0}{0}" +
+                            " - update username and password and click Ok{0}" +
+                            " - or before synchronization make sure you can{0}   reach the path from Windows Explorer",
+                            Environment.NewLine);
 
-
-                        mesaj.lblInfo.Content += (Environment.NewLine +
-                                " Update username and password ");
                         if (e != null) mesaj.Show();
                     }
                 }
@@ -277,13 +283,56 @@ namespace VwSyncSever
                         " Task done in {0}ms.  Download changes total:{1}  Download changes applied:{2}  Download changes failed:{3}", //  UploadChangesTotal: {6}
                         stats.SyncEndTime.Subtract(stats.SyncStartTime).Milliseconds, //Environment.NewLine,
                         stats.DownloadChangesTotal, stats.DownloadChangesApplied, stats.DownloadChangesFailed
-                        //stats.UploadChangesTotal    
+                        //stats.UploadChangesTotal
                         );
                 UpdateSyncPathGui(o.set);
-
-                if (serviceWasRunning && !Exec.SerIsOn()) btnService_Click(null, null);
             }
 
+            if (mapNetwork)
+            {
+                PinvokeWindowsNetworking.disconnectRemote(pathProviderRemote);
+            }
+
+            // restart service
+            if (stats != null && serviceWasRunning && !Exec.SerIsOn()) btnService_Click(null, null);
+
+        }
+
+        private bool ConnectToRemote()
+        {
+            bool retVal = false;
+            string connectStringResult =
+    PinvokeWindowsNetworking.connectToRemote(pathProviderRemote, user, pass);
+
+            if (connectStringResult == null)
+            {
+                retVal = true;
+            }
+            else
+            {
+                infoLbl.Content = connectStringResult;
+
+            }
+            return retVal;
+        }
+
+        private void Mesaj_OkClick(object sender, EventArgs e)
+        {
+            if (mesaj != null)
+            {
+                if (!String.IsNullOrEmpty(mesaj.username))
+                {
+                    user = mesaj.username;
+                    pass = mesaj.password;
+                    mesaj.Close();
+                    btnSync_Click(null, null);
+                }
+                else
+                {
+                    infoLbl.Content = string.Empty;
+                    mesaj.Close();
+                }
+            }
         }
 
         private void btnSerDel_Click(object sender, RoutedEventArgs e)

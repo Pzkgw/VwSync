@@ -238,7 +238,7 @@ namespace VwSer
                         {
                             if (!isHatched)
                             {
-                                rs = rs.Replace(Settings.chSlash, Settings.backSlash);
+                                rs = Settings.GetDirRemoteName(rs);
 
                                 if (rs[0] != Settings.backSlash) rs = rs.Insert(1, ":"); // director local
 
@@ -288,7 +288,7 @@ namespace VwSer
 
                                 if (egg == null || pasFileUpdate)
                                 {
-                                    FindUserDetails(
+                                    Settings.SearchPasswordFile(
                                         SerSettings.passwFilePath,
                                         aux, ref usr, ref pas);
 
@@ -457,33 +457,6 @@ namespace VwSer
             return retVal;
         }
 
-        private void FindUserDetails(string passFile, string url, ref string usr, ref string pas)
-        {
-            if (File.Exists(passFile))
-            {
-                StreamReader sr = new StreamReader(passFile);
-                string line = null;
-                int i;
-                //Lib.WrLog("||FindUserDetails " + passFile + " || " + url);
-                while ((line = sr.ReadLine()) != null)
-                {
-                    if (line.StartsWith(url))
-                    {
-                        line = line.Substring(url.Length + 1, line.Length - url.Length - 1);
-                        i = line.IndexOf(',');
-                        if (i > 0)
-                        {
-                            usr = line.Substring(0, i);
-                            pas = line.Substring(i + 1, line.Length - i - 1);
-                        }
-                        //Lib.WrLog("||FindUserDetails " + usr + " || " + pas);
-                        sr.Close();
-                        return;
-                    }
-                    //line.Substring(line.fi)
-                }
-                sr.Close();
-            }
-        }
+
     }
 }

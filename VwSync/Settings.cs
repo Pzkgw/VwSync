@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Net;
 using Microsoft.Synchronization;
 using Microsoft.Synchronization.Files;
@@ -55,12 +56,71 @@ namespace VwSyncSever
 
         public Settings(string localDir, string remoteDir)
         {
-            dirLocalSync = localDir + GetDirLocalSync(remoteDir);
+            dirLocalSync = localDir + GetDirLocalName(remoteDir);
             RefreshPaths(localDir, remoteDir);
+
+            optFilter = new FileSyncScopeFilter();
+
+            optFilter.AttributeExcludeMask = excludeFileAttributes;
+            foreach (string s in Settings.excludeFileExtensions)
+                optFilter.FileNameExcludes.Add(s);
         }
 
-        public string GetDirLocalSync(string remoteDir) // dirRemote
+        /// <summary>
+        /// Given a password file and url as path,
+        /// search the username and password required on the given path
+        /// returns index for the resulted line
+        /// </summary>
+        /// <param name="passFile">Input password file</param>
+        /// <param name="url"></param>
+        /// <param name="usr"></param>
+        /// <param name="pas"></param>
+        public static int SearchPasswordFile(string passFile, string url, ref string usr, ref string pas)
         {
+            usr = string.Empty;
+            pas = string.Empty;
+
+            if (File.Exists(passFile))
+            {
+                StreamReader sr = new StreamReader(passFile);
+                string line = null;
+                int i, retVal = 0;
+                //Lib.WrLog("||FindUserDetails " + passFile + " || " + url);
+                while ((line = sr.ReadLine()) != null)
+                {
+                    if (line.StartsWith(url))
+                    {
+                        line = line.Substring(url.Length + 1, line.Length - url.Length - 1);
+                        i = line.IndexOf(',');
+                        if (i > 0)
+                        {
+                            usr = line.Substring(0, i);
+                            pas = line.Substring(i + 1, line.Length - i - 1);
+                        }
+                        //Lib.WrLog("||FindUserDetails " + usr + " || " + pas);
+                        sr.Close();
+                        return retVal;
+                    }
+                    //line.Substring(line.fi)
+                    ++retVal;
+                }
+                sr.Close();
+            }
+
+            return 0; 
+        }
+
+
+        public static string GetDirRemoteName(string localDir) // dirRemote
+        {
+            if (string.IsNullOrEmpty(localDir)) return null;
+            return localDir.Replace(chSlash, backSlash);
+        }
+
+        public static string GetDirLocalName(string remoteDir) // dirRemote
+        {
+            if (string.IsNullOrEmpty(remoteDir)) return null;
+
             string rFileName = null;
 
             rFileName = remoteDir.Replace(backSlash, chSlash);
@@ -89,6 +149,35 @@ namespace VwSyncSever
 
             if (!dirLocal.EndsWith("\\")) dirLocal = dirLocal + "\\";
 
+        }
+
+        public static bool LocalDirCheck(string dir)
+        {
+            string rs;
+            int startIdx;
+
+            foreach (string s in Directory.GetDirectories(dir))
+            {
+                startIdx = s.LastIndexOf(Settings.backSlash) + 1;
+                if (startIdx > 0)
+                {
+                    rs = s.Substring(startIdx, s.Length - startIdx);
+
+                    if (rs.Contains(Settings.chSlash))
+                    {
+                        rs = Settings.GetDirRemoteName(rs);
+                        if (Utils.IsEnglishLetter(rs[0])) rs = rs.Insert(1, ":"); // director local
+                        //VwSer.Lib.WrLog(rs);
+                        if (Utils.IsValidPath(rs) || (Directory.Exists(rs) && Utils.DirectoryExists(rs)))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+
+            return false;
         }
 
         public void SetupDirectoryStruct()

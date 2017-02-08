@@ -134,16 +134,10 @@ namespace VwSyncSever
             //if (set.ErrCount > Settings.ErrCountMax) return null;
 
             // 1. dir struct
-            set.dirLocalSync = set.dirLocal + set.GetDirLocalSync(rStr);
+            set.dirLocalSync = set.dirLocal + Settings.GetDirLocalName(rStr);
             set.RefreshPaths(lStr, rStr);
 
             // 3. WCF Sync
-            set.optFilter = new FileSyncScopeFilter();
-
-            set.optFilter.AttributeExcludeMask = set.excludeFileAttributes;
-            foreach (string s in Settings.excludeFileExtensions)
-                set.optFilter.FileNameExcludes.Add(s);
-
             set.directoryStructureIsOk =
                 set.PrepareDirectories(set.dirLocal, set.dirRemote);
 

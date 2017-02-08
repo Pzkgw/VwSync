@@ -24,15 +24,8 @@
                 <StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Right">
                     <Label x:Name="label" Content="    IP:" HorizontalAlignment="Left" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" VerticalAlignment="Center" />
                     <Label x:Name="lblIpServer" Foreground="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" VerticalAlignment="Center"/>
-
-
                 </StackPanel>
-
-                <Label x:Name="lblLstServer" Content="Files:" HorizontalAlignment="Left" Margin="11,0,0,0" Foreground="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" VerticalAlignment="Center" />
-
-                <ListView ScrollViewer.VerticalScrollBarVisibility="Auto" Name="lstServerFiles" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}" Margin="15,5,0,5" MaxHeight="200" BorderThickness="0,1,0,0" HorizontalAlignment="Left"/>
-
-
+ 
             </StackPanel>
 
 

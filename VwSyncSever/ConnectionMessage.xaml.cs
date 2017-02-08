@@ -1,16 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace VwSyncSever
 {
@@ -19,40 +9,36 @@ namespace VwSyncSever
     /// </summary>
     public partial class ConnectionMessage : Window
     {
-        readonly MainWindow ParentWindow;
-        public ConnectionMessage(MainWindow windowCaller)
+        public delegate void OkClickEventHandler(object sender, EventArgs e);
+        public event OkClickEventHandler OkClick;
+
+        public string username, password;
+        public ConnectionMessage()
         {
             InitializeComponent();
-            ParentWindow = windowCaller;
         }
 
         private void btnOk_Click(object sender, RoutedEventArgs e)
         {
-            if (ParentWindow != null)
+            if (OkClick != null)
             {
-                if (!String.IsNullOrEmpty(textBoxUser.Text))
-                {
-                    ParentWindow.user = textBoxUser.Text;
-                    ParentWindow.pass = textBoxPassword.Text;
-                    Close();
-                    ParentWindow.btnSync_Click(null, null);
-                }
-                else
-                {
-                    ParentWindow.infoLbl.Content = "New username and password should be used";
-                    Close();
-                }
+                //OkClick(string.IsNullOrEmpty(textBoxUser.Text) ? null : (string.Format("{0},{1}", textBoxUser.Text, textBoxPassword.Text)), e);
+
+                username = textBoxUser.Text;
+                password = textBoxPassword.Text;
+
+                OkClick(sender, e);
             }
         }
 
-        private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DragMove();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-
+            //OkClick = null;
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)

@@ -36,11 +36,8 @@ namespace VwSer
             {
                 if (!SerSettings.logPathInit)
                 {
-                    SerSettings.logPath = string.Format("{0}{1}{2}",
-                        SerSettings.dirLocal, Settings.backSlash, Settings.serLogFile);
-
-                    SerSettings.passwFilePath = string.Format("{0}{1}{2}",
-                        SerSettings.dirLocal, Settings.backSlash, Settings.serPasswFile);
+                    SerSettings.UpdateFileLocations(Settings.backSlash,
+                        Settings.serLogFile, Settings.serPasswFile);
 
                     SerSettings.logPathInit = true;
                 }
@@ -49,9 +46,9 @@ namespace VwSer
 
                 if (logCheckDelay > 32)
                 {
-                    if ((new FileInfo(SerSettings.logPath)).Length > maxLogCheckDelay) // clear file
+                    if ((new FileInfo(SerSettings.logPath)).Length > maxLogCheckDelay) 
                     {
-                        File.WriteAllText(SerSettings.logPath, string.Empty);
+                        File.WriteAllText(SerSettings.logPath, string.Empty);// clear file
                     }
                     logCheckDelay = 0;
                 }
