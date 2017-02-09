@@ -30,7 +30,7 @@ namespace VwSer
         {
             //(new Thread(() =>            {
 
-            StreamWriter sw = null;
+            
 
             try
             {
@@ -52,11 +52,12 @@ namespace VwSer
                     }
                     logCheckDelay = 0;
                 }
-
-                sw = new StreamWriter(SerSettings.logPath, true);
-                sw.WriteLine(string.Format("{0} : {1}", DateTime.Now.ToString(), s));
-                sw.Flush();
-                sw.Close();
+                using (StreamWriter sw = new StreamWriter(SerSettings.logPath, true))
+                {
+                    sw.WriteLine(string.Format("{0} : {1}", DateTime.Now.ToString(), s));
+                    sw.Flush();
+                    sw.Close();
+                }
             }
             catch { }
 

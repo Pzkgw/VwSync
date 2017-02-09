@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using Microsoft.Synchronization;
@@ -82,32 +83,74 @@ namespace VwSyncSever
 
             if (File.Exists(passFile))
             {
-                StreamReader sr = new StreamReader(passFile);
-                string line = null;
-                int i, retVal = 0;
-                //Lib.WrLog("||FindUserDetails " + passFile + " || " + url);
-                while ((line = sr.ReadLine()) != null)
+                using (StreamReader sr = new StreamReader(passFile))
                 {
-                    if (line.StartsWith(url))
+                    string line = null;
+                    int i, retVal = 0;
+                    //Lib.WrLog("||FindUserDetails " + passFile + " || " + url);
+                    while ((line = sr.ReadLine()) != null)
                     {
-                        line = line.Substring(url.Length + 1, line.Length - url.Length - 1);
-                        i = line.IndexOf(',');
-                        if (i > 0)
+                        if (line.StartsWith(url))
                         {
-                            usr = line.Substring(0, i);
-                            pas = line.Substring(i + 1, line.Length - i - 1);
+                            line = line.Substring(url.Length + 1, line.Length - url.Length - 1);
+                            i = line.IndexOf(',');
+                            if (i > 0)
+                            {
+                                usr = line.Substring(0, i);
+                                pas = line.Substring(i + 1, line.Length - i - 1);
+                            }
+                            //Lib.WrLog("||FindUserDetails " + usr + " || " + pas);
+                            sr.Close();
+                            return retVal;
                         }
-                        //Lib.WrLog("||FindUserDetails " + usr + " || " + pas);
-                        sr.Close();
-                        return retVal;
+                        //line.Substring(line.fi)
+                        ++retVal;
                     }
-                    //line.Substring(line.fi)
-                    ++retVal;
+                    sr.Close();
                 }
-                sr.Close();
             }
+            return -1;
+        }
 
-            return 0; 
+
+        public static void UpdatePasswordFile(string passFile, string url, string usr, string pas)
+        {
+            try
+            {
+                List<string> lines = new List<string>();
+                string linetoUpdate = string.Format("{0},{1},{2}", url, usr, pas);
+
+                if (File.Exists(passFile) && !string.IsNullOrEmpty(url)) 
+                {
+                    using (StreamReader sr = new StreamReader(passFile))
+                    {
+                        bool updateAcomplished = false;
+                        string line = null;
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            if (line.StartsWith(url))
+                            {
+                                line = linetoUpdate; // modifica parola
+                                updateAcomplished = true;
+                            }
+
+                            if (line != null && line.Contains(chSlash)) lines.Add(line);
+                        }
+
+                        if (!updateAcomplished) lines.Add(linetoUpdate); // adauga parola
+
+                        sr.Close();
+                    }
+                }
+                else
+                {
+                    lines.Add(linetoUpdate); // fisier cu o singura parola
+                }
+
+                if (lines != null && lines.Count > 0) File.WriteAllLines(passFile, lines);
+
+            }
+            catch { }
         }
 
 

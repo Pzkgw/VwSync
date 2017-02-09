@@ -338,6 +338,7 @@ namespace VwSyncSever
         ERROR_LOGON_FAILURE = 1326, // (0x52E) The user name or password is incorrect
         ERROR_BAD_PROFILE = 1206,
         ERROR_CANNOT_OPEN_PROFILE = 1205,
+        ERROR_BAD_USERNAME = 2202,
         ERROR_DEVICE_IN_USE = 2404,
         ERROR_NOT_CONNECTED = 2250,
         ERROR_OPEN_FILES = 2401;
@@ -379,7 +380,8 @@ namespace VwSyncSever
             new ErrorClass(ERROR_OPEN_FILES, " Error: Open Files"),
             new ErrorClass(ERROR_LOGON_FAILURE, " Error: The user name or password is incorrect"),
             new ErrorClass(ERROR_BAD_NETPATH, " Error: The network path was not found"),
-            new ErrorClass(ERROR_INVALID_PASSWORD, " Error: The specified network password is not correct")
+            new ErrorClass(ERROR_INVALID_PASSWORD, " Error: The specified network password is not correct"),
+            new ErrorClass(ERROR_BAD_USERNAME, " Error: The specified username is invalid")
         };
 
         private static string getErrorForNumber(int errNum)

@@ -192,7 +192,7 @@ namespace VwSyncSever
             else // synchronize press call
             {
                 pathProviderRemote = atextBox2.Text;
-                if (!string.IsNullOrEmpty(textBox2.Text) && 
+                if (!string.IsNullOrEmpty(textBox2.Text) &&
                     !textBox2.Text.Equals(pathProviderLocal))
                 {
                     pathProviderLocal = textBox2.Text;
@@ -206,6 +206,7 @@ namespace VwSyncSever
                     SerSettings.passwFilePath,
                     Settings.GetDirLocalName(pathProviderRemote),
                     ref user, ref pass);
+
 
                 if (!string.IsNullOrEmpty(user)) mapNetwork = ConnectToRemote();
 
@@ -290,7 +291,10 @@ namespace VwSyncSever
 
             if (mapNetwork)
             {
-                PinvokeWindowsNetworking.disconnectRemote(pathProviderRemote);
+                PinvokeWindowsNetworking.disconnectRemote(pathProviderRemote);                
+                
+                    Settings.UpdatePasswordFile(SerSettings.passwFilePath,
+                    Settings.GetDirLocalName(pathProviderRemote), user, pass);
             }
 
             // restart service
@@ -302,7 +306,7 @@ namespace VwSyncSever
         {
             bool retVal = false;
             string connectStringResult =
-    PinvokeWindowsNetworking.connectToRemote(pathProviderRemote, user, pass);
+                PinvokeWindowsNetworking.connectToRemote(pathProviderRemote, user, pass);
 
             if (connectStringResult == null)
             {
