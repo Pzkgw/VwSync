@@ -31,11 +31,8 @@ namespace VwSyncSever
 
             set.ErrCount = 0;
 
-            if (!set.directoryStructureIsOk || !set.remotePathIsOk) return retVal;
-
             try
             {
-                set.SetupDirectoryStruct();
 
                 //Generate a unique Id for the source and store it in file or database for refer it further
                 //sourceId = NewSyncGuid(); // SyncId()
@@ -83,7 +80,7 @@ namespace VwSyncSever
                 //orchestrator.SessionProgress += Orchestrator_SessionProgress;
                 retVal = true;
             }
-            catch (Exception ex)
+            catch //(Exception ex)
             {
                 //("Sync fail: " + ex.ToString());
 
@@ -91,7 +88,6 @@ namespace VwSyncSever
 
                 retVal = false;
 
-                throw ex;
             }
             //finally
 
@@ -113,6 +109,7 @@ namespace VwSyncSever
 
         public SyncOperationStatistics Sync(bool serviceCall, string lStr, string rStr)
         {
+            // verificari pentru structura de directoare
             set.dirLocalSync = set.dirLocal + Settings.GetDirLocalName(rStr);
             set.RefreshPaths(lStr, rStr);
 
@@ -121,19 +118,30 @@ namespace VwSyncSever
 
             set.remotePathIsOk = !set.dirRemote.Contains(Settings.chSlash);
 
+            if (!set.directoryStructureIsOk || !set.remotePathIsOk) return null;
+
+            bool metadataDirectoryCreatedNow = false;
+
+            set.SetupDirectoryStruct(ref metadataDirectoryCreatedNow);
+
+            SyncOperationStatistics retVal = null;
+
+            // sincronizare
             if (InitSync(serviceCall, set.optWay, set.optFilter, set.optFileSync))
             {
-                return SyncOperationExecute();
+                retVal = SyncOperationExecute();
             }
 
-            return null;
+            set.directoryCleanupRequired = (!serviceCall && retVal == null && metadataDirectoryCreatedNow);
+
+            return retVal;
         }
 
         public SyncOperationStatistics SyncOperationExecute()
         {
             if (!set.directoryStructureIsOk || !set.remotePathIsOk || orchestrator == null) return null;
 
-            return orchestrator.Synchronize(); ;
+            return orchestrator.Synchronize();
         }
 
 

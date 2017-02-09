@@ -229,7 +229,7 @@ namespace VwSyncSever
                 Exec.SerDelete();
             }*/
 
-            if (Exec.SerIsOn()) System.Threading.Thread.Sleep(100);
+            //if (Exec.SerIsOn()) System.Threading.Thread.Sleep(100);
 
             SyncOperationStatistics stats = null;
 
@@ -237,12 +237,12 @@ namespace VwSyncSever
             {
                 stats = o.Sync(false, pathProviderLocal, pathProviderRemote);
             }
-            catch //(Exception ex)
+            catch// (Exception ex)
             {
 
             }
 
-            
+
             if (stats == null) //  => show why sync result was null
             {
                 if (e != null)
@@ -274,6 +274,11 @@ namespace VwSyncSever
                         if (e != null) mesaj.Show();
                     }
                 }
+
+                if (o.set != null && o.set.directoryCleanupRequired)
+                {
+                    o.set.CleanupLocalDir();
+                }
             }
             else
             {
@@ -295,6 +300,8 @@ namespace VwSyncSever
                 Settings.UpdatePasswordFile(SerSettings.passwFilePath,
                 Settings.GetDirLocalName(pathProviderRemote), user, pass);
             }
+
+
 
             // restart service
             if (stats != null && serviceWasRunning && !Exec.SerIsOn()) btnService_Click(null, null);

@@ -320,7 +320,8 @@ namespace VwSyncSever
         #region Errors
         const int NO_ERROR = 0,
         ERROR_ACCESS_DENIED = 5,
-        ERROR_BAD_NETPATH = 53, //(0x35) The network path was not found.
+        ERROR_BAD_NETPATH = 53, //(0x35) The network path was not found
+        ERROR_DEV_NOT_EXIST = 55, //(0x37) The specified network resource or device is no longer available
         ERROR_ALREADY_ASSIGNED = 85,
         ERROR_INVALID_PASSWORD = 86,
         ERROR_BAD_DEVICE = 1200,
@@ -359,6 +360,7 @@ namespace VwSyncSever
         // ="new ErrorClass("&A1&", """&PROPER(SUBSTITUTE(MID(A1,7,LEN(A1)-6), "_", " "))&"""), "
         private static ErrorClass[] ERROR_LIST = new ErrorClass[] {
             new ErrorClass(ERROR_ACCESS_DENIED, " Error: Access Denied"),
+            new ErrorClass(ERROR_DEV_NOT_EXIST, " Error: Network resource is not available"),
             new ErrorClass(ERROR_ALREADY_ASSIGNED, " Error: Already Assigned"),
             new ErrorClass(ERROR_BAD_DEVICE, " Error: Bad Device"),
             new ErrorClass(ERROR_BAD_NET_NAME, " Error: Bad Net Name"),
@@ -438,6 +440,7 @@ namespace VwSyncSever
             NETRESOURCE nr = new NETRESOURCE();
             nr.dwType = RESOURCETYPE_DISK;
             nr.lpRemoteName = remoteUNC;
+            nr.dwDisplayType = 0x00000000; // RESOURCEDISPLAYTYPE_GENERIC
             //			nr.lpLocalName = "F:";
 
             int ret;

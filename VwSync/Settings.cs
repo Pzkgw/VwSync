@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -49,7 +50,7 @@ namespace VwSyncSever
 
         public const char backSlash = '\\', chSlash = '@'; // caracterul ce inlocuieste slash
 
-        public bool directoryStructureIsOk, remotePathIsOk;
+        public bool directoryStructureIsOk, remotePathIsOk, directoryCleanupRequired;
 
         // de cate ori am avut fail de syncronizare
         public int ErrCount;
@@ -83,21 +84,22 @@ namespace VwSyncSever
 
             if (File.Exists(passFile))
             {
-                using (StreamReader sr = new StreamReader(passFile))
+                StreamReader sr = new StreamReader(passFile);
                 {
                     string line = null;
-                    int i, retVal = 0;
+                    int i1, i2, retVal = 0;
                     //Lib.WrLog("||FindUserDetails " + passFile + " || " + url);
                     while ((line = sr.ReadLine()) != null)
                     {
                         if (line.StartsWith(url))
                         {
-                            line = line.Substring(url.Length + 1, line.Length - url.Length - 1);
-                            i = line.IndexOf(',');
-                            if (i > 0)
+                            //line = line.Substring(url.Length + 1, line.Length - url.Length - 1);
+                            i1 = line.IndexOf(',');
+                            i2 = line.LastIndexOf(',');
+                            if (i1 > 0 && i2 > i1)
                             {
-                                usr = line.Substring(0, i);
-                                pas = line.Substring(i + 1, line.Length - i - 1);
+                                usr = line.Substring(i1 + 1, i2 - i1 - 1);
+                                pas = line.Substring(i2 + 1, line.Length - i2 - 1);
                             }
                             //Lib.WrLog("||FindUserDetails " + usr + " || " + pas);
                             sr.Close();
@@ -120,7 +122,7 @@ namespace VwSyncSever
                 List<string> lines = new List<string>();
                 string linetoUpdate = string.Format("{0},{1},{2}", url, usr, pas);
 
-                if (File.Exists(passFile) && !string.IsNullOrEmpty(url)) 
+                if (File.Exists(passFile) && !string.IsNullOrEmpty(url))
                 {
                     using (StreamReader sr = new StreamReader(passFile))
                     {
@@ -153,6 +155,18 @@ namespace VwSyncSever
             catch { }
         }
 
+        public void CleanupLocalDir()
+        {
+            try
+            {
+                DirectoryInfo di = new DirectoryInfo(dirLocalSync);
+                if (di.Exists) di.Delete(true);
+            }
+            catch //(Exception ex)
+            {
+
+            }
+        }
 
         public static string GetDirRemoteName(string localDir) // dirRemote
         {
@@ -223,19 +237,24 @@ namespace VwSyncSever
             return false;
         }
 
-        public void SetupDirectoryStruct()
+        public void SetupDirectoryStruct(ref bool metadataDirectoryCreatedNow)
         {
             if (!Directory.Exists(dirLocal)) Directory.CreateDirectory(dirLocal);
+
             if (!Directory.Exists(dirLocalSync)) Directory.CreateDirectory(dirLocalSync);
+
 
             metadataDirectoryPath = dirLocalSync + dirForMetadata; /* "filesync.metadata" */
             tempDirectoryPath = dirLocalSync + dirForTemporaryFiles;
             pathToSaveConflictLoserFiles = dirLocalSync + dirForConflictedFiles;
 
-            if (!Directory.Exists(metadataDirectoryPath)) Directory.CreateDirectory(metadataDirectoryPath);
+            if (!Directory.Exists(metadataDirectoryPath))
+            {
+                Directory.CreateDirectory(metadataDirectoryPath);
+                metadataDirectoryCreatedNow = true;
+            }
             if (!Directory.Exists(tempDirectoryPath)) Directory.CreateDirectory(tempDirectoryPath);
             if (!Directory.Exists(pathToSaveConflictLoserFiles)) Directory.CreateDirectory(pathToSaveConflictLoserFiles);
-
         }
 
 
