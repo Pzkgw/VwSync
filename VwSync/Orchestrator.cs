@@ -14,7 +14,7 @@ namespace VwSyncSever
 
         public Settings set;
 
-        Guid sourceId, destId;
+        //Guid sourceId, destId;
         public Orchestrator(Settings settings)
         {
             set = settings;
@@ -38,18 +38,18 @@ namespace VwSyncSever
                 set.SetupDirectoryStruct();
 
                 //Generate a unique Id for the source and store it in file or database for refer it further
-                sourceId = NewSyncGuid(); // SyncId()
+                //sourceId = NewSyncGuid(); // SyncId()
                 //Generate a unique Id for the destination and store it in a file or database for refer it further
-                destId = NewSyncGuid();
+                //destId = NewSyncGuid();
                 //ReplicaId se genereaza in constructor
 
                 // file sync providers
-                localPro = new FileSyncProvider(sourceId, set.dirLocalSync,
+                localPro = new FileSyncProvider(set.dirLocalSync,
                     scopeFilter, fileSyncOptions,
                       set.metadataDirectoryPath, Settings.metaFileLoc,
                       set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
 
-                remotePro = new FileSyncProvider(destId, set.dirRemote,
+                remotePro = new FileSyncProvider(set.dirRemote,
                     scopeFilter, fileSyncOptions,
                     set.metadataDirectoryPath, Settings.metaFileRem,
                     set.tempDirectoryPath, set.pathToSaveConflictLoserFiles);
@@ -72,8 +72,8 @@ namespace VwSyncSever
                 localPro.DetectChanges();
                 remotePro.DetectChanges();
 
-                sourceId = localPro.ReplicaId;
-                destId = remotePro.ReplicaId;
+                //sourceId = localPro.ReplicaId;
+                //destId = remotePro.ReplicaId;
 
                 // Init Sync
                 orchestrator = new SyncOrchestrator();
@@ -99,23 +99,6 @@ namespace VwSyncSever
             return retVal;
         }
 
-        private Guid NewSyncGuid()
-        {
-            //return new SyncId(Guid.NewGuid());
-            return Guid.NewGuid();
-        }
-
-        public Guid GetIdLocal()
-        {
-            return sourceId;
-            // return localPro.ReplicaId;
-        }
-
-        public Guid GetIdRemote()
-        {
-            return destId;
-            //return remotePro.ReplicaId;
-        }
 
         private void ProviderEvent_ApplyingChange(object sender, ApplyingChangeEventArgs e)
         {
@@ -130,14 +113,9 @@ namespace VwSyncSever
 
         public SyncOperationStatistics Sync(bool serviceCall, string lStr, string rStr)
         {
-
-            //if (set.ErrCount > Settings.ErrCountMax) return null;
-
-            // 1. dir struct
             set.dirLocalSync = set.dirLocal + Settings.GetDirLocalName(rStr);
             set.RefreshPaths(lStr, rStr);
 
-            // 3. WCF Sync
             set.directoryStructureIsOk =
                 set.PrepareDirectories(set.dirLocal, set.dirRemote);
 
@@ -153,20 +131,9 @@ namespace VwSyncSever
 
         public SyncOperationStatistics SyncOperationExecute()
         {
-            if (!set.directoryStructureIsOk || !set.remotePathIsOk) return null;
+            if (!set.directoryStructureIsOk || !set.remotePathIsOk || orchestrator == null) return null;
 
-            SyncOperationStatistics retVal = null;
-
-            if (orchestrator != null)
-            {
-                retVal = orchestrator.Synchronize();
-            }
-            else
-            {
-                //("orchestrator !exists");
-            }
-
-            return retVal;
+            return orchestrator.Synchronize(); ;
         }
 
 

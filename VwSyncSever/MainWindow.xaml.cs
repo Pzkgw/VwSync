@@ -184,12 +184,12 @@ namespace VwSyncSever
                 mesaj = null;
             }
 
-            if (e == null) // mesaj window call
+            if (e == null) // call din mesaj, cu username si password, cu de toate
             {
                 // user, pass disponibile
-                mapNetwork = ConnectToRemote();
+                mapNetwork = RemoteConnect();
             }
-            else // synchronize press call
+            else // synchronize button press call
             {
                 pathProviderRemote = atextBox2.Text;
                 if (!string.IsNullOrEmpty(textBox2.Text) &&
@@ -208,7 +208,7 @@ namespace VwSyncSever
                     ref user, ref pass);
 
 
-                if (!string.IsNullOrEmpty(user)) mapNetwork = ConnectToRemote();
+                if (!string.IsNullOrEmpty(user)) mapNetwork = RemoteConnect();
 
             }
 
@@ -233,7 +233,6 @@ namespace VwSyncSever
 
             SyncOperationStatistics stats = null;
 
-
             try
             {
                 stats = o.Sync(false, pathProviderLocal, pathProviderRemote);
@@ -243,8 +242,8 @@ namespace VwSyncSever
 
             }
 
-            // Get stats => show result
-            if (stats == null)
+            
+            if (stats == null) //  => show why sync result was null
             {
                 if (e != null)
                 {
@@ -291,10 +290,10 @@ namespace VwSyncSever
 
             if (mapNetwork)
             {
-                PinvokeWindowsNetworking.disconnectRemote(pathProviderRemote);                
-                
-                    Settings.UpdatePasswordFile(SerSettings.passwFilePath,
-                    Settings.GetDirLocalName(pathProviderRemote), user, pass);
+                RemoteDisconnect();
+
+                Settings.UpdatePasswordFile(SerSettings.passwFilePath,
+                Settings.GetDirLocalName(pathProviderRemote), user, pass);
             }
 
             // restart service
@@ -302,11 +301,29 @@ namespace VwSyncSever
 
         }
 
-        private bool ConnectToRemote()
+        private bool RemoteConnect()
         {
             bool retVal = false;
             string connectStringResult =
                 PinvokeWindowsNetworking.connectToRemote(pathProviderRemote, user, pass);
+
+            if (connectStringResult == null)
+            {
+                retVal = true;
+            }
+            else
+            {
+                infoLbl.Content = connectStringResult;
+
+            }
+            return retVal;
+        }
+
+        private bool RemoteDisconnect()
+        {
+            bool retVal = false;
+            string connectStringResult =
+                PinvokeWindowsNetworking.disconnectRemote(pathProviderRemote);
 
             if (connectStringResult == null)
             {
