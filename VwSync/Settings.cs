@@ -91,7 +91,7 @@ namespace VwSyncSever
                     //Lib.WrLog("||FindUserDetails " + passFile + " || " + url);
                     while ((line = sr.ReadLine()) != null)
                     {
-                        if (line.StartsWith(url))
+                        if (LineContainsUrl(line, url))
                         {
                             //line = line.Substring(url.Length + 1, line.Length - url.Length - 1);
                             i1 = line.IndexOf(',');
@@ -130,7 +130,7 @@ namespace VwSyncSever
                         string line = null;
                         while ((line = sr.ReadLine()) != null)
                         {
-                            if (line.StartsWith(url))
+                            if (LineContainsUrl(line, url))
                             {
                                 line = linetoUpdate; // modifica parola
                                 updateAcomplished = true;
@@ -153,6 +153,11 @@ namespace VwSyncSever
 
             }
             catch { }
+        }
+
+        private static bool LineContainsUrl(string line, string url)
+        {
+            return (line.StartsWith(url) && line.Length > url.Length && line[url.Length] == ',');
         }
 
         public void CleanupLocalDir()

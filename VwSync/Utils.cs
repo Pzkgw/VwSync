@@ -435,6 +435,63 @@ namespace VwSyncSever
             return connectToRemote(remoteUNC, username, password, false);
         }
 
+
+        /*
+        dwFlags[in]
+        Set of bit flags describing the connection.
+        This parameter can be any combination of the following values.
+
+        CONNECT_INTERACTIVE
+        If this flag is set, the operating system may interact with
+        the user for authentication purposes.
+
+        CONNECT_PROMPT
+        This flag instructs the system not to use any default
+        settings for user names or passwords without offering
+        the user the opportunity to supply an alternative.
+        This flag is ignored unless CONNECT_INTERACTIVE is also set.
+
+        CONNECT_REDIRECT
+        This flag forces the redirection of a local device when making the connection.
+        If the lpLocalName member of NETRESOURCE specifies a local device to redirect,
+        this flag has no effect, because the operating system
+        still attempts to redirect the specified device.
+        When the operating system automatically chooses a
+        local device, the dwType member must not be equal to RESOURCETYPE_ANY.
+        If this flag is not set, a local device is automatically chosen for
+        redirection only if the network requires a local device to be redirected.
+        Windows XP:  When the system automatically assigns network drive letters,
+        letters are assigned beginning with Z:, then Y:, and ending with C:.
+        This reduces collision between per-logon drive letters
+        (such as network drive letters) and global drive letters(such as disk drives).
+        Note that previous releases assigned drive letters beginning
+        with C: and ending with Z:
+
+        CONNECT_UPDATE_PROFILE
+        This flag instructs the operating system to store the network resource connection.
+        If this bit flag is set, the operating system automatically
+        attempts to restore the connection when the user logs on.
+        The system remembers only successful connections that redirect local devices.
+        It does not remember connections that are unsuccessful or deviceless connections.
+        (A deviceless connection occurs when lpLocalName is NULL
+        or when it points to an empty string.)
+        If this bit flag is clear, the operating system does not automatically
+        restore the connection at logon.
+
+        CONNECT_COMMANDLINE
+        If this flag is set, the operating system prompts the user
+        for authentication using the command line instead of a graphical user interface (GUI).
+        This flag is ignored unless CONNECT_INTERACTIVE is also set.
+        Windows 2000/NT and Windows Me/98/95:  This value is not supported.
+
+        CONNECT_CMD_SAVECRED
+        If this flag is set, and the operating system prompts for a credential,
+        the credential should be saved by the credential manager.
+        If the credential manager is disabled for the caller's logon session,
+        or if the network provider does not support saving credentials, this flag is ignored
+        This flag is also ignored unless you set the CONNECT_COMMANDLINE flag.
+        Windows 2000/NT and Windows Me/98/95:  This value is not supported.
+        */
         public static string connectToRemote(string remoteUNC, string username, string password, bool promptUser)
         {
             NETRESOURCE nr = new NETRESOURCE();
@@ -455,7 +512,7 @@ namespace VwSyncSever
 
         public static string disconnectRemote(string remoteUNC)
         {
-            int ret = WNetCancelConnection2(remoteUNC, CONNECT_UPDATE_PROFILE, false);
+            int ret = WNetCancelConnection2(remoteUNC, 0, false);
             if (ret == NO_ERROR) return null;
             return getErrorForNumber(ret);
         }

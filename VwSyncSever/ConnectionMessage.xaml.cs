@@ -12,7 +12,7 @@ namespace VwSyncSever
         public delegate void OkClickEventHandler(object sender, EventArgs e);
         public event OkClickEventHandler OkClick;
 
-        public string username, password;
+        public string domain, username, password;
         public ConnectionMessage()
         {
             InitializeComponent();
@@ -24,6 +24,7 @@ namespace VwSyncSever
             {
                 //OkClick(string.IsNullOrEmpty(textBoxUser.Text) ? null : (string.Format("{0},{1}", textBoxUser.Text, textBoxPassword.Text)), e);
 
+                domain = textBoxDomain.Text;
                 username = textBoxUser.Text;
                 password = textBoxPassword.Text;
 

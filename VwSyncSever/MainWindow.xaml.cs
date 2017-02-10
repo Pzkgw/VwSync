@@ -350,7 +350,8 @@ namespace VwSyncSever
             {
                 if (!String.IsNullOrEmpty(mesaj.username))
                 {
-                    user = mesaj.username;
+                    user = string.IsNullOrEmpty(mesaj.domain) ? mesaj.username :
+                        string.Format(@"{0}\{1}", mesaj.domain, mesaj.username);
                     pass = mesaj.password;
                     mesaj.Close();
                     btnSync_Click(null, null);

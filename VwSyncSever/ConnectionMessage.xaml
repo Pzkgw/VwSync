@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VwSyncSever"
         mc:Ignorable="d"
-        Title="ConnectionMessage" Height="300" Width="300"
+        Title="ConnectionMessage" Height="400" Width="300"
                 Closing="Window_Closing"
         MouseLeftButtonDown="Window_MouseLeftButtonDown"
         Background="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
@@ -15,6 +15,7 @@
             <Label MinHeight="40" MinWidth="200" Margin="40,40,40,0" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" Name="lblInfo" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"></Label>
 
         <StackPanel Orientation="Vertical">
+
             <StackPanel Orientation="Vertical" Margin="10">
                 <Label Content="Username" HorizontalAlignment="Center" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontSize="16"/>
                 <TextBox x:Name="textBoxUser" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" FontFamily="Times New Roman" Width="200"/>
@@ -24,6 +25,12 @@
                 <Label  Content="Password" HorizontalAlignment="Center" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontSize="16"/>
                 <TextBox x:Name="textBoxPassword"  Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" FontFamily="Times New Roman" Width="200"/>
             </StackPanel>
+
+            <StackPanel Orientation="Vertical" Margin="10">
+                <Label Content="Domain [optional]" HorizontalAlignment="Center" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" FontSize="16"/>
+                <TextBox x:Name="textBoxDomain" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" FontFamily="Times New Roman" Width="200"/>
+            </StackPanel>
+
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10" VerticalAlignment="Bottom">
