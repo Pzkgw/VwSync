@@ -372,6 +372,7 @@ namespace VwSer
                                     if (isHatched)
                                     {
                                         o = egg.orc;
+                                        o.DetectChanges();
                                         stats = o.SyncOperationExecute();
                                     }
                                     else

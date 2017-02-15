@@ -203,7 +203,6 @@ namespace VwSyncSever
             return rFileName;
         }
 
-
         public void RefreshPaths(string localDir, string remoteDir)
         {
             dirLocal = localDir;

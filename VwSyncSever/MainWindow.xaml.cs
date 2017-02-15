@@ -175,7 +175,7 @@ namespace VwSyncSever
         {
             //VwService.SerSettings.dirLocal = textBox2.Text; // TODO: ver ca e path valabil
             //VwService.FileStructClass.RunSync();
-
+            btnSync.IsEnabled = false;
             //return;
             bool mapNetwork = false;
 
@@ -201,6 +201,8 @@ namespace VwSyncSever
                     SerSettings.UpdateFileLocations(Settings.backSlash,
                         Settings.serLogFile, Settings.serPasswFile);
                 }
+
+
 
                 Settings.SearchPasswordFile(
                     SerSettings.passwFilePath,
@@ -305,6 +307,8 @@ namespace VwSyncSever
 
             // restart service
             if (stats != null && serviceWasRunning && !Exec.SerIsOn()) btnService_Click(null, null);
+
+            btnSync.IsEnabled = true;
 
         }
 

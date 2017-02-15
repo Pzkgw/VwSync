@@ -53,10 +53,10 @@ namespace VwSyncSever
 
                 // Task curent: Skip delete
                 // ChangeType:
-                // Create A file or folder will be created.
-                // Delete A file or folder will be deleted.
-                // Update A file or folder will be updated.
-                // Rename A file or folder will be renamed.
+                // Create A file or folder will be created
+                // Delete A file or folder will be deleted
+                // Update A file or folder will be updated
+                // Rename A file or folder will be renamed
                 remotePro.ApplyingChange += ProviderEvent_ApplyingChange;
                 localPro.ApplyingChange += ProviderEvent_ApplyingChange;
 
@@ -66,8 +66,7 @@ namespace VwSyncSever
                 //by the SyncOrchestrator.Synchronize( ) method,
                 //or explicitly if the FileSyncProvider options specifies
                 //that DetectChanges is to be called explicitly
-                localPro.DetectChanges();
-                remotePro.DetectChanges();
+                DetectChanges();
 
                 //sourceId = localPro.ReplicaId;
                 //destId = remotePro.ReplicaId;
@@ -95,6 +94,11 @@ namespace VwSyncSever
             return retVal;
         }
 
+        public void DetectChanges()
+        {
+            localPro.DetectChanges();
+            remotePro.DetectChanges();
+        }
 
         private void ProviderEvent_ApplyingChange(object sender, ApplyingChangeEventArgs e)
         {
@@ -109,6 +113,8 @@ namespace VwSyncSever
 
         public SyncOperationStatistics Sync(bool serviceCall, string lStr, string rStr)
         {
+            if (set == null) return null;
+
             // verificari pentru structura de directoare
             set.dirLocalSync = set.dirLocal + Settings.GetDirLocalName(rStr);
             set.RefreshPaths(lStr, rStr);
@@ -123,6 +129,15 @@ namespace VwSyncSever
             bool metadataDirectoryCreatedNow = false;
 
             set.SetupDirectoryStruct(ref metadataDirectoryCreatedNow);
+
+            if (!serviceCall)
+            {
+                string mp;
+                mp = string.Format("{0}{1}{2}", set.metadataDirectoryPath, Settings.backSlash, Settings.metaFileRem);
+                if (System.IO.File.Exists(mp)) System.IO.File.Delete(mp);
+                mp = string.Format("{0}{1}{2}", set.metadataDirectoryPath, Settings.backSlash, Settings.metaFileLoc);
+                if (System.IO.File.Exists(mp)) System.IO.File.Delete(mp);
+            }
 
             SyncOperationStatistics retVal = null;
 
